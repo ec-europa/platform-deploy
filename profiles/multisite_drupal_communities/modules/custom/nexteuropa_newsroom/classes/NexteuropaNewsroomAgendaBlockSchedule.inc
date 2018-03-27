@@ -8,7 +8,7 @@
 /**
  * NexteuropaNewsroomAgendaBlockSchedule class.
  */
-class NexteuropaNewsroomAgendaBlockSchedule extends NexteuropaNewsroomAgendaSchedule {
+class NexteuropaNewsroomAgendaBlockSchedule extends NexteuropaNewsroomAgenda {
   private $operator = NEXTEUROPA_NEWSROOM_TOPIC_OPERATOR_OR;
 
   /**
@@ -20,8 +20,10 @@ class NexteuropaNewsroomAgendaBlockSchedule extends NexteuropaNewsroomAgendaSche
    *   Newsroom topic taxonomy term.
    * @param object $current_day
    *   Current date.
+   * @param string $operator
+   *   Operator.
    */
-  public function __construct($type, $topics, $current_day, $operator) {
+  public function __construct($type, array $topics, $current_day, $operator) {
     $this->setIsBlock(TRUE);
     $this->setOperator($operator);
     parent::__construct($type, $topics, $current_day);

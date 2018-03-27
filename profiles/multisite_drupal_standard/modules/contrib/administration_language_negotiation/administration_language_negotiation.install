@@ -16,11 +16,20 @@ function administration_language_negotiation_install() {
         '*admin',
         '*admin/*',
         '*node/*/edit*',
+        '*node/*/translate*',
         '*admin_menu/*',
         '/*/admin/*',
         '/*/node/*/edit',
+        '/*/node/*/translate',
         '/*/admin_menu/*',
       )
+    );
+  }
+  if (empty(variable_get('administration_language_negotiation_default', NULL))) {
+    $language_default = language_default();
+    variable_set(
+      'administration_language_negotiation_default',
+      $language_default->language
     );
   }
 }

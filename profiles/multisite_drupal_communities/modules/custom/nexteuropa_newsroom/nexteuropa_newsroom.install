@@ -62,7 +62,7 @@ function nexteuropa_newsroom_install() {
   variable_set('nexteuropa_newsroom_display_highlights_begin', 1);
   variable_set('nexteuropa_newsroom_order_by_last_update', 1);
   variable_set('nexteuropa_newsroom_proposal_script', NEXTEUROPA_NEWSROOM_PROPOSAL_SCRIPT);
-  variable_set('nexteuropa_newsroom_docsroom_url', 'http://ec.europa.eu/DocsRoom/documents/');
+  variable_set('nexteuropa_newsroom_docsroom_url', 'http://ec.europa.eu/docsroom/documents/');
 
   variable_set('nexteuropa_newsroom_central_newsletter_title', $t('Central newsletters'));
   variable_set('nexteuropa_newsroom_other_newsletter_title', $t('Other newsletters'));
@@ -100,6 +100,9 @@ function nexteuropa_newsroom_install() {
   variable_set('node_preview_newsroom_newsletter_item', 0);
   variable_set('node_submitted_newsroom_newsletter_item', 0);
   variable_set('comment_newsroom_newsletter_item', COMMENT_NODE_CLOSED);
+
+  variable_set('nexteuropa_newsroom_use_default_view_mode', 0);
+  variable_set('nexteuropa_newsroom_redirect_short_items', 0);
 
   // Body field is locked and an instance is always created, we want
   // to remove it.
@@ -168,6 +171,9 @@ function nexteuropa_newsroom_uninstall() {
   variable_del('nexteuropa_newsroom_ct_node_relative_items');
   variable_del('nexteuropa_newsroom_agenda_page_items_number');
   variable_del('nexteuropa_newsroom_page_items_number');
+
+  variable_del('nexteuropa_newsroom_use_default_view_mode');
+  variable_del('nexteuropa_newsroom_redirect_short_items');
 }
 
 /**
@@ -518,4 +524,20 @@ function nexteuropa_newsroom_update_7113() {
 
   variable_del('newsroom_display_agenda');
   variable_del('newsroom_summary_block_columns');
+}
+
+/**
+ * Remove field_tags.
+ */
+function nexteuropa_newsroom_update_7114() {
+  if ($instance = field_info_instance('node', 'field_tags', 'newsroom_item')) {
+    field_delete_instance($instance, TRUE);
+  }
+}
+
+/**
+ * Remove field group section.
+ */
+function nexteuropa_newsroom_update_7115() {
+  _nexteuropa_newsroom_remove_group(['group_newsroom_item_form_section|node|newsroom_item|form']);
 }

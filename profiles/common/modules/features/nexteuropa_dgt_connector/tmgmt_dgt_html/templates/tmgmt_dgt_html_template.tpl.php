@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Template of the DGT supported HTML format.
@@ -23,10 +24,18 @@ print $xml;
   <body>
     <?php foreach ($items as $item_key => $item): ?>
       <div class="asset" id="item-<?php echo filter_xss($item_key); ?>">
+        <?php if (isset($items_context[$item_key])): ?>
+        <!--
+          label="context"
+        -->
+        <div class="context" style="color:#ff0000;">
+          [REF <?php echo filter_xss($items_context[$item_key]['comment']); ?>Link: <a href="<?php echo filter_xss($items_context[$item_key]['url']); ?>" target="blank"><?php echo filter_xss($items_context[$item_key]['url']) ?></a>]
+        </div>
+        <?php endif; ?>
         <?php foreach ($item as $field_key => $field): ?>
           <?php
-            $key = substr($field_key, 1);
-            $key = base64_decode(str_pad(strtr($key, '-_', '+/'), strlen($key) % 4, '=', STR_PAD_RIGHT));
+            $key = drupal_substr($field_key, 1);
+            $key = base64_decode(str_pad(strtr($key, '-_', '+/'), drupal_strlen($key) % 4, '=', STR_PAD_RIGHT));
           ?>
         <!--
           label="<?php echo filter_xss($field['#label']); ?>"

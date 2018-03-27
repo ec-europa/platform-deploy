@@ -5,9 +5,9 @@ package = Multilanguage
 dependencies[] = locale
 configure = admin/config/regional/language/configure/administration_language
 
-; Information added by Drupal.org packaging script on 2017-03-17
-version = "7.x-1.2"
+; Information added by Drupal.org packaging script on 2017-11-21
+version = "7.x-1.4"
 core = "7.x"
 project = "administration_language_negotiation"
-datestamp = "1489762398"
+datestamp = "1511285288"
 

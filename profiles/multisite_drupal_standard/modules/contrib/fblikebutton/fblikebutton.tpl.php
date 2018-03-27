@@ -15,4 +15,4 @@
  */
 ?>
 
-<iframe src="//www.facebook.com/plugins/like.php?<?php print $src; ?>" scrolling="no" frameborder="0" style="border: none; overflow: hidden; width: <?php print $width; ?>px; height: <?php print $height; ?>px; <?php $other_css; ?>" allowTransparency="true"></iframe>
+<iframe src="//www.facebook.com/plugins/like.php?<?php print $src; ?>" scrolling="no" frameborder="0" style="border: none; overflow: hidden; width: <?php print $width; ?>px; height: <?php print $height; ?>px; <?php print $other_css; ?>" allowTransparency="true"></iframe>

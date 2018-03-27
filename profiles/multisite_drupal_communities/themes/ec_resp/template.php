@@ -948,7 +948,7 @@ function ec_resp_menu_link__menu_breadcrumb_menu(array $variables) {
   // Format output.
   $element['#localized_options']['html'] = TRUE;
   $output = l($element['#title'], $element['#href'], $element['#localized_options']);
-  $suffix = ($last ? '' : '<span class="easy-breadcrumb_segment-separator"> ' . $separator . ' </span>');
+  $suffix = ($last ? '' : '<span class="easy-breadcrumb_segment-separator"> ' . filter_xss($separator) . ' </span>');
   return $output . $sub_menu . $suffix;
 }
 
@@ -1004,6 +1004,7 @@ function ec_resp_menu_local_tasks(&$variables) {
 function ec_resp_form_alter(&$form, &$form_state, $form_id) {
   switch ($form_id) {
     case 'nexteuropa_europa_search_search_form':
+      $form['search_input_group']['QueryText']['#title_display'] = 'invisible';
       if (theme_get_setting('enable_interinstitutional_theme')) {
         $form['search_input_group']['europa_search_submit']['#type'] = 'image_button';
         $form['search_input_group']['europa_search_submit']['#src'] = drupal_get_path('theme', 'ec_resp') . '/images/search-button.gif';
@@ -1184,9 +1185,14 @@ function ec_resp_link($variables) {
     }
   }
   $path = ($variables['path'] == '<nolink>') ? '#' : check_plain(url($variables['path'], $variables['options']));
+
+  $variables += array('options' => array());
+  $variables['options'] += array('attributes' => array());
+  $options_attributes = drupal_attributes($variables['options']['attributes']);
+
   $output = $action_bar_before . $btn_group_before .
     '<a href="' . $path . '"' .
-    drupal_attributes($variables['options']['attributes']) . '>' . $decoration .
+    $options_attributes . '>' . $decoration .
     ($variables['options']['html'] ? $variables['text'] : check_plain($variables['text'])) .
     '</a>' . $btn_group_after . $action_bar_after;
   return $output;
@@ -1560,9 +1566,8 @@ function ec_resp_preprocess_username(&$vars) {
 /**
  * Returns HTML for a dropdown.
  */
-function ec_resp_dropdown($variables) {
+function ec_resp_dropdown(array $variables) {
   $items = $variables['items'];
-  $attributes = array();
   $output = "";
 
   if (!empty($items)) {
@@ -1571,7 +1576,6 @@ function ec_resp_dropdown($variables) {
     }
     else {
       $output .= "<ul class='dropdown-menu'>";
-      $num_items = count($items);
       foreach ($items as $i => $item) {
         $data = '';
         if (is_array($item)) {
@@ -1582,7 +1586,7 @@ function ec_resp_dropdown($variables) {
           }
         }
         else {
-          $data = $item;
+          $data = l($i, $item);
         }
         $output .= '<li>' . $data . "</li>\n";
       }
@@ -1765,8 +1769,8 @@ function ec_resp_nexteuropa_multilingual_language_list(array $variables) {
   $first_half = array_slice($variables['languages'], 0, $half);
   $second_half = array_slice($variables['languages'], $half);
 
-  $content .= _ec_resp_nexteuropa_multilingual_language_list_column($first_half, $variables['path'], $options);
-  $content .= _ec_resp_nexteuropa_multilingual_language_list_column($second_half, $variables['path'], $options);
+  $content .= _ec_resp_nexteuropa_multilingual_language_list_column($first_half, $variables['path'], $options, $variables['all_paths']);
+  $content .= _ec_resp_nexteuropa_multilingual_language_list_column($second_half, $variables['path'], $options, $variables['all_paths']);
 
   $content .= '</div>';
 
@@ -1782,18 +1786,28 @@ function ec_resp_nexteuropa_multilingual_language_list(array $variables) {
  *   The internal path being linked to.
  * @param array $options
  *   An associative array of additional options.
+ * @param array $all_paths
+ *   An associative array of paths keyed by their language code.
+ *   If it is not empty, the array items will be used to generate the links of
+ *   language list.
  *
  * @return string
  *   Formatted HTML column displaying the list of provided languages.
  */
-function _ec_resp_nexteuropa_multilingual_language_list_column($languages, $path, $options) {
+function _ec_resp_nexteuropa_multilingual_language_list_column($languages, $path, $options, $all_paths = array()) {
   $content = '<div class="col-sm-6">';
   foreach ($languages as $language) {
     $options['attributes']['lang'] = $language->language;
     $options['attributes']['hreflang'] = $language->language;
     $options['attributes']['class'] = 'btn splash-page__btn-language';
     $options['language'] = $language;
-    $content .= l($language->native, $path, $options);
+
+    $translated_path = $path;
+    if (!empty($all_paths[$language->language])) {
+      $translated_path = $all_paths[$language->language];
+    }
+
+    $content .= l($language->native, $translated_path, $options);
   }
   $content .= '</div>';
 

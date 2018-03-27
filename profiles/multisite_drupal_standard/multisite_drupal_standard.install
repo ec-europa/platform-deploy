@@ -1,18 +1,21 @@
 <?php
+
 /**
  * @file
  * Multisite Drupal Standard installation profile.
  */
 
+include_once 'multisite_drupal_standard.install.inc';
+
 /**
- * Implements hook_install().
+ * Install all basic configuration of the standard profile.
  */
 function multisite_drupal_standard_install() {
   cce_basic_config_post_install();
 }
 
 /**
- * Implements hook_update_N().
+ * Gives permissions to the editor role.
  */
 function multisite_drupal_standard_update_7100() {
   // Editor role.

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * nexteuropa_newsroom.context.inc
@@ -19,7 +20,8 @@ function nexteuropa_newsroom_context_default_contexts() {
   $context->conditions = array(
     'path' => array(
       'values' => array(
-        'newsroom-agenda*' => 'newsroom-agenda*',
+        'newsroom-agenda' => 'newsroom-agenda',
+        'newsroom-agenda/*' => 'newsroom-agenda/*',
       ),
     ),
   );
@@ -87,6 +89,7 @@ function nexteuropa_newsroom_context_default_contexts() {
   $context->conditions = array(
     'path' => array(
       'values' => array(
+        'newsroom' => 'newsroom',
         'newsroom/*' => 'newsroom/*',
       ),
     ),

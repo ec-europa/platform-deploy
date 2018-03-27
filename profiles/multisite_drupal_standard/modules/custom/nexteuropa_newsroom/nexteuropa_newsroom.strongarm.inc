@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * nexteuropa_newsroom.strongarm.inc
@@ -163,7 +164,23 @@ function nexteuropa_newsroom_strongarm() {
       ),
     ),
     'extra_fields' => array(
-      'form' => array(),
+      'form' => array(
+        'metatags' => array(
+          'weight' => '40',
+        ),
+        'path' => array(
+          'weight' => '20',
+        ),
+        'redirect' => array(
+          'weight' => '30',
+        ),
+        'xmlsitemap' => array(
+          'weight' => '30',
+        ),
+        'language' => array(
+          'weight' => '7',
+        ),
+      ),
       'display' => array(
         'share_buttons' => array(
           'default' => array(
@@ -171,7 +188,7 @@ function nexteuropa_newsroom_strongarm() {
             'visible' => FALSE,
           ),
           'newsroom_consultations' => array(
-            'weight' => '42',
+            'weight' => '43',
             'visible' => FALSE,
           ),
           'newsroom_events' => array(
@@ -187,7 +204,7 @@ function nexteuropa_newsroom_strongarm() {
             'visible' => TRUE,
           ),
           'newsroom_default' => array(
-            'weight' => '42',
+            'weight' => '46',
             'visible' => FALSE,
           ),
           'teaser' => array(

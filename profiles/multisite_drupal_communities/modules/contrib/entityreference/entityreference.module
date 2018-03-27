@@ -1,5 +1,7 @@
 <?php
 
+define('ENTITYREFERENCE_DENIED', '- Restricted access -');
+
 /**
  * @file
  * Entityreference primary module file.
@@ -182,7 +184,7 @@ function entityreference_get_behavior_handlers($field, $instance = NULL) {
 /**
  * Get the behavior handler for a given entityreference field and instance.
  *
- * @param $handler
+ * @param $behavior
  *   The behavior handler name.
  */
 function _entityreference_get_behavior_handler($behavior) {
@@ -1106,10 +1108,14 @@ function entityreference_autocomplete_callback_get_matches($type, $field, $insta
   if (isset($tag_last)) {
     // Get an array of matching entities.
     $entity_labels = $handler->getReferencableEntities($tag_last, $instance['widget']['settings']['match_operator'], 10);
-
+    $denied_label = t(ENTITYREFERENCE_DENIED);
     // Loop through the products and convert them into autocomplete output.
     foreach ($entity_labels as $values) {
       foreach ($values as $entity_id => $label) {
+        // Never autocomplete entities that aren't accessible.
+        if ($label == $denied_label) {
+          continue;
+        }
         $key = "$label ($entity_id)";
         // Strip starting/trailing white spaces, line breaks and tags.
         $key = preg_replace('/\s\s+/', ' ', str_replace("\n", '', trim(decode_entities(strip_tags($key)))));
@@ -1414,7 +1420,7 @@ function entityreference_field_formatter_view($entity_type, $entity, $field, $in
 
         $target_entity = clone $item['entity'];
         unset($target_entity->content);
-        $result[$delta] = entity_view($target_type, array($item[$column] => $target_entity), $settings['view_mode'], $langcode, FALSE);
+        $result[$delta] = entity_view($target_type, array($item[$column] => $target_entity), $settings['view_mode'], $target_langcode, FALSE);
 
         if (empty($settings['links']) && isset($result[$delta][$target_type][$column]['links'])) {
           $result[$delta][$target_type][$item[$column]]['links']['#access'] = FALSE;

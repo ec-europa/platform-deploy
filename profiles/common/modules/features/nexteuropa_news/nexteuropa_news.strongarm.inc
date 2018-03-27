@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * nexteuropa_news.strongarm.inc
@@ -30,13 +31,6 @@ function nexteuropa_news_strongarm() {
   $strongarm->name = 'comment_default_per_page_nexteuropa_news';
   $strongarm->value = '50';
   $export['comment_default_per_page_nexteuropa_news'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'comment_form_location_nexteuropa_news';
-  $strongarm->value = 1;
-  $export['comment_form_location_nexteuropa_news'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -129,23 +123,9 @@ function nexteuropa_news_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'pathauto_node_nexteuropa_news_en_pattern';
-  $strongarm->value = '';
-  $export['pathauto_node_nexteuropa_news_en_pattern'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
   $strongarm->name = 'pathauto_node_nexteuropa_news_pattern';
   $strongarm->value = 'news/[node:source:title]';
   $export['pathauto_node_nexteuropa_news_pattern'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'pathauto_node_nexteuropa_news_und_pattern';
-  $strongarm->value = '';
-  $export['pathauto_node_nexteuropa_news_und_pattern'] = $strongarm;
 
   return $export;
 }

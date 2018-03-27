@@ -180,7 +180,7 @@ class QuickSet {
    * @throws InvalidQuickSetException if there are no contents to render.
    */
   protected function prepareContents() {
-    if (!count($this->contents))  {
+    if (!count($this->contents) && !$this->settings['hide_empty_tabs'])  {
       throw new InvalidQuickSetException('There are no contents to render.');
     }
     if ($this->settings['hide_empty_tabs'] && !$this->settings['ajax']) {
@@ -202,7 +202,7 @@ class QuickSet {
           $renderable_contents++;
         }
       }
-      if (!$renderable_contents)  {
+      if (!$renderable_contents && !$this->settings['hide_empty_tabs'])  {
         throw new InvalidQuickSetException('There are no contents to render.');
       }
     }
@@ -250,7 +250,7 @@ class QuickSet {
     else {
       $active_tab = (isset($active_tab) && isset($this->contents[$active_tab])) ? $active_tab : key($this->contents);
     }
-    return $active_tab;
+  return $active_tab;
   }
 }
 
@@ -348,6 +348,11 @@ interface QuickContentRenderable {
    */
   public function getAjaxKeys();
   
+  /**
+   * Returns an array of keys, sufficient to represent the content uniquely.
+   */
+  public function getUniqueKeys();
+
 }
 
 /**
@@ -466,6 +471,13 @@ class QuickPreRenderedContent implements QuickContentRenderable {
    */
   protected $rendered_content;
 
+  /**
+   * An array containing the information that defines the tab content, specific
+   * to its type.
+   * @var array
+   */
+  protected $settings;
+
 
   /**
    * Constructor
@@ -479,6 +491,9 @@ class QuickPreRenderedContent implements QuickContentRenderable {
     $this->rendered_content = $contents;
 
     $this->title = isset($item['title']) ? $item['title'] : '';
+
+    unset($item['title'], $item['contents']);
+    $this->settings = $item;
   }
   
   /**
@@ -489,10 +504,10 @@ class QuickPreRenderedContent implements QuickContentRenderable {
   }
 
   /**
-   * Prerendered content doesn't need any extra settings.
+   * Accessor for the tab settings.
    */
   public function getSettings() {
-    return array();
+    return $this->settings;
   }
 
 
@@ -509,6 +524,10 @@ class QuickPreRenderedContent implements QuickContentRenderable {
    */
   public function getAjaxKeys() {
     return array();
+  }
+
+  public function getUniqueKeys() {
+    return array('class_suffix');
   }
 
 }

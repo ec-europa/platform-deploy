@@ -44,7 +44,7 @@ class NexteuropaNewsroomBlock extends NexteuropaNewsroomBlockBase {
    * @param array $value
    *   Block items.
    */
-  public function setItems($value) {
+  public function setItems(array $value) {
     $this->items = $value;
   }
 
@@ -132,7 +132,7 @@ class NexteuropaNewsroomBlock extends NexteuropaNewsroomBlockBase {
         }
       }
 
-      $query->condition('tt.tid', NexteuropaNewsroomHelper::getTypeChildren($this->getType()->tid));
+      $query->condition('tt.tid', NexteuropaNewsroomVocabularyHelper::getTypeChildren($this->getType()->tid));
       $query->range(0, NexteuropaNewsroomHelper::getBlockItemsNumber($this->getHighlighted()));
       $query->orderBy('n.created', 'DESC');
       $result = $query->execute()->fetchAll();
@@ -146,7 +146,7 @@ class NexteuropaNewsroomBlock extends NexteuropaNewsroomBlockBase {
 
     foreach ($result as $key => $item) {
       $result[$key]->new = NexteuropaNewsroomHelper::isNewItem($item->created, $item->nid);
-      $result[$key]->created = NexteuropaNewsroomHelper::getFormatedDate('d/m/Y', $item->created);
+      $result[$key]->created = NexteuropaNewsroomHelper::getFormatedDate(NexteuropaNewsroomAgenda::OUTPUT_DATE_FORMAT, $item->created);
     }
 
     $this->setItems($result);

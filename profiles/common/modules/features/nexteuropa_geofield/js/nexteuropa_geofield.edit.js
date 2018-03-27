@@ -17,13 +17,13 @@
       var lng = settings.nexteuropa_geojson.settings.fs_default_map_center['lng'];
       var map = L.map('geofield_geojson_map', {}).setView([lat, lng], 13);
 
-      $(document).ready(function() {
+      $(document).ready(function () {
         if (context == document) {
           // If there are vertical tabs the widget should refresh when swapping
           // between them.
           if ($('.vertical-tabs').length > 0 && $('.vertical-tabs-panes').length > 0) {
-            var refresh = function() {
-              $('.vertical-tabs-panes').find('.vertical-tabs-pane').each(function(key, pane) {
+            var refresh = function () {
+              $('.vertical-tabs-panes').find('.vertical-tabs-pane').each(function (key, pane) {
                 // Check pane is visible and refresh widget if it is.
                 if ($(pane).is(':visible')) {
                   map.invalidateSize();
@@ -39,7 +39,7 @@
             // Refresh current vertical tab.
             refresh();
             // Refresh when changing to a different vertical tab.
-            $('.vertical-tabs').find('.vertical-tab-button').each(function(key, tab) {
+            $('.vertical-tabs').find('.vertical-tab-button').each(function (key, tab) {
               $(tab).find('a').bind('click', refresh);
             });
           }
@@ -97,22 +97,22 @@
         // Popups are pre-populated with the conteny title and body.
         name_obj = getFieldObject(name_field);
         name_obj.change(
-          function() {
+          function () {
             updateGeoJsonField();
             updatePopups();
           }
         );
         $('#geofield_geojson_map').click(
-          function() {
+          function () {
             updateGeoJsonField();
             updatePopups();
           }
         );
         CKEDITOR.on(
-          'instanceReady', function(ev) {
+          'instanceReady', function (ev) {
             description_obj = getFieldObject(description_field);
             description_obj.on(
-              'change', function() {
+              'change', function () {
                 updateGeoJsonField();
                 updatePopups();
               }
@@ -145,36 +145,20 @@
 
       map.addControl(drawControl);
 
-      // Manage the event : when a new object is put on the map.
+      // Bind address click event. Add marker to the map.
+      $(document).on("click", ".geofield-search-item", function () {
+
+        var lat = $(this).attr("lat");
+        var lng = $(this).attr("lng");
+        map.setView([lat, lng], 13);
+
+      });
+
+      // Manage the event : when a new object is added on the map.
       map.on(
-        'draw:created', function(e) {
-          if (objects_count < settings.nexteuropa_geojson.settings.fs_objects.objects_amount) {
-            var type = e.layerType,
-            layer = e.layer;
-
-            var geoJSON = layer.toGeoJSON();
-            feature = layer.feature;
-
-            objects_count++;
-
-            // Add the layer object to the map.
-            drawnItems.addLayer(layer);
-
-            // Only add inputs elements if the popups are not pre-populated.
-            if (settings.nexteuropa_geojson.settings.fs_objects.objects_amount > 1) {
-              createLabel(layer._leaflet_id, "", "");
-            }
-            else {
-              // Prepopulate the popups with the title and body content.
-              name = getFieldValue(name_field);
-              description = getFieldValue(description_field);
-              createPopup(layer._leaflet_id, name, description);
-            }
-            // Update GeoJSON field.
-            updateGeoJsonField();
-          }
-          else {
-            alert("The Maximum number of items on the map is limited to " + settings.nexteuropa_geojson.settings.fs_objects.objects_amount);
+        'draw:created', function (e) {
+          if (addNewLayerValidate()) {
+            addNewLayer(e.layer);
           }
         }
       );
@@ -189,6 +173,40 @@
           updateGeoJsonField();
         }
       );
+
+      /**
+       *
+       * @param layer
+       */
+      function addNewLayer(layer) {
+        objects_count++;
+
+        // Add the layer object to the map.
+        drawnItems.addLayer(layer);
+
+        // Only add inputs elements if the popups are not pre-populated.
+        if (settings.nexteuropa_geojson.settings.fs_objects.objects_amount > 1) {
+          createLabel(layer._leaflet_id, "", "");
+        }
+        else {
+          // Pre-populate the popups with the title and body content.
+          var name = getFieldValue(name_field);
+          var description = getFieldValue(description_field);
+          createPopup(layer._leaflet_id, name, description);
+        }
+        // Update GeoJSON field.
+        updateGeoJsonField();
+      }
+
+      function addNewLayerValidate() {
+        if (objects_count < settings.nexteuropa_geojson.settings.fs_objects.objects_amount) {
+          return true;
+        }
+        else {
+          alert("The Maximum number of items on the map is limited to " + settings.nexteuropa_geojson.settings.fs_objects.objects_amount);
+          return false;
+        }
+      }
 
       /**
        * Create 2 inputs (and their related events) to manage popups contents.
@@ -212,7 +230,7 @@
 
         // Manage change event on input elements.
         $('#L' + leaflet_id + ', #T' + leaflet_id).change(
-          function() {
+          function () {
             updateGeoJsonField();
             updatePopups();
           }
@@ -220,7 +238,7 @@
 
         // Manage focus event on input elements.
         $('#L' + leaflet_id + ', #T' + leaflet_id).focus(
-          function() {
+          function () {
             layer = map._layers[leaflet_id];
             layer.openPopup();
 
@@ -236,7 +254,7 @@
 
         // Manage blur event on input elements.
         $('#L' + leaflet_id + ', #T' + leaflet_id).blur(
-          function() {
+          function () {
             layer = map._layers[leaflet_id];
             layer.closePopup();
           }
@@ -244,7 +262,7 @@
 
         // Manage the removal of a label.
         $('.remove-label').click(
-          function() {
+          function () {
             layer = map._layers[$(this).attr('data-label-id')];
             layer.closePopup();
             layer.unbindPopup();
@@ -326,7 +344,7 @@
        */
       function buildPopupContent(leaflet_id, name, description) {
         var content = '<div id="popup_' + leaflet_id + '">';
-        content = content + '<h4 class="popup_name">' + name + '</h4>';
+        content = content + '<h4 class="ecl-heading ecl-heading--h4 popup_name">' + name + '</h4>';
         content = content + '<p class="popup_description">' + description + '</p>';
         content = content + '</div>';
         return content;

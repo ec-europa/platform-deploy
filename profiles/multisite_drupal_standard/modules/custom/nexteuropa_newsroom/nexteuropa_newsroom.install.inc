@@ -58,6 +58,8 @@ function _nexteuropa_newsroom_rename_field($old_name, $new_name) {
               ->execute();
           }
 
+          db_truncate('field_data_' . $old_name);
+
           // Migrate old fields' revision data to the new ones.
           $field_revision = db_select('field_revision_' . $old_name, 'old')
             ->fields('old')
@@ -76,8 +78,25 @@ function _nexteuropa_newsroom_rename_field($old_name, $new_name) {
               ->fields($revision_new)
               ->execute();
           }
+
+          db_truncate('field_revision_' . $old_name);
         }
       }
     }
+  }
+}
+
+/**
+ * Removes field group.
+ *
+ * @param array $groups
+ *   Groups identifiers.
+ */
+function _nexteuropa_newsroom_remove_group(array $groups = []) {
+  foreach ($groups as $group_id) {
+    $query = db_delete('field_group');
+    $query->condition('identifier', $group_id);
+    $query->execute();
+    cache_clear_all('field_groups', 'cache_field');
   }
 }

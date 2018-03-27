@@ -17,7 +17,6 @@ class NexteuropaNewsroomPage {
   protected $topic = NULL;
   protected $startDate = NULL;
   protected $endDate = NULL;
-  protected $ecContent = NEXTEUROPA_NEWSROOM_EC;
 
   /**
    * NexteuropaNewsroomPage constructor.
@@ -30,15 +29,12 @@ class NexteuropaNewsroomPage {
    *   Start date.
    * @param Datetime|null $end_date
    *   End date.
-   * @param string $ec_content
-   *   EC content.
    */
-  public function __construct($type = NULL, $topic = NULL, $start_date = NULL, $end_date = NULL, $ec_content = NEXTEUROPA_NEWSROOM_EC) {
+  public function __construct($type = NULL, $topic = NULL, $start_date = NULL, $end_date = NULL) {
     $this->setTopic($topic);
     $this->setType($type);
     $this->setStartDate($start_date);
     $this->setEndDate($end_date);
-    $this->setEcContent($ec_content);
   }
 
   /**
@@ -111,6 +107,10 @@ class NexteuropaNewsroomPage {
    *   End date.
    */
   public function setEndDate($value) {
+    if (!empty($value)) {
+      // Include the whole day.
+      $value->setTime(23, 59, 59);
+    }
     $this->endDate = $value;
   }
 
@@ -142,26 +142,6 @@ class NexteuropaNewsroomPage {
    */
   public function getTopic() {
     return $this->topic;
-  }
-
-  /**
-   * Sets EC content.
-   *
-   * @param string $value
-   *   EC content.
-   */
-  public function setEcContent($value) {
-    $this->ecContent = $value;
-  }
-
-  /**
-   * Gets EC content.
-   *
-   * @return string
-   *   EC content.
-   */
-  public function getEcContent() {
-    return $this->ecContent;
   }
 
   /**
@@ -239,7 +219,9 @@ class NexteuropaNewsroomPage {
       $data = [];
       if ($items) {
         foreach ($items as $item) {
-          $data[] = node_load($item->nid);
+          $node = node_load($item->nid);
+          $node->related_items = NexteuropaNewsroomRelatedItemHelper::getRelatedItems($item->nid);
+          $data[$item->nid] = $node;
         }
       }
 
@@ -334,10 +316,9 @@ class NexteuropaNewsroomPage {
     $topic_id = $this->getTopic() ? $this->getTopic()->tid : NULL;
     $start_date = $this->getStartDate() ? $this->getStartDate()->getTimestamp() : NULL;
     $end_date = $this->getEndDate() ? $this->getEndDate()->getTimestamp() : NULL;
-    $ec_content = $this->getEcContent();
     $page = !empty($_GET['page']) ? $_GET['page'] : NULL;
 
-    return md5($type_id . $topic_id . $start_date . $end_date . $page . $ec_content);
+    return md5($type_id . $topic_id . $start_date . $end_date . $page);
   }
 
   /**
@@ -354,23 +335,10 @@ class NexteuropaNewsroomPage {
     $query->leftJoin('field_data_field_newsroom_item_type', 'type_field', 'type_field.entity_id = n.nid');
     $query->leftJoin('field_data_field_newsroom_topics', 'topic_field', 'topic_field.entity_id = n.nid');
     $query->leftJoin('field_data_field_newsroom_item_date', 'd', 'd.entity_id = n.nid');
-    $query->leftJoin('field_data_field_newsroom_ec_content', 'ec', 'ec.entity_id = n.nid');
     $query->leftJoin('field_data_field_newsroom_newsletter_only', 'newsletter_item', 'newsletter_item.entity_id = n.nid');
 
     $query->condition('n.status', 1);
     $query->condition('n.type', NEXTEUROPA_NEWSROOM_CONTENT_TYPE);
-
-    $db_or = db_or();
-    if ($this->getEcContent() == NEXTEUROPA_NEWSROOM_EC) {
-      $db_or->condition('ec.field_newsroom_ec_content_value', 1);
-    }
-    elseif ($this->getEcContent() == NEXTEUROPA_NEWSROOM_NONEC) {
-      $db_or->condition('ec.field_newsroom_ec_content_value', 0);
-    }
-
-    $db_or->isNull('ec.field_newsroom_ec_content_value');
-
-    $query->condition($db_or);
 
     $db_or = db_or();
     $db_or->condition('newsletter_item.field_newsroom_newsletter_only_value', 1, '<>');
@@ -382,7 +350,7 @@ class NexteuropaNewsroomPage {
     $query->orderBy('end_date', 'DESC');
 
     if ($this->getType()) {
-      $query->condition('type_field.field_newsroom_item_type_tid', NexteuropaNewsroomHelper::getTypeChildren($this->getType()->tid));
+      $query->condition('type_field.field_newsroom_item_type_tid', NexteuropaNewsroomVocabularyHelper::getTypeChildren($this->getType()->tid));
     }
 
     if ($this->getTopic()) {
@@ -403,7 +371,7 @@ class NexteuropaNewsroomPage {
 
       $db_and = db_and();
       $db_and->isNull('d.field_newsroom_item_date_value2');
-      $db_and->condition('n.created', $this->getEndDate()->getTimestamp(), '<=');
+      $db_and->condition('d.field_newsroom_item_date_value', $this->getEndDate()->getTimestamp(), '<=');
       $db_or->condition($db_and);
       $query->condition($db_or);
     }
@@ -427,7 +395,6 @@ class NexteuropaNewsroomPage {
     $url_parts[] = $this->getTermUrl($this->getTopic() ? $this->getTopic()->name : NULL);
     $url_parts[] = $this->getStartDate() ? $this->getStartDate()->format(NexteuropaNewsroomPage::MYSQL_DATE_FORMAT) : NEXTEUROPA_NEWSROOM_ALL;
     $url_parts[] = $this->getEndDate() ? $this->getEndDate()->format(NexteuropaNewsroomPage::MYSQL_DATE_FORMAT) : NEXTEUROPA_NEWSROOM_ALL;
-    $url_parts[] = $this->getEcContent() == NEXTEUROPA_NEWSROOM_EC ? NEXTEUROPA_NEWSROOM_EC : NEXTEUROPA_NEWSROOM_NONEC;
 
     return $is_rss ? NexteuropaNewsroomHelper::getRssUrl($url_parts) : NexteuropaNewsroomHelper::getPageUrl($url_parts);
   }
@@ -443,7 +410,7 @@ class NexteuropaNewsroomPage {
     $featured_item_id = NexteuropaNewsroomHelper::getFieldValue($this->getType(), 'field_newsroom_featured_item', 'target_id');
     if (empty($featured_item_id)) {
       // If featured item is not set we try to take from feature newsroom type.
-      if ($featured_type = NexteuropaNewsroomHelper::getNewsroomType(variable_get('nexteuropa_newsroom_featured_type'))) {
+      if ($featured_type = NexteuropaNewsroomVocabularyHelper::getNewsroomType(variable_get('nexteuropa_newsroom_featured_type'))) {
         $featured_item_id = NexteuropaNewsroomHelper::getFieldValue($featured_type, 'field_newsroom_featured_item', 'target_id');
       }
     }
@@ -458,7 +425,7 @@ class NexteuropaNewsroomPage {
 
         if ($featured_node = node_load($featured_item_id)) {
 
-          $type = NexteuropaNewsroomHelper::getNewsroomType(NexteuropaNewsroomHelper::getFieldValue($featured_node, 'field_newsroom_item_type', 'tid'));
+          $type = NexteuropaNewsroomVocabularyHelper::getNewsroomType(NexteuropaNewsroomHelper::getFieldValue($featured_node, 'field_newsroom_item_type', 'tid'));
 
           $image_style = 'large';
           $image = $this->getNodeImage($featured_node, 'field_newsroom_illustrative_img', $image_style);

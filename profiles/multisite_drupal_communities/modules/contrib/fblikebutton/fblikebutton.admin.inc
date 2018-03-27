@@ -66,7 +66,7 @@ function fblikebutton_dynamic_settings() {
   $form['fblikebutton_dynamic_appearance']['fblikebutton_layout'] = array(
     '#type' => 'select',
     '#title' => t('Layout style'),
-    '#options' => array('standard' => t('Standard'), 'box_count' => t('Box Count'), 'button_count' => t('Button Count')),
+    '#options' => array('standard' => t('Standard'), 'box_count' => t('Box Count'), 'button_count' => t('Button Count'), 'button' => t('Button')),
     '#default_value' => variable_get('fblikebutton_layout', 'standard'),
     '#description' => t('Determines the size and amount of social context next to the button.'),
   );
@@ -99,6 +99,13 @@ function fblikebutton_dynamic_settings() {
     ),
     '#default_value' => variable_get('fblikebutton_font', 'arial'),
     '#description' => t('The font with which to display the text of the button.'),
+  );
+  $form['fblikebutton_dynamic_appearance']['fblikebutton_share'] = array(
+    '#type' => 'select',
+    '#title' => t('Show Share-button in the box?'),
+    '#options' => array(TRUE => t('Show share'), FALSE => t('Do not show share')),
+    '#default_value' => variable_get('fblikebutton_share', FALSE),
+    '#description' => t('Specifies whether to include a share button beside the Like button.'),
   );
   $form['fblikebutton_dynamic_appearance']['fblikebutton_color_scheme'] = array(
     '#type' => 'select',
@@ -149,7 +156,7 @@ function fblikebutton_static_settings() {
   $form['fblikebutton_static_block_appearance']['fblikebutton_bl_layout'] = array(
     '#type' => 'select',
     '#title' => t('Layout style'),
-    '#options' => array('standard' => t('Standard'), 'box_count' => t('Box Count'), 'button_count' => t('Button Count')),
+    '#options' => array('standard' => t('Standard'), 'box_count' => t('Box Count'), 'button_count' => t('Button Count'), 'button' => t('Button')),
     '#default_value' => variable_get('fblikebutton_bl_layout', 'standard'),
     '#description' => t('Determines the size and amount of social context next to the button'),
   );
@@ -182,6 +189,13 @@ function fblikebutton_static_settings() {
     ),
     '#default_value' => variable_get('fblikebutton_bl_font', 'arial'),
     '#description' => t('The font to display in the button'),
+  );
+  $form['fblikebutton_static_block_appearance']['fblikebutton_bl_share'] = array(
+    '#type' => 'select',
+    '#title' => t('Show Share-button in the box?'),
+    '#options' => array(TRUE => t('Show share'), FALSE => t('Do not show share')),
+    '#default_value' => variable_get('fblikebutton_bl_share', FALSE),
+    '#description' => t('Specifies whether to include a share button beside the Like button.'),
   );
   $form['fblikebutton_static_block_appearance']['fblikebutton_bl_color_scheme'] = array(
     '#type' => 'select',

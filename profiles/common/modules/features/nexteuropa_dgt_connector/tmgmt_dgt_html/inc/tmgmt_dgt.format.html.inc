@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Export into DGT supported HTML format.
@@ -7,7 +8,7 @@
 /**
  * DGT aproved HTML format exporter.
  */
-class TMGMTFileDGTFormatHTML implements TMGMTFileFormatInterface {
+class TmgmtDgtHtmlFormat implements TMGMTFileFormatInterface {
 
   /**
    * Returns base64 encoded data that is safe for use in xml ids.
@@ -22,8 +23,8 @@ class TMGMTFileDGTFormatHTML implements TMGMTFileFormatInterface {
    */
   protected function decodeIdSafeBase64($data) {
     // Remove prefixed b.
-    $data = substr($data, 1);
-    return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
+    $data = drupal_substr($data, 1);
+    return base64_decode(str_pad(strtr($data, '-_', '+/'), drupal_strlen($data) % 4, '=', STR_PAD_RIGHT));
   }
 
   /**
@@ -39,11 +40,26 @@ class TMGMTFileDGTFormatHTML implements TMGMTFileFormatInterface {
       }
     }
 
+    $items_context = array();
+    if ('tmgmt_dgt_connector' === $job->translator) {
+      if (module_exists('tmgmt_dgt_connector_cart')) {
+        $cart_items = _tmgmt_dgt_connector_cart_get_items_by_jobitems(array_keys($items));
+        foreach ($cart_items as $cart_item) {
+          $comment = empty($cart_item->context_comment) ? '' : $cart_item->context_comment . ' ';
+          $items_context[$cart_item->tjiid] = array(
+            'comment' => $comment,
+            'url' => $cart_item->context_url,
+          );
+        }
+      }
+    }
+
     return theme('tmgmt_dgt_html_template', array(
       'tjid' => $job->tjid,
       'source_language' => $job->getTranslator()->mapToRemoteLanguage($job->source_language),
       'target_language' => $job->getTranslator()->mapToRemoteLanguage($job->target_language),
       'items' => $items,
+      'items_context' => $items_context,
     ));
   }
 

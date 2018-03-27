@@ -32,6 +32,7 @@ function fblikebutton_uninstall() {
   variable_del('fblikebutton_teaser_display');
   variable_del('fblikebutton_xfbml');
   variable_del('fblikebutton_appid');
+  variable_del('fblikebutton_share');
   variable_del('fblikebutton_bl_layout');
   variable_del('fblikebutton_bl_layout');
   variable_del('fblikebutton_bl_show_faces');
@@ -42,6 +43,7 @@ function fblikebutton_uninstall() {
   variable_del('fblikebutton_bl_iframe_height');
   variable_del('fblikebutton_bl_iframe_css');
   variable_del('fblikebutton_bl_language');
+  variable_del('fblikebutton_bl_share');
 }
 
 /**

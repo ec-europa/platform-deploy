@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * @file
  * Code for the NexteuropaNewsroomImporterGenerator class.
@@ -44,7 +43,7 @@ class NexteuropaNewsroomImporterGenerator {
    * @param int $import_period
    *   Import period in seconds.
    */
-  public function __construct($id, $field_mapping, $title, $description, $rss_context, $entity_type, $bundle, $import_period) {
+  public function __construct($id, array $field_mapping, $title, $description, $rss_context, $entity_type, $bundle, $import_period) {
     $this->setId($id);
     $this->setFieldMapping($field_mapping);
     $this->setTitle($title);
@@ -94,7 +93,7 @@ class NexteuropaNewsroomImporterGenerator {
    * @param array $field_mapping
    *   Field mapping settings.
    */
-  private function setFieldMapping($field_mapping) {
+  private function setFieldMapping(array $field_mapping) {
     $this->fieldMapping = $field_mapping;
   }
 
@@ -264,7 +263,7 @@ class NexteuropaNewsroomImporterGenerator {
    * @param array $field_info
    *   Field info.
    */
-  private function setFieldInfo($field_info) {
+  private function setFieldInfo(array $field_info) {
     $this->fieldInfo = $field_info;
   }
 
@@ -311,7 +310,7 @@ class NexteuropaNewsroomImporterGenerator {
    * @param string $language
    *   Language code.
    */
-  protected function addMapper($field_mapping, $language = NULL) {
+  protected function addMapper(array $field_mapping, $language = NULL) {
 
     $mapper = [
       'source' => !empty($field_mapping['source']) ? $field_mapping['source'] : $this->getXpathString(),
@@ -345,7 +344,7 @@ class NexteuropaNewsroomImporterGenerator {
     $save->save();
 
     // Set default URLS for importers.
-    NexteuropaNewsroomHelper::setDefaultImporterUrl($this->getId());
+    NexteuropaNewsroomImporterHelper::setDefaultImporterUrl($this->getId());
   }
 
   /**
@@ -357,7 +356,7 @@ class NexteuropaNewsroomImporterGenerator {
    * @return bool
    *   Is transltable field.
    */
-  protected function isTranslatableField($field_mapping) {
+  protected function isTranslatableField(array $field_mapping) {
     $is_translatable = FALSE;
     $fields = $this->getFieldInfo();
     $attribute = strrchr($field_mapping['field'], ':');
@@ -387,12 +386,13 @@ class NexteuropaNewsroomImporterGenerator {
    */
   protected function addNewsroomDefaultValueTamper($default_source) {
     if ($default_source) {
-      $tamper['tamper'] = [
-        'plugin_id' => 'newsroom_default_value',
-        'default_value' => '[' . $default_source . ']',
+      $tamper['tamper']['plugins'] = [
+        'newsroom_default_value' => [
+          'default_value' => '[' . $default_source . ']',
+        ],
       ];
 
-      $this->addTamper($tamper);
+      $this->addTampers($tamper);
     }
   }
 
@@ -421,7 +421,7 @@ class NexteuropaNewsroomImporterGenerator {
 
       }
       else {
-        $this->addTamper($field_mapping);
+        $this->addTampers($field_mapping);
         if (!empty($field_mapping['query'])) {
           $this->addQuery($field_mapping['query']);
         }
@@ -477,7 +477,7 @@ class NexteuropaNewsroomImporterGenerator {
    * @param array $field_mapping
    *   Field mapping settings.
    */
-  private function addTamper($field_mapping) {
+  private function addTampers(array $field_mapping) {
     if (empty($field_mapping['tamper'])) {
       return;
     }
@@ -489,64 +489,82 @@ class NexteuropaNewsroomImporterGenerator {
       '_',
       '_',
     ], $source));
+    $weight = 0;
+    foreach ($settings['plugins'] as $plugin_id => $plugin) {
 
-    $feeds_tamper = new stdClass();
-    $feeds_tamper->id = $this->getId() . '-' . $source_prepared_string . '-' . $settings['plugin_id'];
-    $feeds_tamper->importer = $this->getId();
-    $feeds_tamper->source = $source;
-    $feeds_tamper->plugin_id = $settings['plugin_id'];
-    $feeds_tamper->disabled = FALSE;
-    $feeds_tamper->api_version = 2;
-    $feeds_tamper->export_type = 0;
-    $feeds_tamper->weight = 0;
+      $feeds_tamper = new stdClass();
+      $feeds_tamper->id = $this->getId() . '-' . $source_prepared_string . '-' . $plugin_id;
+      $feeds_tamper->importer = $this->getId();
+      $feeds_tamper->source = $source;
+      $feeds_tamper->plugin_id = $plugin_id;
+      $feeds_tamper->disabled = FALSE;
+      $feeds_tamper->api_version = 2;
+      $feeds_tamper->export_type = 0;
+      $feeds_tamper->weight = $weight;
 
-    if ($settings['plugin_id'] == 'efq_finder') {
+      if ($plugin_id == 'efq_finder') {
 
-      // Prepare setting for Entity Field Query finder.
-      $feeds_tamper->settings = [
-        'entity_type' => $settings['entity_type'],
-        'bundle' => $settings['bundle'],
-        'column' => 'value',
-        'property' => FALSE,
-        'update' => 'Update',
-        'field' => $settings['field'],
-      ];
-      $feeds_tamper->description = 'Entity Field Query finder';
+        // Prepare setting for Entity Field Query finder.
+        $feeds_tamper->settings = [
+          'entity_type' => $plugin['entity_type'],
+          'bundle' => $plugin['bundle'],
+          'column' => 'value',
+          'property' => FALSE,
+          'update' => 'Update',
+          'field' => $plugin['field'],
+        ];
+        $feeds_tamper->description = 'Entity Field Query finder';
 
+      }
+      elseif ($plugin_id == 'rewrite') {
+
+        // Prepare setting for Rewrite plugin.
+        $feeds_tamper->settings = [
+          'text' => $plugin['prefix'] . '[' . $source . ']',
+        ];
+        $feeds_tamper->description = 'Rewrite';
+
+      }
+      elseif ($plugin_id == 'strtotime') {
+
+        // String to timestamp plugin.
+        $feeds_tamper->description = 'String to Unix timestamp';
+
+      }
+      elseif ($plugin_id == 'default_value') {
+
+        $feeds_tamper->settings = [
+          'default_value' => $plugin['default_value'],
+        ];
+        $feeds_tamper->description = 'Set default language';
+
+      }
+      elseif ($plugin_id == 'newsroom_default_value') {
+
+        $feeds_tamper->settings = [
+          'default_value' => $plugin['default_value'],
+        ];
+        $feeds_tamper->description = 'Set default value if empty';
+
+      }
+      elseif ($plugin_id == 'find_replace') {
+
+        $feeds_tamper->settings = [
+          'find' => $plugin['replacement'],
+          'replace' => '',
+          'case_sensitive' => 1,
+          'word_boundaries' => 0,
+          'whole' => 0,
+          'regex' => FALSE,
+          'func' => 'str_replace',
+        ];
+        $feeds_tamper->description = 'Find replace';
+
+      }
+
+      feeds_tamper_save_instance($feeds_tamper);
+      $weight++;
     }
-    elseif ($settings['plugin_id'] == 'rewrite') {
-
-      // Prepare setting for Rewrite plugin.
-      $feeds_tamper->settings = [
-        'text' => $settings['prefix'] . '[' . $source . ']',
-      ];
-      $feeds_tamper->description = 'Rewrite';
-
-    }
-    elseif ($settings['plugin_id'] == 'strtotime') {
-
-      // String to timestamp plugin.
-      $feeds_tamper->description = 'String to Unix timestamp';
-
-    }
-    elseif ($settings['plugin_id'] == 'default_value') {
-
-      $feeds_tamper->settings = [
-        'default_value' => $settings['default_value'],
-      ];
-      $feeds_tamper->description = 'Set default language';
-
-    }
-    elseif ($settings['plugin_id'] == 'newsroom_default_value') {
-
-      $feeds_tamper->settings = [
-        'default_value' => $settings['default_value'],
-      ];
-      $feeds_tamper->description = 'Set default value if empty';
-
-    }
-
-    feeds_tamper_save_instance($feeds_tamper);
   }
 
   /**
@@ -600,7 +618,7 @@ class NexteuropaNewsroomImporterGenerator {
           'mappings' => $this->getMappers(),
           'update_existing' => '2',
           'input_format' => 'full_html',
-          'skip_hash_check' => 0,
+          'skip_hash_check' => 1,
           'bundle' => $this->getBundle(),
         ],
       ];

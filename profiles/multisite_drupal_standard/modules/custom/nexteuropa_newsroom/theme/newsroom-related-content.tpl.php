@@ -20,12 +20,10 @@
 
       <?php if ($cnt_children > 0): ?>
       <li>
-        <?php $title_text = check_plain($current_item->title); ?>
-        <?php echo l($title_text, 'node/' . $current_item->nid); ?>
+        <?php echo check_plain($current_item->title); ?>
         <ul>
           <?php foreach ($children_items as $item): ?>
             <li>
-            </li>
                 <?php $title_text = check_plain($item->title); ?>
                 <?php echo l($title_text, 'node/' . $item->id); ?>
             </li>

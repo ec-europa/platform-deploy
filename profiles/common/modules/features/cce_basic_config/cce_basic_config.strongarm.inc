@@ -52,15 +52,6 @@ function cce_basic_config_strongarm() {
 
   $strongarm->disabled = FALSE;
   $strongarm->api_version = 1;
-  $strongarm->name = 'comment_form_location_article';
-  $strongarm->value = 1;
-  $export['comment_form_location_article'] = $strongarm;
-
-  $strongarm = new stdClass();
-  /* Edit this to true to make a default strongarm disabled initially */
-
-  $strongarm->disabled = FALSE;
-  $strongarm->api_version = 1;
   $strongarm->name = 'comment_preview_article';
   $strongarm->value = '1';
   $export['comment_preview_article'] = $strongarm;
@@ -98,7 +89,7 @@ function cce_basic_config_strongarm() {
   $strongarm->disabled = FALSE;
   $strongarm->api_version = 1;
   $strongarm->name = 'date_first_day';
-  $strongarm->value = '0';
+  $strongarm->value = '1';
   $export['date_first_day'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -143,6 +134,7 @@ function cce_basic_config_strongarm() {
   $strongarm->disabled = FALSE;
   $strongarm->api_version = 1;
   $strongarm->name = 'file_private_path';
+  // @codingStandardsIgnoreLine: NEPT-1308: The default file path is replaced on development and production sites.
   $strongarm->value = 'sites/default/files/private_files';
   $export['file_private_path'] = $strongarm;
 
@@ -304,25 +296,18 @@ example.org';
   $export['linkchecker_scan_blocks'] = $strongarm;
 
   $strongarm = new stdClass();
-  /* Edit this to true to make a default strongarm disabled initially */
-
-  $strongarm->disabled = FALSE;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'linkchecker_scan_comments';
-  $strongarm->value = 0;
-  $export['linkchecker_scan_comments'] = $strongarm;
+  $strongarm->name = 'linkchecker_scan_node_article';
+  $strongarm->value = 1;
+  $export['linkchecker_scan_node_article'] = $strongarm;
 
   $strongarm = new stdClass();
-  /* Edit this to true to make a default strongarm disabled initially */
-
-  $strongarm->disabled = FALSE;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'linkchecker_scan_nodetypes';
-  $strongarm->value = array(
-    'article' => 'article',
-    'page' => 'page',
-  );
-  $export['linkchecker_scan_nodetypes'] = $strongarm;
+  $strongarm->name = 'linkchecker_scan_node_page';
+  $strongarm->value = 1;
+  $export['linkchecker_scan_node_page'] = $strongarm;
 
   $strongarm = new stdClass();
   /* Edit this to true to make a default strongarm disabled initially */
@@ -710,28 +695,6 @@ example.org';
 
   $strongarm->disabled = FALSE;
   $strongarm->api_version = 1;
-  $strongarm->name = 'search_active_modules';
-  $strongarm->value = array(
-    'apachesolr_search' => 'apachesolr_search',
-    'user' => 'user',
-    'node' => 0,
-  );
-  $export['search_active_modules'] = $strongarm;
-
-  $strongarm = new stdClass();
-  /* Edit this to true to make a default strongarm disabled initially */
-
-  $strongarm->disabled = FALSE;
-  $strongarm->api_version = 1;
-  $strongarm->name = 'search_default_module';
-  $strongarm->value = 'apachesolr_search';
-  $export['search_default_module'] = $strongarm;
-
-  $strongarm = new stdClass();
-  /* Edit this to true to make a default strongarm disabled initially */
-
-  $strongarm->disabled = FALSE;
-  $strongarm->api_version = 1;
   $strongarm->name = 'security_allowed_tags';
   $strongarm->value = 'a
 abbr
@@ -1053,6 +1016,13 @@ video
   $strongarm->name = 'easy_breadcrumb-segments_separator';
   $strongarm->value = '>';
   $export['easy_breadcrumb-segments_separator'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE;
+  $strongarm->api_version = 1;
+  $strongarm->name = 'easy_breadcrumb-include_title_segment';
+  $strongarm->value = 0;
+  $export['easy_breadcrumb-include_title_segment'] = $strongarm;
 
   $strongarm = new stdClass();
   /* Edit this to true to make a default strongarm disabled initially */

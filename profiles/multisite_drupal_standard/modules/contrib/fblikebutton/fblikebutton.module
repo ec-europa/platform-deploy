@@ -64,9 +64,11 @@ function fblikebutton_conf($type = 'dynamic') {
     'height' => variable_get($prefix . '_iframe_height', '80'),
     'width' => variable_get($prefix . '_iframe_width', '450'),
     'send' => variable_get($prefix . '_send', 'true'),
-    'other_css' => variable_get($prefix . '_iframe_css', ''),
+    'other_css' => check_plain(variable_get($prefix . '_iframe_css', '')),
+    'share' => variable_get($prefix . '_share', ''),
     'language' => variable_get($prefix . '_language', 'en_US'),
   );
+
   return $conf;
 }
 

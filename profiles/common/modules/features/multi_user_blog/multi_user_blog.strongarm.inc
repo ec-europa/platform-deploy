@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * multi_user_blog.strongarm.inc
@@ -37,13 +38,6 @@ function multi_user_blog_strongarm() {
   $strongarm->name = 'comment_default_per_page_blog_post';
   $strongarm->value = '50';
   $export['comment_default_per_page_blog_post'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'comment_form_location_blog_post';
-  $strongarm->value = 0;
-  $export['comment_form_location_blog_post'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -143,30 +137,9 @@ function multi_user_blog_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'pathauto_node_blog_pattern';
-  $strongarm->value = '';
-  $export['pathauto_node_blog_pattern'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'pathauto_node_blog_post_en_pattern';
-  $strongarm->value = '';
-  $export['pathauto_node_blog_post_en_pattern'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
   $strongarm->name = 'pathauto_node_blog_post_pattern';
   $strongarm->value = 'blog/[node:title]';
   $export['pathauto_node_blog_post_pattern'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'pathauto_node_blog_post_und_pattern';
-  $strongarm->value = '';
-  $export['pathauto_node_blog_post_und_pattern'] = $strongarm;
 
   return $export;
 }

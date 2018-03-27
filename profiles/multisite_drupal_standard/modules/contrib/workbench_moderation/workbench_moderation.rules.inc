@@ -251,7 +251,11 @@ function workbench_moderation_rules_condition_contents_current_state($node, $mod
     return FALSE;
   }
 
-  $state = (!empty($node->workbench_moderation)) ? $node->workbench_moderation['current']->state : $node->workbench_moderation_state_current;
+  if (!workbench_moderation_node_is_current_revision($node)) {
+    return FALSE;
+  }
+
+  $state = (!empty($node->workbench_moderation_state_new)) ? $node->workbench_moderation_state_new : $node->workbench_moderation_state_current;
 
   if ($state != $moderation_state) {
     return FALSE;
@@ -277,7 +281,13 @@ function workbench_moderation_rules_condition_contents_previous_state($node, $mo
     return FALSE;
   }
 
-  if ($node->workbench_moderation['current']->from_state != $moderation_state) {
+  if (!workbench_moderation_node_is_current_revision($node)) {
+    return FALSE;
+  }
+
+  $state = (empty($node->is_new)) ? $node->workbench_moderation['my_revision']->state : $node->workbench_moderation_state_current;
+
+  if ($state != $moderation_state) {
     return FALSE;
   }
 
