@@ -948,7 +948,7 @@ function ec_resp_menu_link__menu_breadcrumb_menu(array $variables) {
   // Format output.
   $element['#localized_options']['html'] = TRUE;
   $output = l($element['#title'], $element['#href'], $element['#localized_options']);
-  $suffix = ($last ? '' : '<span class="easy-breadcrumb_segment-separator"> ' . $separator . ' </span>');
+  $suffix = ($last ? '' : '<span class="easy-breadcrumb_segment-separator"> ' . filter_xss($separator) . ' </span>');
   return $output . $sub_menu . $suffix;
 }
 
