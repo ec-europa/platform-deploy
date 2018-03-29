@@ -50,7 +50,7 @@ files[] = views/handlers/tmgmt_handler_field_tmgmt_job_item_operations.inc
 files[] = views/handlers/tmgmt_handler_field_tmgmt_job_item_count.inc
 files[] = views/plugins/tmgmt_views_job_access.inc
 
-; Information added by drush on 2015-11-19
+; Information added by drush on 2015-11-20
 version = "7.x-1.0-rc1+18-dev"
 project = "tmgmt"
 datestamp = "1447976287"

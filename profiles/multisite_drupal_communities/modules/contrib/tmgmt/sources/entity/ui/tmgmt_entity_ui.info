@@ -12,7 +12,7 @@ files[] = tmgmt_entity_ui.list.test
 files[] = tmgmt_entity_ui.ui.inc
 
 
-; Information added by drush on 2015-11-19
+; Information added by drush on 2015-11-20
 version = "7.x-1.0-rc1+18-dev"
 project = "tmgmt"
 datestamp = "1447976287"

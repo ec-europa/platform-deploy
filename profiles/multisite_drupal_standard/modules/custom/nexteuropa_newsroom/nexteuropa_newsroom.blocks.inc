@@ -193,7 +193,7 @@ function _nexteuropa_newsroom_get_type_from_agenda_block_context() {
       foreach ($active_context->reactions as $reaction_type => $current_reaction) {
         if ($reaction_type == 'newsroom_agenda_block') {
           if (!empty($current_reaction['type_id'])) {
-            $type = NexteuropaNewsroomHelper::getNewsroomType($current_reaction['type_id']);
+            $type = NexteuropaNewsroomVocabularyHelper::getNewsroomType($current_reaction['type_id']);
           }
         }
       }
@@ -311,7 +311,7 @@ function _nexteuropa_newsroom_get_related_content($field_name, $node) {
  * @return array
  *   Array of objects to display.
  */
-function _nexteuropa_newsroom_prepare_related_content_array($ids) {
+function _nexteuropa_newsroom_prepare_related_content_array(array $ids) {
   $items = [];
   if (!empty($ids)) {
     foreach ($ids as $id) {
@@ -382,6 +382,7 @@ function _nexteuropa_newsroom_newsletter_subscription() {
     $view->set_display('block');
     $view->pre_execute();
     $view->execute();
+
     if (!empty($view->result)) {
       $service = array_shift($view->result);
       $content = drupal_get_form('nexteuropa_newsroom_newsletter_subscription_form', [
@@ -390,7 +391,6 @@ function _nexteuropa_newsroom_newsletter_subscription() {
       ]);
     }
   }
-
   return $content;
 }
 

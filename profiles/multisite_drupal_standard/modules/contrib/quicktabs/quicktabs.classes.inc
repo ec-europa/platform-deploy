@@ -180,7 +180,7 @@ class QuickSet {
    * @throws InvalidQuickSetException if there are no contents to render.
    */
   protected function prepareContents() {
-    if (!count($this->contents))  {
+    if (!count($this->contents) && !$this->settings['hide_empty_tabs'])  {
       throw new InvalidQuickSetException('There are no contents to render.');
     }
     if ($this->settings['hide_empty_tabs'] && !$this->settings['ajax']) {
@@ -202,7 +202,7 @@ class QuickSet {
           $renderable_contents++;
         }
       }
-      if (!$renderable_contents)  {
+      if (!$renderable_contents && !$this->settings['hide_empty_tabs'])  {
         throw new InvalidQuickSetException('There are no contents to render.');
       }
     }

@@ -16,7 +16,7 @@ files[] = includes/tmgmt_ui.cart.inc
 files[] = tmgmt_ui.test
 files[] = tmgmt_ui_job.test
 
-; Information added by drush on 2015-11-19
+; Information added by drush on 2015-11-20
 version = "7.x-1.0-rc1+18-dev"
 project = "tmgmt"
 datestamp = "1447976287"

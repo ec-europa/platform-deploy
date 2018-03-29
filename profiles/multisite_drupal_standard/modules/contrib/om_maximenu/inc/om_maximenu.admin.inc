@@ -633,6 +633,17 @@ function om_maximenu_links_order($menu_content = array(), $roles = array(), $men
         '#default_value'  => 0,      
       );    
     }
+
+    // If link is new, we can't delete it so we won't show the checkbox, but we
+    // still need to make sure this value is set to 0 to prevent submit errors.
+    else {
+      $links[$link]['link_delete'] = array(
+        '#type' => 'hidden',
+        '#default_value' => 0,
+        '#value' => 0,
+      );
+    }
+
     $links[$link]['link_title'] = array(
       '#type'   => 'textarea',
       '#title'  => t('Link Title'),
@@ -910,7 +921,6 @@ function om_maximenu_admin_submit($form, $form_state) {
       
       foreach ($maximenu_content['links'] as $link => $link_prop) {
         
-        if (!isset($link_prop['link_delete'])) $link_prop['link_delete'] = 0; 
         // links will not be included in the array if the title is not modified and delete field is checked
         if (!empty($link_prop['link_title']) && ($link_prop['link_title'] != 'New Link') && ($link_prop['link_delete'] != 1) && is_numeric($link)) {
           $om_maximenu[$menu_id]['links'][$link] = array(

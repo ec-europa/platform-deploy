@@ -14,7 +14,7 @@ files[] = tmgmt_node_ui.overview.test
 files[] = views/tmgmt_node_ui_handler_filter_node_translatable_types.inc
 files[] = views/tmgmt_node_ui_handler_field_jobs.inc
 
-; Information added by drush on 2015-11-19
+; Information added by drush on 2015-11-20
 version = "7.x-1.0-rc1+18-dev"
 project = "tmgmt"
 datestamp = "1447976287"
