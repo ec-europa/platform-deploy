@@ -735,29 +735,32 @@ function ec_resp_page_alter(&$page) {
  * Implements hook_block_view_alter().
  */
 function ec_resp_block_view_alter(&$data, $block) {
+  if (empty($block->region) || !in_array($block->region, array('sidebar_left', 'sidebar_right'))) {
+    return;
+  }
 
-  if ($block->region == 'sidebar_left' || $block->region == 'sidebar_right') {
-    // Add classes to list.
-    $data['content'] = (isset($data['content']) ? str_replace('<ul>', '<ul class="list-group list-group-flush list-unstyled">', $data['content']) : '');
+  if (empty($data['content']) || is_array($data['content'])) {
+    return;
+  }
 
-    // Add classes to list items.
-    if (!is_array($data['content'])) {
-      preg_match_all('/<a(.*?)>/s', $data['content'], $matches);
+  // Add classes to list.
+  $content = &$data['content'];
+  $content = str_replace('<ul>', '<ul class="list-group list-group-flush list-unstyled">', $content);
+  // Add classes to list items.
+  preg_match_all('/<a(.*?)>/s', $data['content'], $matches);
 
-      if (isset($matches[0])) {
-        foreach ($matches[0] as $link) {
-          if (strpos($link, ' class="') !== FALSE) {
-            $new_link = str_replace(' class="', ' class="list-group-item ', $link);
-          }
-          elseif (strpos($link, " class='") !== FALSE) {
-            $new_link = str_replace(" class='", " class='list-group-item ", $link);
-          }
-          else {
-            $new_link = str_replace(' href=', ' class="list-group-item" href=', $link);
-          }
-          $data['content'] = str_replace($link, $new_link, $data['content']);
-        }
+  if (isset($matches[0])) {
+    foreach ($matches[0] as $link) {
+      if (strpos($link, ' class="') !== FALSE) {
+        $new_link = str_replace(' class="', ' class="list-group-item ', $link);
       }
+      elseif (strpos($link, " class='") !== FALSE) {
+        $new_link = str_replace(" class='", " class='list-group-item ", $link);
+      }
+      else {
+        $new_link = str_replace(' href=', ' class="list-group-item" href=', $link);
+      }
+      $content = str_replace($link, $new_link, $content);
     }
   }
 }
