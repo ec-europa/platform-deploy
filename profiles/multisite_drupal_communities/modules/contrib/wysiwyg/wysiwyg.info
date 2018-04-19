@@ -9,7 +9,7 @@ configure = admin/config/content/wysiwyg
 files[] = wysiwyg.module
 files[] = tests/wysiwyg.test
 
-; Information added by drush on 2017-05-08
+; Information added by drush on 2018-04-18
 version = "unknown"
 project = "wysiwyg"
-datestamp = "1494267841"
+datestamp = "1524083955"
