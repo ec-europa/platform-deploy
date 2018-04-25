@@ -84,9 +84,8 @@ settings[preprocess][node][classes_to_remove] = node,node-sticky,node-unpublishe
 settings[preprocess][region][classes_to_remove] = region
 
 
-; Information added by Drupal.org packaging script on 2018-02-23
-version = "7.x-2.7"
+; Information added by Drupal.org packaging script on 2018-04-11
+version = "7.x-2.8"
 core = "7.x"
 project = "atomium"
-datestamp = "1519390091"
-
+datestamp = "1523455298"
