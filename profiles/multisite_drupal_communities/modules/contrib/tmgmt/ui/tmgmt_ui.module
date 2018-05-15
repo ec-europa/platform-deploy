@@ -661,6 +661,7 @@ function tmgmt_ui_translation_review_form_defaults($form, &$form_state, TMGMTJob
     '#type' => 'submit',
     '#value' => t('Save as completed'),
     '#access' => $item->isNeedsReview(),
+    '#validate' => array('tmgmt_ui_validate_accept'),
   );
   $form['actions']['save'] = array(
     '#type' => 'submit',
@@ -678,6 +679,25 @@ function tmgmt_ui_translation_review_form_defaults($form, &$form_state, TMGMTJob
   // The reject functionality has to be implement by the translator plugin as
   // that process is completely unique and custom for each translation service.
   return $form;
+}
+
+/**
+ * Perform translation validation before it is accepted.
+ *
+ * @param array $form
+ *   An associative array containing the structure of the form.
+ * @param array $form_state
+ *   An associative array containing the current state of the form.
+ */
+function tmgmt_ui_validate_accept(array $form, array &$form_state) {
+  foreach ($form_state['values'] as $key => $value) {
+    if (is_array($value) && isset($value['translation'])) {
+      // Check if translation is empty.
+      if (empty($value['translation'])) {
+        form_set_error($key . '][translation', t('The field is empty'));
+      }
+    }
+  }
 }
 
 /**
@@ -823,6 +843,14 @@ function _tmgmt_ui_review_form_element(&$form_state, $data, TMGMTJobItem $job_it
         '#title' => t('Translation'),
         '#disabled' => $job_item->isAccepted(),
       );
+
+      // Add #maxlength attribute when field has this definition.
+      if ($field = field_info_field($parent_key)) {
+        if (isset($field['settings']['max_length'])) {
+          $form[$target_key]['translation']['#maxlength'] = $field['settings']['max_length'];
+        }
+      }
+
       $form[$target_key]['source'] = array(
         '#type' => 'textarea',
         '#default_value' => $data[$key]['#text'],
