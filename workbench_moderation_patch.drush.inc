@@ -1,0 +1,161 @@
+<?php
+
+/**
+ * Implements hook_drush_command().
+ */
+function workbench_moderation_patch_drush_command() {
+
+  $commands['workbench-moderation-patch-update-status'] = array(
+    'description' => 'Fix content that are wrongly unpublished at "draft"
+    saving time after upgrading workbench moderation from 1.4 to 3.x.
+    It must run after the "update" hook of the module.',
+    'callback'    => 'workbench_moderation_patch_setup_batch',
+    'aliases' => array('wmpu'),
+  );
+
+  return $commands;
+}
+
+/**
+ * Define the batch operation.
+ */
+function workbench_moderation_patch_setup_batch() {
+  $operations = [];
+  // Get unpublished nodes.
+  $node_query = db_select('node', 'n')
+    ->fields('n', array('nid'))
+    ->condition('status', 0, '=');
+  $result = $node_query->execute();
+  $records = $result->fetchCol();
+  $total = count($records);
+  $i = 0;
+  if ($total > 0) {
+
+  }
+
+  // Prepare the batch operations.
+  foreach ($records as $nid) {
+    $i++;
+    $operations[] = array(
+      "workbench_moderation_patch_update_status",
+      array($nid, $i, $total),
+    );
+  }
+
+  // Put all that information into our batch array.
+  $batch = array(
+    // First we update the nodes modified after the update from 1.4 to 3.0.
+    'operations' => $operations,
+    'title' => t('Update status'),
+    // Then we fix the status of the revisions.
+    'finished' => 'workbench_moderation_patch_finished',
+  );
+
+  // Get the batch process ready.
+  batch_set($batch);
+
+  // Start processing the batch operations.
+  drush_backend_batch_process();
+}
+
+/**
+ * Update the node if affected by "unpublished" issue.
+ *
+ * @param int $nid
+ *   The nid of the node to treat.
+ * @param int $current
+ *   The current number of the iteration.
+ * @param int $total
+ *   The total number of nodes to update.
+ */
+function workbench_moderation_patch_update_status($nid, $current, $total, &$context) {
+  if (!isset($context['results']['treated_nids'])) {
+    $context['results']['treated_nids'] = array();
+  }
+
+  $message = dt('[!number/!total] Skipped node !nid ', array(
+    '!number' => $current,
+    '!total' => $total,
+    '!nid' => $nid,
+  ));
+
+  // Get the nodes that were updated after updating to version 3.0 to fix
+  // them in the batch process.
+  // Get the last revision that was published but not current currently.
+  $revision_query = db_select('workbench_moderation_node_history', 'wmnh')
+    ->fields('wmnh', array('vid'))
+    ->condition('state', 'published')
+    ->condition('published', 0)
+    ->condition('is_current', '0', '=')
+    ->condition('nid', $nid)
+    ->orderBy('stamp', 'DESC')
+    ->range(0, 1);
+  // If there is only one, it means there was a published revision,
+  // which is not the current one and got unpublished by
+  // workbench_moderation upgrade to its 3.x.
+  if ($revision_query->countQuery()->execute()->fetchField() == 1) {
+    $vid = $revision_query->execute()->fetchCol();
+    // Let's update the node to the right revision and make it published.
+    db_update('node')
+      ->fields(array(
+        'vid' => $vid,
+        'status' => 1,
+      ))
+      ->condition('nid', $nid)
+      ->execute();
+    // Also set the published flag on the right revision.
+    db_update('workbench_moderation_node_history')
+      ->fields(array(
+        'published' => 1,
+      ))
+      ->condition('nid', $nid)
+      ->condition('vid', $vid)
+      ->execute();
+    $context['results']['treated_nids'][] = $nid;
+
+    $message = dt('[!number/!total] Updated node workbench_moderation_node_history: node !nid revision !revision', array(
+      '!number' => $current,
+      '!total' => $total,
+      '!nid' => $nid,
+      '!revision' => $vid[0],
+    ));
+  }
+  drush_log($message, 'ok');
+  watchdog('workbench_moderation_patch', $message, [], WATCHDOG_INFO);
+}
+
+/**
+ * Update the status of the node revisions.
+ *
+ * Update node_revision and workbench_moderation_node_history status so they comply
+ * with workbench_moderation 3.0.
+ */
+function workbench_moderation_patch_finished($success, $results, $operations) {
+  // Get the all published nodes.
+  $node_ids_query = db_select('node')
+    ->fields('node', array('nid'))
+    ->condition('status', '1', '=');
+  $node_ids = $node_ids_query->execute()->fetchAllAssoc('nid');
+
+  // Get if the published node has a newer revision that is not published state.
+  $vids_query = db_select('workbench_moderation_node_history', 'wmnh')
+    ->fields('wmnh', array('vid'))
+    ->condition('state', 'published', 'NOT LIKE')
+    ->condition('is_current', '1', '=')
+    ->condition('nid', array_keys($node_ids), 'IN');
+
+  if ($vids_query->countQuery()->execute()->fetchField()) {
+    // Apply the change on the subset of revisions.
+    $vids = $vids_query->execute()->fetchCol();
+    db_update('node_revision')
+      ->fields(array('status' => 1))
+      ->condition('vid', $vids, 'IN')
+      ->execute();
+    $message = dt('Update !total nodes on node_revision table (vids): !vids ', array(
+      '!total' => count($vids),
+      '!vids' => "[" . implode("|", $vids) . "]",
+    ));
+    drush_log($message, 'ok');
+    watchdog('workbench_moderation_patch', $message, [], WATCHDOG_INFO);
+  }
+}
