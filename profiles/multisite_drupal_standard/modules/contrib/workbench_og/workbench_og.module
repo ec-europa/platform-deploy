@@ -108,6 +108,17 @@ function workbench_og_node_access_records($node) {
     }
     return $grants;
   }
+  else {
+    $grants[] = array(
+      'realm' => 'workbench_moderation_og',
+      'gid' => 0,
+      'grant_view' => 1,
+      'grant_update' => 0,
+      'grant_delete' => 0,
+      'priority' => 2,
+     );
+    return $grants;
+  }
 }
 
 /**
@@ -121,6 +132,8 @@ function workbench_og_node_grants($account, $op) {
 
   // Gets the user groups.
   $group_ids = og_get_entity_groups('user', $account, array(OG_STATE_ACTIVE));
+
+  $grants['workbench_moderation_og'][] = 0;
 
   // Foreach group that user is a member.
   if (isset($group_ids) && !empty($group_ids['node'])) {
