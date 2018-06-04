@@ -13,13 +13,37 @@ function workbench_moderation_patch_drush_command() {
     'aliases' => array('wmpu'),
   );
 
+  $commands['workbench-moderation-patch-update-status-sumulation'] = array(
+    'description' => 'Run the simulation of the of the workbench-moderation-patch-update-status (wmpu)
+    command, this command will not update the database.',
+    'callback'    => 'workbench_moderation_patch_simulation_batch',
+    'aliases' => array('wms'),
+  );
+
   return $commands;
 }
 
 /**
- * Define the batch operation.
+ * Define the batch operation of the update operation.
  */
 function workbench_moderation_patch_setup_batch() {
+  _workbench_moderation_patch_batch(FALSE);
+}
+
+/**
+ * Define the batch operation of the update simulation operation.
+ */
+function workbench_moderation_patch_simulation_batch() {
+  _workbench_moderation_patch_batch(TRUE);
+}
+
+/**
+ * Helper function that defines the batch operations.
+ *
+ * @param bool $simulation
+ *   Run the simulation or the update batch operation.
+ */
+function _workbench_moderation_patch_batch($simulation = TRUE) {
   $operations = [];
   // Get unpublished nodes.
   $node_query = db_select('node', 'n')
@@ -38,7 +62,7 @@ function workbench_moderation_patch_setup_batch() {
     $i++;
     $operations[] = array(
       "workbench_moderation_patch_update_status",
-      array($nid, $i, $total),
+      array($nid, $i, $total, $simulation),
     );
   }
 
@@ -68,16 +92,13 @@ function workbench_moderation_patch_setup_batch() {
  * @param int $total
  *   The total number of nodes to update.
  */
-function workbench_moderation_patch_update_status($nid, $current, $total, &$context) {
+function workbench_moderation_patch_update_status($nid, $current, $total, $simulation, &$context) {
   if (!isset($context['results']['treated_nids'])) {
     $context['results']['treated_nids'] = array();
   }
-
-  $message = dt('[!number/!total] Skipped node !nid ', array(
-    '!number' => $current,
-    '!total' => $total,
-    '!nid' => $nid,
-  ));
+  if (!isset($context['results']['simulation'])) {
+    $context['results']['simulation'] = $simulation;
+  }
 
   // Get the nodes that were updated after updating to version 3.0 to fix
   // them in the batch process.
@@ -93,35 +114,48 @@ function workbench_moderation_patch_update_status($nid, $current, $total, &$cont
   // If there is only one, it means there was a published revision,
   // which is not the current one and got unpublished by
   // workbench_moderation upgrade to its 3.x.
+  $message = '';
+  if($context['results']['simulation']){
+    $message = dt("(Simulation run)");
+  }
   if ($revision_query->countQuery()->execute()->fetchField() == 1) {
     $vid = $revision_query->execute()->fetchCol();
-    // Let's update the node to the right revision and make it published.
-    db_update('node')
-      ->fields(array(
-        'vid' => $vid,
-        'status' => 1,
-      ))
-      ->condition('nid', $nid)
-      ->execute();
-    // Also set the published flag on the right revision.
-    db_update('workbench_moderation_node_history')
-      ->fields(array(
-        'published' => 1,
-      ))
-      ->condition('nid', $nid)
-      ->condition('vid', $vid)
-      ->execute();
+    if (!$context['results']['simulation']) {
+      // Let's update the node to the right revision and make it published.
+      db_update('node')
+        ->fields(array(
+          'vid' => $vid,
+          'status' => 1,
+        ))
+        ->condition('nid', $nid)
+        ->execute();
+      // Also set the published flag on the right revision.
+      db_update('workbench_moderation_node_history')
+        ->fields(array(
+          'published' => 1,
+        ))
+        ->condition('nid', $nid)
+        ->condition('vid', $vid)
+        ->execute();
+    }
     $context['results']['treated_nids'][] = $nid;
 
-    $message = dt('[!number/!total] Updated node workbench_moderation_node_history: node !nid revision !revision', array(
+    $message .= dt('[!number/!total] Updated node workbench_moderation_node_history: node !nid revision !revision', array(
       '!number' => $current,
       '!total' => $total,
       '!nid' => $nid,
       '!revision' => $vid[0],
     ));
   }
-  drush_log($message, 'ok');
+  else {
+    $message .= dt('[!number/!total] Skipped node !nid ', array(
+      '!number' => $current,
+      '!total' => $total,
+      '!nid' => $nid,
+    ));
+  }
   watchdog('workbench_moderation_patch', $message, [], WATCHDOG_INFO);
+  drush_log($message, 'ok');
 }
 
 /**
@@ -143,15 +177,20 @@ function workbench_moderation_patch_finished($success, $results, $operations) {
     ->condition('state', 'published', 'NOT LIKE')
     ->condition('is_current', '1', '=')
     ->condition('nid', array_keys($node_ids), 'IN');
-
   if ($vids_query->countQuery()->execute()->fetchField()) {
+    $message = '';
     // Apply the change on the subset of revisions.
     $vids = $vids_query->execute()->fetchCol();
-    db_update('node_revision')
-      ->fields(array('status' => 1))
-      ->condition('vid', $vids, 'IN')
-      ->execute();
-    $message = dt('Update !total nodes on node_revision table (vids): !vids ', array(
+    if (!$results['simulation']) {
+      db_update('node_revision')
+        ->fields(array('status' => 1))
+        ->condition('vid', $vids, 'IN')
+        ->execute();
+    }
+    else {
+      $message = dt("(Simulation run)");
+    }
+    $message .= dt('Update !total nodes on node_revision table (vids): !vids ', array(
       '!total' => count($vids),
       '!vids' => "[" . implode("|", $vids) . "]",
     ));

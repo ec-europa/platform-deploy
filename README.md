@@ -24,3 +24,16 @@ To run this script please take these steps:
   - Run the script "drush wmpu"
 
 The operation will log the results to the console and to drupal's watchdog, identified by workbench_moderation_patch
+
+Running simulation
+-----
+To run the update simulation script please take these steps:
+  - Backup the database of the site, before starting the update
+  - Ensure the site run previously with the platform version 2.3
+  - Ensure the site is deployed with a platform version 2.4
+  - Ensure the Workbench Moderation "update" hook was run on version 2.4
+  - Run the script "drush wms"
+
+The operation will log the results to the console and to drupal's watchdog, identified by workbench_moderation_patch, all messages will include at the start of the line (Simulation run).
+
+
