@@ -8,11 +8,12 @@
 /**
  * Implements hook_drush_command().
  */
-function watchdog_drush_command() {
+function smoketest_drush_command() {
   $items = [];
 
-  $items['watchdog-smoketest'] = [
+  $items['smoketest-watchdog'] = [
     'description' => 'Crawl site and report watchdog errors and notifications back to user.',
+    'callback'    => 'smoketest_smoketest_watchdog',
     'drupal dependencies' => ['dblog'],
     'aliases' => ['wd-smoke', 'wdsm'],
   ];
@@ -23,9 +24,9 @@ function watchdog_drush_command() {
 /**
  * Implements hook_drush_help().
  */
-function watchdog_drush_help($section) {
+function smoketest_drush_help($section) {
   switch ($section) {
-    case 'drush:watchdog-smoketest':
+    case 'drush:smoketest-watchdog':
       return dt("Crawl site and report watchdog errors and notifications back to user.");
       break;
   }
@@ -35,7 +36,7 @@ function watchdog_drush_help($section) {
 /**
  * Revert all enabled features to their definitions in code.
  */
-function drush_watchdog_watchdog_smoketest() {
+function smoketest_smoketest_watchdog() {
   // Get cookie for root user.
   global $user;
   $user = user_load(1);
@@ -152,8 +153,29 @@ function generateUrlsBySearch($paths)
 function generateUrlsByViews($paths)
 {
   if (module_exists('views')) {
+
     $all_views = views_get_all_views();
     foreach ($all_views as $view) {
+
+      // Load all views displays to check for missing handlers.
+      if (module_exists('devel')) {
+
+        $views_debug = variable_get('views_devel_output', FALSE);
+        $views_region = variable_get('views_devel_region', 'watchdog');
+        variable_set('views_devel_output', TRUE);
+        variable_set('views_devel_region', 'message');
+
+        $displays = array_keys($view->display);
+        foreach($displays as $display) {
+           $view->execute($display);
+           $view = $view->clone_view();
+        }
+
+        variable_set('views_devel_output', $views_debug);
+        variable_set('views_devel_region', $views_region);
+      }
+
+      // Get the page views to visit later for detecting other watchdog entries.
       if (empty($view->disabled)) {
         foreach ($view->display as $display) {
           if ($display->display_plugin == 'page') {

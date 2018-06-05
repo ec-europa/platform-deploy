@@ -38,7 +38,7 @@ function features_drush_help($section) {
 /**
  * Revert all enabled features to their definitions in code.
  */
-function drush_features_features_revert_site() {
+function drush_features_revert_site() {
   // Before we can trigger other commands, we need to set our strict value to 0.
   drush_set_option('strict', FALSE);
 
