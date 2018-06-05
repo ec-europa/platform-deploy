@@ -166,17 +166,17 @@ function workbench_moderation_patch_update_status($nid, $current, $total, $simul
  */
 function workbench_moderation_patch_finished($success, $results, $operations) {
   // Get the all published nodes.
-  $node_ids_query = db_select('node')
-    ->fields('node', array('nid'))
-    ->condition('status', '1', '=');
-  $node_ids = $node_ids_query->execute()->fetchAllAssoc('nid');
-
+  $node_ids_query = db_select('node_revision');
+  $node_ids_query->innerJoin('node', '', 'node_revision.nid = node.nid and node.status = 1');
+  $node_ids_query ->fields('node_revision', array('vid'))
+    ->condition('node_revision.status', '0', '=');
+  $vid_ids = $node_ids_query->execute()->fetchAllAssoc('vid');
   // Get if the published node has a newer revision that is not published state.
   $vids_query = db_select('workbench_moderation_node_history', 'wmnh')
     ->fields('wmnh', array('vid'))
     ->condition('state', 'published', 'NOT LIKE')
     ->condition('is_current', '1', '=')
-    ->condition('nid', array_keys($node_ids), 'IN');
+    ->condition('vid', array_keys($vid_ids), 'IN');
   if ($vids_query->countQuery()->execute()->fetchField()) {
     $message = '';
     // Apply the change on the subset of revisions.
