@@ -34,6 +34,5 @@ To run the update simulation script please take these steps:
   - Ensure the Workbench Moderation "update" hook was run on version 2.4
   - Run the script "drush wms"
 
-The operation will log the results to the console and to drupal's watchdog, identified by workbench_moderation_patch, all messages will include at the start of the line (Simulation run).
-
+The operation will log the nodes to update to the console
 

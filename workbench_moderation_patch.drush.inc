@@ -13,7 +13,7 @@ function workbench_moderation_patch_drush_command() {
     'aliases' => array('wmpu'),
   );
 
-  $commands['workbench-moderation-patch-update-status-sumulation'] = array(
+  $commands['workbench-moderation-patch-update-status-simulation'] = array(
     'description' => 'Run the simulation of the of the workbench-moderation-patch-update-status (wmpu)
     command, this command will not update the database.',
     'callback'    => 'workbench_moderation_patch_simulation_batch',
@@ -98,6 +98,13 @@ function workbench_moderation_patch_update_status($nid, $current, $total, $simul
   }
   if (!isset($context['results']['simulation'])) {
     $context['results']['simulation'] = $simulation;
+    if ($simulation) {
+      $initial_message = dt('Running update simulation, no changes will apply to the database.');
+    }
+    else {
+      $initial_message = dt('Running update, the status of the some nodes will be updated in the database.');
+    }
+    _workbench_moderation_patch_logs($initial_message, $simulation);
   }
 
   // Get the nodes that were updated after updating to version 3.0 to fix
@@ -114,10 +121,6 @@ function workbench_moderation_patch_update_status($nid, $current, $total, $simul
   // If there is only one, it means there was a published revision,
   // which is not the current one and got unpublished by
   // workbench_moderation upgrade to its 3.x.
-  $message = '';
-  if($context['results']['simulation']){
-    $message = dt("(Simulation run)");
-  }
   if ($revision_query->countQuery()->execute()->fetchField() == 1) {
     $vid = $revision_query->execute()->fetchCol();
     if (!$context['results']['simulation']) {
@@ -137,25 +140,31 @@ function workbench_moderation_patch_update_status($nid, $current, $total, $simul
         ->condition('nid', $nid)
         ->condition('vid', $vid)
         ->execute();
+      $message = dt('[!number/!total] Updated node workbench_moderation_node_history: node !nid revision !revision', array(
+        '!number' => $current,
+        '!total' => $total,
+        '!nid' => $nid,
+        '!revision' => $vid[0],
+      ));
+    }
+    else {
+      $message = dt('[!number/!total] The workbench_moderation_node_history of this node can be updated: node !nid revision !revision', array(
+        '!number' => $current,
+        '!total' => $total,
+        '!nid' => $nid,
+        '!revision' => $vid[0],
+      ));
     }
     $context['results']['treated_nids'][] = $nid;
-
-    $message .= dt('[!number/!total] Updated node workbench_moderation_node_history: node !nid revision !revision', array(
-      '!number' => $current,
-      '!total' => $total,
-      '!nid' => $nid,
-      '!revision' => $vid[0],
-    ));
   }
   else {
-    $message .= dt('[!number/!total] Skipped node !nid ', array(
+    $message = dt('[!number/!total] Nothing to do on this node !nid ', array(
       '!number' => $current,
       '!total' => $total,
       '!nid' => $nid,
     ));
   }
-  watchdog('workbench_moderation_patch', $message, [], WATCHDOG_INFO);
-  drush_log($message, 'ok');
+  _workbench_moderation_patch_logs($message, $context['results']['simulation']);
 }
 
 /**
@@ -186,15 +195,34 @@ function workbench_moderation_patch_finished($success, $results, $operations) {
         ->fields(array('status' => 1))
         ->condition('vid', $vids, 'IN')
         ->execute();
+      $message = dt('Update !total nodes on node_revision table (vids): !vids ', array(
+        '!total' => count($vids),
+        '!vids' => "[" . implode("|", $vids) . "]",
+      ));
     }
     else {
-      $message = dt("(Simulation run)");
+      $message = dt('!total nodes on node_revision table (vids) would be updated: !vids ', array(
+        '!total' => count($vids),
+        '!vids' => "[" . implode("|", $vids) . "]",
+      ));
     }
-    $message .= dt('Update !total nodes on node_revision table (vids): !vids ', array(
-      '!total' => count($vids),
-      '!vids' => "[" . implode("|", $vids) . "]",
-    ));
-    drush_log($message, 'ok');
-    watchdog('workbench_moderation_patch', $message, [], WATCHDOG_INFO);
+  }
+  _workbench_moderation_patch_logs($message, $results['simulation']);
+}
+
+/**
+ * Helper function to print the logs of the udpate and simulation.
+ */
+function _workbench_moderation_patch_logs($message, $simulation = TRUE) {
+  if ($simulation) {
+    if ($message != '') {
+      drush_print(dt('(Running update simulation)') . $message);
+    }
+  }
+  else {
+    if ($message != '') {
+      drush_log($message, 'ok');
+      watchdog('workbench_moderation_patch', $message, [], WATCHDOG_INFO);
+    }
   }
 }
