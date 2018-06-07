@@ -34,5 +34,4 @@ To run the update simulation script please take these steps:
   - Ensure the Workbench Moderation "update" hook was run on version 2.4
   - Run the script "drush wms"
 
-The operation will log the nodes to update to the console
-
+The operation will log the nodes to update to the console.

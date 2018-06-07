@@ -170,14 +170,14 @@ function workbench_moderation_patch_update_status($nid, $current, $total, $simul
 /**
  * Update the status of the node revisions.
  *
- * Update node_revision and workbench_moderation_node_history status so they comply
- * with workbench_moderation 3.0.
+ * Update node_revision and workbench_moderation_node_history status so
+ * they comply with workbench_moderation 3.0.
  */
 function workbench_moderation_patch_finished($success, $results, $operations) {
   // Get the all published nodes.
   $node_ids_query = db_select('node_revision');
   $node_ids_query->innerJoin('node', '', 'node_revision.nid = node.nid and node.status = 1');
-  $node_ids_query ->fields('node_revision', array('vid'))
+  $node_ids_query->fields('node_revision', array('vid'))
     ->condition('node_revision.status', '0', '=');
   $vid_ids = $node_ids_query->execute()->fetchAllAssoc('vid');
   // Get if the published node has a newer revision that is not published state.
