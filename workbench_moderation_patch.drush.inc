@@ -123,38 +123,7 @@ function workbench_moderation_patch_update_status($nid, $current, $total, $simul
   // workbench_moderation upgrade to its 3.x.
   if ($revision_query->countQuery()->execute()->fetchField() == 1) {
     $vid = $revision_query->execute()->fetchCol();
-    // Simulation message for nodes that can be updated.
-    $message = dt('[!number/!total] The workbench_moderation_node_history of this node should be updated: node !nid revision !revision', array(
-      '!number' => $current,
-      '!total' => $total,
-      '!nid' => $nid,
-      '!revision' => $vid[0],
-    ));
-    if (!$context['results']['simulation']) {
-      // Let's update the node to the right revision and make it published.
-      db_update('node')
-        ->fields(array(
-          'vid' => $vid,
-          'status' => 1,
-        ))
-        ->condition('nid', $nid)
-        ->execute();
-      // Also set the published flag on the right revision.
-      db_update('workbench_moderation_node_history')
-        ->fields(array(
-          'published' => 1,
-        ))
-        ->condition('nid', $nid)
-        ->condition('vid', $vid)
-        ->execute();
-      // Message for nodes that are updated.
-      $message = dt('[!number/!total] Updated node workbench_moderation_node_history: node !nid revision !revision', array(
-        '!number' => $current,
-        '!total' => $total,
-        '!nid' => $nid,
-        '!revision' => $vid[0],
-      ));
-    }
+    $message = _workbench_moderation_patch_update_nodes($vid, !$context['results']['simulation']);
     $context['results']['treated_nids'][] = $nid;
   }
   _workbench_moderation_patch_logs($message, $context['results']['simulation']);
@@ -214,4 +183,50 @@ function _workbench_moderation_patch_logs($message, $simulation = TRUE) {
   }
   drush_log($message, 'ok');
   watchdog('workbench_moderation_patch', $message, [], WATCHDOG_INFO);
+}
+
+/**
+ * Nodes to update theirs status.
+ *
+ * @param array $vid
+ *   Array with the vids to udpate.
+ * @param bool $simulation
+ *   Run the update of the simulation.
+ * @return
+ *   The message with the operation results.
+ */
+function _workbench_moderation_patch_update_nodes($vid, $simulation) {
+  // Simulation message for nodes that can be updated.
+  $message = dt('[!number/!total] The workbench_moderation_node_history of this node should be updated: node !nid revision !revision', array(
+    '!number' => $current,
+    '!total' => $total,
+    '!nid' => $nid,
+    '!revision' => $vid[0],
+  ));
+  if ($simulation) {
+    // Let's update the node to the right revision and make it published.
+    db_update('node')
+      ->fields(array(
+        'vid' => $vid,
+        'status' => 1,
+      ))
+      ->condition('nid', $nid)
+      ->execute();
+    // Also set the published flag on the right revision.
+    db_update('workbench_moderation_node_history')
+      ->fields(array(
+        'published' => 1,
+      ))
+      ->condition('nid', $nid)
+      ->condition('vid', $vid)
+      ->execute();
+    // Message for nodes that are updated.
+    $message = dt('[!number/!total] Updated node workbench_moderation_node_history: node !nid revision !revision', array(
+      '!number' => $current,
+      '!total' => $total,
+      '!nid' => $nid,
+      '!revision' => $vid[0],
+    ));
+  }
+  return $message;
 }
