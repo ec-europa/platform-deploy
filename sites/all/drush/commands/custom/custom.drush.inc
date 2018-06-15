@@ -24,9 +24,14 @@ function custom_drush_command() {
     'description' => 'Crawl site and report watchdog errors and notifications back to user.',
     'drupal dependencies' => ['dblog'],
     'aliases' => ['wd-smoke', 'wdsm'],
-    'outputformat' => array(
-      'default' => 'table'
-    ),
+    'outputformat' => [
+      'default' => 'table',
+      'pipe-format' => 'var_export',
+      'field-labels' => array('wid' => 'ID', 'type' => 'Type', 'message' => 'Message', 'severity' => 'Severity', 'location' => 'Location', 'hostname' => 'Hostname', 'date' => 'Date', 'username' => 'Username'),
+      'fields-default' => array('type', 'severity', 'location', 'message'),
+      'column-widths' => array('type' => 8, 'severity' => 8),
+      'output-data-type' => 'format-table',
+    ],
   ];
 
   return $items;
@@ -123,14 +128,22 @@ function drush_custom_watchdog_smoketest() {
 
   _drupal_session_destroy($session_id);
   $watchdog_messages = db_select('watchdog', 'wd')
-    ->fields('wd', array('wid', 'timestamp', 'type', 'severity', 'location', 'message'))
+    ->fields('wd')
     ->condition('wid', $last_wid, '>')
+    ->condition('severity', 5, '<')
     ->execute()
     ->fetchAllAssoc('wid');
 
+  $table = array();
+  foreach ($watchdog_messages as $result) {
+    $row = core_watchdog_format_result($result, TRUE);
+    $table[$row->wid] = $row;
+  }
+
   $count_watchdog = count($watchdog_messages);
   if ($count_watchdog >= 1) {
-    drush_log(dt('Generated !count_watchdog watchdog entries. Run "drush watchdog-show --count=!count_watchdog" to get a report.', array('!count_watchdog' => $count_watchdog)), 'warning');
+    drush_log(dt('Generated !count_watchdog watchdog entries of severity less than 5.', array('!count_watchdog' => $count_watchdog)), 'warning');
+    return $table;
   }
   else {
     drush_log(dt('Generated !count_watchdog watchdog entries.', array('!count_watchdog' => $count_watchdog)), 'ok');
