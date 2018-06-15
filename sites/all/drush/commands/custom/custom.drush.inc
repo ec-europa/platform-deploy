@@ -116,7 +116,7 @@ function drush_custom_watchdog_smoketest() {
     foreach($paths as $path) {
       $url = url($path,  array('absolute' => TRUE));
       $visit = drupal_http_request($url, $options);
-      drush_log(format_string('Visiting path "!path."', array('!path' => $path)), 'ok');
+      drush_log(dt('Visiting path "!path."', array('!path' => $path)), 'ok');
     }
   }
 
@@ -129,10 +129,10 @@ function drush_custom_watchdog_smoketest() {
 
   $count_watchdog = count($watchdog_messages);
   if ($count_watchdog >= 1) {
-    drush_log(format_string('Found !count_watchdog watchdog entries. Run "drush ws --count=!count_watchdog" to get a report.', array('!count_watchdog' => $count_watchdog)), 'warning');
+    drush_log(dt('Found !count_watchdog watchdog entries. Run "drush ws --count=!count_watchdog" to get a report.', array('!count_watchdog' => $count_watchdog)), 'warning');
   }
   else {
-    drush_log(format_string('Found !count_watchdog watchdog entries.', array('!count_watchdog' => $count_watchdog)), 'ok');
+    drush_log(dt('Found !count_watchdog watchdog entries.', array('!count_watchdog' => $count_watchdog)), 'ok');
   }
 }
 
