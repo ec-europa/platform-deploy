@@ -13,7 +13,7 @@ function workbench_moderation_patch_drush_command() {
     'aliases' => array('wmpu'),
   );
 
-  $commands['workbench-moderation-patch-update-status-sumulation'] = array(
+  $commands['workbench-moderation-patch-update-status-simulation'] = array(
     'description' => 'Run the simulation of the of the workbench-moderation-patch-update-status (wmpu)
     command, this command will not update the database.',
     'callback'    => 'workbench_moderation_patch_simulation_batch',
@@ -54,32 +54,30 @@ function _workbench_moderation_patch_batch($simulation = TRUE) {
   $total = count($records);
   $i = 0;
   if ($total > 0) {
-
-  }
-
-  // Prepare the batch operations.
-  foreach ($records as $nid) {
-    $i++;
-    $operations[] = array(
-      "workbench_moderation_patch_update_status",
-      array($nid, $i, $total, $simulation),
+    // Prepare the batch operations.
+    foreach ($records as $nid) {
+      $i++;
+      $operations[] = array(
+        "workbench_moderation_patch_update_status",
+        array($nid, $i, $total, $simulation),
+      );
+    }
+  
+    // Put all that information into our batch array.
+    $batch = array(
+      // First we update the nodes modified after the update from 1.4 to 3.0.
+      'operations' => $operations,
+      'title' => t('Update status'),
+      // Then we fix the status of the revisions.
+      'finished' => 'workbench_moderation_patch_finished',
     );
+  
+    // Get the batch process ready.
+    batch_set($batch);
+  
+    // Start processing the batch operations.
+    drush_backend_batch_process();
   }
-
-  // Put all that information into our batch array.
-  $batch = array(
-    // First we update the nodes modified after the update from 1.4 to 3.0.
-    'operations' => $operations,
-    'title' => t('Update status'),
-    // Then we fix the status of the revisions.
-    'finished' => 'workbench_moderation_patch_finished',
-  );
-
-  // Get the batch process ready.
-  batch_set($batch);
-
-  // Start processing the batch operations.
-  drush_backend_batch_process();
 }
 
 /**
@@ -118,7 +116,7 @@ function workbench_moderation_patch_update_status($nid, $current, $total, $simul
   if($context['results']['simulation']){
     $message = dt("(Simulation run)");
   }
-  if ($revision_query->countQuery()->execute()->fetchField() == 1) {
+  if (!empty($revision_query->execute()->fetchField())) {
     $vid = $revision_query->execute()->fetchCol();
     if (!$context['results']['simulation']) {
       // Let's update the node to the right revision and make it published.
