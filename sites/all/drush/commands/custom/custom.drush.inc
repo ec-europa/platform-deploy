@@ -111,12 +111,13 @@ function drush_custom_watchdog_smoketest() {
   $paths = generateUrlsByViews($paths);
   $paths = generateUrlsByPageManager($paths);
 
-  if (count($paths) >= 1) {
+  $count_paths = count($paths);
+  if ($count_paths >= 1) {
     $last_wid = db_query('SELECT MAX(wid) FROM {watchdog}')->fetchField();
+    drush_log(dt('Visiting !count_paths paths as admin to check for watchdog messages.', array('!count_paths' => $count_paths)), 'ok');
     foreach($paths as $path) {
       $url = url($path,  array('absolute' => TRUE));
       $visit = drupal_http_request($url, $options);
-      drush_log(dt('Visiting path "!path."', array('!path' => $path)), 'ok');
     }
   }
 
@@ -129,10 +130,10 @@ function drush_custom_watchdog_smoketest() {
 
   $count_watchdog = count($watchdog_messages);
   if ($count_watchdog >= 1) {
-    drush_log(dt('Found !count_watchdog watchdog entries. Run "drush ws --count=!count_watchdog" to get a report.', array('!count_watchdog' => $count_watchdog)), 'warning');
+    drush_log(dt('Generated !count_watchdog watchdog entries. Run "drush watchdog-show --count=!count_watchdog" to get a report.', array('!count_watchdog' => $count_watchdog)), 'warning');
   }
   else {
-    drush_log(dt('Found !count_watchdog watchdog entries.', array('!count_watchdog' => $count_watchdog)), 'ok');
+    drush_log(dt('Generated !count_watchdog watchdog entries.', array('!count_watchdog' => $count_watchdog)), 'ok');
   }
 }
 
