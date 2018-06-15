@@ -116,7 +116,7 @@ function drush_custom_watchdog_smoketest() {
     foreach($paths as $path) {
       $url = url($path,  array('absolute' => TRUE));
       $visit = drupal_http_request($url, $options);
-      drush_print(format_string('Visiting path "!path."', array('!path' => $path)));
+      drush_log(format_string('Visiting path "!path."', array('!path' => $path)), 'ok');
     }
   }
 
