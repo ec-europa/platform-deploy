@@ -144,12 +144,12 @@ function workbench_moderation_patch_update_status($nid, $current, $total, $simul
         '!number' => $current,
         '!total' => $total,
         '!nid' => $nid,
-        '!revision' => $vid,
+        '!revision' => $vid[0],
       )
     );
 
     if (!$simulation) {
-      workbench_moderation_patch_update_nodes($nid, $vid);
+      _workbench_moderation_patch_update_nodes($nid, $vid);
     }
 
     $context['results']['treated_nids'][] = $nid;
