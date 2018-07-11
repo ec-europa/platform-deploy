@@ -10,19 +10,19 @@
  */
 function workbench_moderation_patch_drush_command() {
 
-  $commands['workbench-moderation-patch-update-status'] = array(
+  $commands['workbench-moderation-patch-update-status-execution'] = array(
     'description' => 'Fix content that are wrongly unpublished at "draft"
     saving time after upgrading workbench moderation from 1.4 to 3.x.
     It must run after the "update" hook of the module.',
     'callback' => 'workbench_moderation_patch_setup_batch',
-    'aliases' => array('wmpu'),
+    'aliases' => array('wmpusexec'),
   );
 
   $commands['workbench-moderation-patch-update-status-simulation'] = array(
     'description' => 'Run the simulation of the of the workbench-moderation-patch-update-status (wmpu)
     command, this command will not update the database.',
     'callback'    => 'workbench_moderation_patch_simulation_batch',
-    'aliases' => array('wms'),
+    'aliases' => array('wmpussim'),
   );
 
   return $commands;
@@ -138,13 +138,13 @@ function workbench_moderation_patch_update_status($nid, $current, $total, $simul
   // which is not the current one and got unpublished by
   // workbench_moderation upgrade to its 3.x.
   if ($revision_query->countQuery()->execute()->fetchField() == 1) {
-    $vid = $revision_query->execute()->fetchCol();
+    $vid = $revision_query->execute()->fetchField();
     $message = dt(
-      '[!number/!total] "workbench_moderation_node_history" table is updated: node !nid - revision !revision', array(
+      '[!number/!total] workbench_moderation_node_history table is updated: node !nid - revision !revision', array(
         '!number' => $current,
         '!total' => $total,
         '!nid' => $nid,
-        '!revision' => $vid[0],
+        '!revision' => $vid,
       )
     );
 
@@ -191,7 +191,7 @@ function workbench_moderation_patch_finished($success, $results, $operations) {
         ->condition('vid', $vids, 'IN')
         ->execute();
     }
-    $message = dt('Update node_revision table: !total revisions are affected amongst these revisions: !vids ', array(
+    $message = dt('Update node_revision table: !total revisions are affected, here are their vids: !vids ', array(
       '!total' => $count,
       '!vids' => "[" . implode(", ", $vids) . "]",
     ));
