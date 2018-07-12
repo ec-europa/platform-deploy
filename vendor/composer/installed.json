@@ -661,17 +661,17 @@
     },
     {
         "name": "symfony/cache",
-        "version": "v3.4.3",
-        "version_normalized": "3.4.3.0",
+        "version": "v3.4.12",
+        "version_normalized": "3.4.12.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/cache.git",
-            "reference": "5725378078bc4e1fe3c3414e9cc0e63d7de47fff"
+            "reference": "99bd0bc61d1de38a7ab3d98ceab00e46ad7385fa"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/cache/zipball/5725378078bc4e1fe3c3414e9cc0e63d7de47fff",
-            "reference": "5725378078bc4e1fe3c3414e9cc0e63d7de47fff",
+            "url": "https://api.github.com/repos/symfony/cache/zipball/99bd0bc61d1de38a7ab3d98ceab00e46ad7385fa",
+            "reference": "99bd0bc61d1de38a7ab3d98ceab00e46ad7385fa",
             "shasum": ""
         },
         "require": {
@@ -694,7 +694,7 @@
             "doctrine/dbal": "~2.4",
             "predis/predis": "~1.0"
         },
-        "time": "2018-01-03T17:14:19+00:00",
+        "time": "2018-06-21T12:16:06+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -733,8 +733,8 @@
     },
     {
         "name": "symfony/dom-crawler",
-        "version": "v3.4.3",
-        "version_normalized": "3.4.3.0",
+        "version": "v3.4.12",
+        "version_normalized": "3.4.12.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/dom-crawler.git",
@@ -791,38 +791,41 @@
     },
     {
         "name": "symfony/event-dispatcher",
-        "version": "v2.8.33",
-        "version_normalized": "2.8.33.0",
+        "version": "v3.4.12",
+        "version_normalized": "3.4.12.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/event-dispatcher.git",
-            "reference": "d64be24fc1eba62f9daace8a8918f797fc8e87cc"
+            "reference": "26b87b6bca8f8f797331a30b76fdae5342dc26ca"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/d64be24fc1eba62f9daace8a8918f797fc8e87cc",
-            "reference": "d64be24fc1eba62f9daace8a8918f797fc8e87cc",
+            "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/26b87b6bca8f8f797331a30b76fdae5342dc26ca",
+            "reference": "26b87b6bca8f8f797331a30b76fdae5342dc26ca",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.3.9"
+            "php": "^5.5.9|>=7.0.8"
+        },
+        "conflict": {
+            "symfony/dependency-injection": "<3.3"
         },
         "require-dev": {
             "psr/log": "~1.0",
-            "symfony/config": "^2.0.5|~3.0.0",
-            "symfony/dependency-injection": "~2.6|~3.0.0",
-            "symfony/expression-language": "~2.6|~3.0.0",
-            "symfony/stopwatch": "~2.3|~3.0.0"
+            "symfony/config": "~2.8|~3.0|~4.0",
+            "symfony/dependency-injection": "~3.3|~4.0",
+            "symfony/expression-language": "~2.8|~3.0|~4.0",
+            "symfony/stopwatch": "~2.8|~3.0|~4.0"
         },
         "suggest": {
             "symfony/dependency-injection": "",
             "symfony/http-kernel": ""
         },
-        "time": "2018-01-03T07:36:31+00:00",
+        "time": "2018-01-03T07:37:34+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "2.8-dev"
+                "dev-master": "3.4-dev"
             }
         },
         "installation-source": "dist",
@@ -853,24 +856,24 @@
     },
     {
         "name": "symfony/expression-language",
-        "version": "v3.4.3",
-        "version_normalized": "3.4.3.0",
+        "version": "v3.4.12",
+        "version_normalized": "3.4.12.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/expression-language.git",
-            "reference": "867e4d1f5d4e52435a8ffff6b24fd6a801582241"
+            "reference": "555bf77002c6319eaf6311be7d6213dc3668e641"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/expression-language/zipball/867e4d1f5d4e52435a8ffff6b24fd6a801582241",
-            "reference": "867e4d1f5d4e52435a8ffff6b24fd6a801582241",
+            "url": "https://api.github.com/repos/symfony/expression-language/zipball/555bf77002c6319eaf6311be7d6213dc3668e641",
+            "reference": "555bf77002c6319eaf6311be7d6213dc3668e641",
             "shasum": ""
         },
         "require": {
             "php": "^5.5.9|>=7.0.8",
             "symfony/cache": "~3.1|~4.0"
         },
-        "time": "2018-01-03T07:37:34+00:00",
+        "time": "2018-06-21T11:10:19+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -905,27 +908,85 @@
     },
     {
         "name": "symfony/polyfill-apcu",
-        "version": "v1.6.0",
-        "version_normalized": "1.6.0.0",
+        "version": "v1.8.0",
+        "version_normalized": "1.8.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/polyfill-apcu.git",
-            "reference": "04f62674339602def515bff4bc6901fc1d4951e8"
+            "reference": "9b83bd010112ec196410849e840d9b9fefcb15ad"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-apcu/zipball/04f62674339602def515bff4bc6901fc1d4951e8",
-            "reference": "04f62674339602def515bff4bc6901fc1d4951e8",
+            "url": "https://api.github.com/repos/symfony/polyfill-apcu/zipball/9b83bd010112ec196410849e840d9b9fefcb15ad",
+            "reference": "9b83bd010112ec196410849e840d9b9fefcb15ad",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.3"
         },
-        "time": "2017-10-11T12:05:26+00:00",
+        "time": "2018-04-26T10:06:28+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.6-dev"
+                "dev-master": "1.8-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Polyfill\\Apcu\\": ""
+            },
+            "files": [
+                "bootstrap.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Nicolas Grekas",
+                "email": "p@tchwork.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony polyfill backporting apcu_* functions to lower PHP versions",
+        "homepage": "https://symfony.com",
+        "keywords": [
+            "apcu",
+            "compatibility",
+            "polyfill",
+            "portable",
+            "shim"
+        ]
+    },
+    {
+        "name": "symfony/polyfill-ctype",
+        "version": "v1.8.0",
+        "version_normalized": "1.8.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/polyfill-apcu.git",
+            "reference": "9b83bd010112ec196410849e840d9b9fefcb15ad"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/polyfill-apcu/zipball/9b83bd010112ec196410849e840d9b9fefcb15ad",
+            "reference": "9b83bd010112ec196410849e840d9b9fefcb15ad",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "time": "2018-04-26T10:06:28+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.8-dev"
             }
         },
         "installation-source": "dist",
@@ -1024,17 +1085,17 @@
     },
     {
         "name": "symfony/translation",
-        "version": "v3.4.3",
-        "version_normalized": "3.4.3.0",
+        "version": "v3.4.12",
+        "version_normalized": "3.4.12.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/translation.git",
-            "reference": "17b5962d252b2d6d1d37a2485ebb7ddc5b2bef0a"
+            "reference": "7047f725e35eab768137c677f8c38e4a2a8e38fb"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/translation/zipball/17b5962d252b2d6d1d37a2485ebb7ddc5b2bef0a",
-            "reference": "17b5962d252b2d6d1d37a2485ebb7ddc5b2bef0a",
+            "url": "https://api.github.com/repos/symfony/translation/zipball/7047f725e35eab768137c677f8c38e4a2a8e38fb",
+            "reference": "7047f725e35eab768137c677f8c38e4a2a8e38fb",
             "shasum": ""
         },
         "require": {
@@ -1059,7 +1120,7 @@
             "symfony/config": "",
             "symfony/yaml": ""
         },
-        "time": "2018-01-03T07:37:34+00:00",
+        "time": "2018-05-21T10:06:52+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1094,17 +1155,17 @@
     },
     {
         "name": "symfony/validator",
-        "version": "v3.4.3",
-        "version_normalized": "3.4.3.0",
+        "version": "v3.4.12",
+        "version_normalized": "3.4.12.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/validator.git",
-            "reference": "10828736a48411f2c4d87a7fe61c2d02ccb922be"
+            "reference": "fca490df65008eb680c5ee9c2d521191c9e54ed5"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/validator/zipball/10828736a48411f2c4d87a7fe61c2d02ccb922be",
-            "reference": "10828736a48411f2c4d87a7fe61c2d02ccb922be",
+            "url": "https://api.github.com/repos/symfony/validator/zipball/fca490df65008eb680c5ee9c2d521191c9e54ed5",
+            "reference": "fca490df65008eb680c5ee9c2d521191c9e54ed5",
             "shasum": ""
         },
         "require": {
@@ -1145,7 +1206,7 @@
             "symfony/property-access": "For accessing properties within comparison constraints",
             "symfony/yaml": ""
         },
-        "time": "2018-01-03T17:14:19+00:00",
+        "time": "2018-06-19T20:52:10+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {

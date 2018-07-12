@@ -41,7 +41,7 @@ trait RedisTrait
     /**
      * @param \Redis|\RedisArray|\RedisCluster|\Predis\Client $redisClient
      */
-    public function init($redisClient, $namespace = '', $defaultLifetime = 0)
+    private function init($redisClient, $namespace = '', $defaultLifetime = 0)
     {
         parent::__construct($namespace, $defaultLifetime);
 
@@ -120,11 +120,18 @@ trait RedisTrait
             $redis = new $class();
 
             $initializer = function ($redis) use ($connect, $params, $dsn, $auth) {
-                @$redis->{$connect}($params['host'], $params['port'], $params['timeout'], $params['persistent_id'], $params['retry_interval']);
+                try {
+                    @$redis->{$connect}($params['host'], $params['port'], $params['timeout'], $params['persistent_id'], $params['retry_interval']);
+                } catch (\RedisException $e) {
+                    throw new InvalidArgumentException(sprintf('Redis connection failed (%s): %s', $e->getMessage(), $dsn));
+                }
 
-                if (@!$redis->isConnected()) {
-                    $e = ($e = error_get_last()) && preg_match('/^Redis::p?connect\(\): (.*)/', $e['message'], $e) ? sprintf(' (%s)', $e[1]) : '';
-                    throw new InvalidArgumentException(sprintf('Redis connection failed%s: %s', $e, $dsn));
+                set_error_handler(function ($type, $msg) use (&$error) { $error = $msg; });
+                $isConnected = $redis->isConnected();
+                restore_error_handler();
+                if (!$isConnected) {
+                    $error = preg_match('/^Redis::p?connect\(\): (.*)/', $error, $error) ? sprintf(' (%s)', $error[1]) : '';
+                    throw new InvalidArgumentException(sprintf('Redis connection failed%s: %s', $error, $dsn));
                 }
 
                 if ((null !== $auth && !$redis->auth($auth))
@@ -190,7 +197,7 @@ trait RedisTrait
     protected function doClear($namespace)
     {
         // When using a native Redis cluster, clearing the cache is done by versioning in AbstractTrait::clear().
-        // This means old keys are not really removed until they expire and may need gargage collection.
+        // This means old keys are not really removed until they expire and may need garbage collection.
 
         $cleared = true;
         $hosts = array($this->redis);
@@ -236,7 +243,7 @@ trait RedisTrait
             $cursor = null;
             do {
                 $keys = $host instanceof \Predis\Client ? $host->scan($cursor, 'MATCH', $namespace.'*', 'COUNT', 1000) : $host->scan($cursor, $namespace.'*', 1000);
-                if (isset($keys[1]) && is_array($keys[1])) {
+                if (isset($keys[1]) && \is_array($keys[1])) {
                     $cursor = $keys[0];
                     $keys = $keys[1];
                 }
