@@ -118,7 +118,10 @@ function workbench_moderation_patch_update_status($nid, $current, $total, $simul
   if (!isset($context['results']['simulation'])) {
     $context['results']['simulation'] = $simulation;
     $context['results']['treated_nids'] = array();
-    $initial_message = dt('Process starts, the status of the some nodes could be concerned by the problem.');
+    $initial_message = dt(
+      'Process starts, the status of !count nodes could be concerned by the problem.',
+      array('!count' => $total)
+    );
     _workbench_moderation_patch_logs($initial_message, $simulation);
   }
 
