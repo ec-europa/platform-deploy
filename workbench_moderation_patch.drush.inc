@@ -64,6 +64,14 @@ function _workbench_moderation_patch_batch($simulation = TRUE) {
   $result = $node_query->execute();
   $records = $result->fetchCol();
   $total = count($records);
+
+  if (!$total) {
+    $message = dt('No node is concerned by the upgrade issue. The process can stop.');
+    _workbench_moderation_patch_logs($message, $simulation);
+    return;
+  }
+
+
   $i = 0;
 
   // Prepare the batch operations.
@@ -110,7 +118,7 @@ function workbench_moderation_patch_update_status($nid, $current, $total, $simul
   if (!isset($context['results']['simulation'])) {
     $context['results']['simulation'] = $simulation;
     $context['results']['treated_nids'] = array();
-    $initial_message = dt('Process starts, the status of the some nodes are to be corrected.');
+    $initial_message = dt('Process starts, the status of the some nodes could be concerned by the problem.');
     _workbench_moderation_patch_logs($initial_message, $simulation);
   }
 
