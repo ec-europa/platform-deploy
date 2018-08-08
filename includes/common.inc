@@ -1588,6 +1588,8 @@ function _filter_xss_attributes($attr) {
   $attrarr = array();
   $mode = 0;
   $attrname = '';
+  $skip = FALSE;
+  $skip_protocol_filtering = FALSE;
 
   while (strlen($attr) != 0) {
     // Was the last operation successful?
@@ -1599,6 +1601,20 @@ function _filter_xss_attributes($attr) {
         if (preg_match('/^([-a-zA-Z]+)/', $attr, $match)) {
           $attrname = strtolower($match[1]);
           $skip = ($attrname == 'style' || substr($attrname, 0, 2) == 'on');
+
+          // Values for attributes of type URI should be filtered for
+          // potentially malicious protocols (for example, an href-attribute
+          // starting with "javascript:"). However, for some non-URI
+          // attributes performing this filtering causes valid and safe data
+          // to be mangled. We prevent this by skipping protocol filtering on
+          // such attributes.
+          // See filter_xss_bad_protocol() and
+          // http://www.w3.org/TR/html4/index/attributes.html.
+          $skip_protocol_filtering = substr($attrname, 0, 5) === 'data-' || in_array($attrname, array(
+            'title',
+            'alt',
+          ));
+
           $working = $mode = 1;
           $attr = preg_replace('/^[-a-zA-Z]+/', '', $attr);
         }
@@ -1624,7 +1640,7 @@ function _filter_xss_attributes($attr) {
       case 2:
         // Attribute value, a URL after href= for instance.
         if (preg_match('/^"([^"]*)"(\s+|$)/', $attr, $match)) {
-          $thisval = filter_xss_bad_protocol($match[1]);
+          $thisval = $skip_protocol_filtering ? $match[1] : filter_xss_bad_protocol($match[1]);
 
           if (!$skip) {
             $attrarr[] = "$attrname=\"$thisval\"";
@@ -1636,7 +1652,7 @@ function _filter_xss_attributes($attr) {
         }
 
         if (preg_match("/^'([^']*)'(\s+|$)/", $attr, $match)) {
-          $thisval = filter_xss_bad_protocol($match[1]);
+          $thisval = $skip_protocol_filtering ? $match[1] : filter_xss_bad_protocol($match[1]);
 
           if (!$skip) {
             $attrarr[] = "$attrname='$thisval'";
@@ -1647,7 +1663,7 @@ function _filter_xss_attributes($attr) {
         }
 
         if (preg_match("%^([^\s\"']+)(\s+|$)%", $attr, $match)) {
-          $thisval = filter_xss_bad_protocol($match[1]);
+          $thisval = $skip_protocol_filtering ? $match[1] : filter_xss_bad_protocol($match[1]);
 
           if (!$skip) {
             $attrarr[] = "$attrname=\"$thisval\"";
@@ -1708,6 +1724,38 @@ function filter_xss_bad_protocol($string, $decode = TRUE) {
     $string = decode_entities($string);
   }
   return check_plain(drupal_strip_dangerous_protocols($string));
+}
+
+/**
+ * Applies a very permissive XSS/HTML filter to data-attributes.
+ *
+ * Contrib modules which allow rich text fields to be edited using client-side
+ * WYSIWYG editors must apply XSS filtering to the contents of data-attributes
+ * since they can contain encoded HTML markup that could be decoded and
+ * interpreted by editors.
+ *
+ * @param string $html
+ *   The string to apply the data-attributes filtering to.
+ *
+ * @return string
+ *   The filtered string.
+ */
+function filter_xss_data_attributes($html) {
+  if (stristr($html, 'data-') !== FALSE) {
+    $dom = filter_dom_load($html);
+    $xpath = new DOMXPath($dom);
+    foreach ($xpath->query('//@*[starts-with(name(.), "data-")]') as $node) {
+      // The data-attributes contain an HTML-encoded value, so we need to
+      // decode the value, apply XSS filtering and then re-save as encoded
+      // value. There is no need to explicitly decode $node->value, since the
+      // DOMAttr::value getter returns the decoded value.
+      $value = filter_xss_admin($node->value);
+      $node->value = check_plain($value);
+    }
+    $html = filter_dom_serialize($dom);
+  }
+
+  return $html;
 }
 
 /**
