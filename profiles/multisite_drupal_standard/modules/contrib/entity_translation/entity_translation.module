@@ -1841,8 +1841,13 @@ function entity_translation_language($entity_type, $entity) {
   if (empty($handler)) {
     return LANGUAGE_NONE;
   }
-  $langcode = $handler->getActiveLanguage();
-  return !empty($langcode) ? $langcode : $handler->getLanguage();
+  if (entity_translation_enabled($entity_type, $entity)) {
+    $langcode = $handler->getActiveLanguage();
+    return $langcode ? $langcode : $handler->getLanguage();
+  }
+  else {
+    return $handler->getLanguage();
+  }
 }
 
 /**
@@ -1867,6 +1872,8 @@ function entity_translation_get_handler($entity_type = NULL, $entity = NULL) {
     $entity_info = entity_get_info($entity_type);
     return new EntityTranslationDefaultHandler($entity_type, $entity_info, $entity);
   }
+
+  return NULL;
 }
 
 /**
