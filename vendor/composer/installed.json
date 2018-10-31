@@ -88,18 +88,18 @@
             "symfony/validator": "^2.8 || ^3.0"
         },
         "require-dev": {
-            "ec-europa/oe-code-review": "^0.0.2",
             "internations/http-mock": "^0.8",
             "mockery/mockery": "^0.9.9",
+            "openeuropa/code-review": "~0.2",
             "peridot-php/leo": "^1.6",
             "phpspec/phpspec": "^4.0",
-            "phpunit/phpunit": "^5"
+            "phpunit/phpunit": "^5||^6"
         },
         "suggest": {
             "ec-europa/oe-poetry-behat": "Test Poetry service integration with Behat",
             "monolog/monolog": "Log Poetry requests and responses via Monolog"
         },
-        "time": "2017-12-12T13:59:22+00:00",
+        "time": "2018-08-29T14:13:26+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -109,7 +109,7 @@
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
-            "EUPL-1.1"
+            "EUPL-1.2"
         ],
         "description": "Client library for the European Commission Poetry Service"
     },
@@ -302,17 +302,17 @@
     },
     {
         "name": "jasig/phpcas",
-        "version": "1.3.5",
-        "version_normalized": "1.3.5.0",
+        "version": "1.3.6",
+        "version_normalized": "1.3.6.0",
         "source": {
             "type": "git",
             "url": "https://github.com/apereo/phpCAS.git",
-            "reference": "61c8899c8f91204e8b9135d795461e50fe5c2db0"
+            "reference": "7972833e84f6ee5fa41f1479eab5d855109627f5"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/apereo/phpCAS/zipball/61c8899c8f91204e8b9135d795461e50fe5c2db0",
-            "reference": "61c8899c8f91204e8b9135d795461e50fe5c2db0",
+            "url": "https://api.github.com/repos/apereo/phpCAS/zipball/7972833e84f6ee5fa41f1479eab5d855109627f5",
+            "reference": "7972833e84f6ee5fa41f1479eab5d855109627f5",
             "shasum": ""
         },
         "require": {
@@ -322,7 +322,7 @@
         "require-dev": {
             "phpunit/phpunit": "~3.7.10"
         },
-        "time": "2017-04-10T19:12:45+00:00",
+        "time": "2018-10-25T20:22:09+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -352,6 +352,7 @@
         "description": "Provides a simple API for authenticating users against a CAS server",
         "homepage": "https://wiki.jasig.org/display/CASC/phpCAS",
         "keywords": [
+            "apereo",
             "cas",
             "jasig"
         ]
@@ -717,17 +718,17 @@
     },
     {
         "name": "symfony/cache",
-        "version": "v3.4.14",
-        "version_normalized": "3.4.14.0",
+        "version": "v3.4.17",
+        "version_normalized": "3.4.17.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/cache.git",
-            "reference": "337408485de75c884e6ab1b2e8f055d31a7aa7b6"
+            "reference": "4f29972d3fae5febec5c18db70e7dd2957e74ad6"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/cache/zipball/337408485de75c884e6ab1b2e8f055d31a7aa7b6",
-            "reference": "337408485de75c884e6ab1b2e8f055d31a7aa7b6",
+            "url": "https://api.github.com/repos/symfony/cache/zipball/4f29972d3fae5febec5c18db70e7dd2957e74ad6",
+            "reference": "4f29972d3fae5febec5c18db70e7dd2957e74ad6",
             "shasum": ""
         },
         "require": {
@@ -750,7 +751,7 @@
             "doctrine/dbal": "~2.4",
             "predis/predis": "~1.0"
         },
-        "time": "2018-07-26T11:19:56+00:00",
+        "time": "2018-09-25T07:13:51+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -789,17 +790,17 @@
     },
     {
         "name": "symfony/dom-crawler",
-        "version": "v3.4.14",
-        "version_normalized": "3.4.14.0",
+        "version": "v3.4.17",
+        "version_normalized": "3.4.17.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/dom-crawler.git",
-            "reference": "452bfc854b60134438e3824b159b0d24a5892331"
+            "reference": "c705bee03ade5b47c087807dd9ffaaec8dda2722"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/452bfc854b60134438e3824b159b0d24a5892331",
-            "reference": "452bfc854b60134438e3824b159b0d24a5892331",
+            "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/c705bee03ade5b47c087807dd9ffaaec8dda2722",
+            "reference": "c705bee03ade5b47c087807dd9ffaaec8dda2722",
             "shasum": ""
         },
         "require": {
@@ -813,7 +814,7 @@
         "suggest": {
             "symfony/css-selector": ""
         },
-        "time": "2018-07-26T10:03:52+00:00",
+        "time": "2018-10-02T12:28:39+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -848,8 +849,8 @@
     },
     {
         "name": "symfony/event-dispatcher",
-        "version": "v3.4.14",
-        "version_normalized": "3.4.14.0",
+        "version": "v3.4.17",
+        "version_normalized": "3.4.17.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/event-dispatcher.git",
@@ -913,8 +914,8 @@
     },
     {
         "name": "symfony/expression-language",
-        "version": "v3.4.14",
-        "version_normalized": "3.4.14.0",
+        "version": "v3.4.17",
+        "version_normalized": "3.4.17.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/expression-language.git",
@@ -1144,17 +1145,17 @@
     },
     {
         "name": "symfony/translation",
-        "version": "v3.4.14",
-        "version_normalized": "3.4.14.0",
+        "version": "v3.4.17",
+        "version_normalized": "3.4.17.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/translation.git",
-            "reference": "9749930bfc825139aadd2d28461ddbaed6577862"
+            "reference": "94bc3a79008e6640defedf5e14eb3b4f20048352"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/translation/zipball/9749930bfc825139aadd2d28461ddbaed6577862",
-            "reference": "9749930bfc825139aadd2d28461ddbaed6577862",
+            "url": "https://api.github.com/repos/symfony/translation/zipball/94bc3a79008e6640defedf5e14eb3b4f20048352",
+            "reference": "94bc3a79008e6640defedf5e14eb3b4f20048352",
             "shasum": ""
         },
         "require": {
@@ -1179,7 +1180,7 @@
             "symfony/config": "",
             "symfony/yaml": ""
         },
-        "time": "2018-07-26T11:19:56+00:00",
+        "time": "2018-10-02T16:33:53+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1214,17 +1215,17 @@
     },
     {
         "name": "symfony/validator",
-        "version": "v3.4.14",
-        "version_normalized": "3.4.14.0",
+        "version": "v3.4.17",
+        "version_normalized": "3.4.17.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/validator.git",
-            "reference": "364b818b5cc813282f19fefb364c24424210634a"
+            "reference": "9f8dbf0dceb03815c3160a279bf8cf4f8018a1c5"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/validator/zipball/364b818b5cc813282f19fefb364c24424210634a",
-            "reference": "364b818b5cc813282f19fefb364c24424210634a",
+            "url": "https://api.github.com/repos/symfony/validator/zipball/9f8dbf0dceb03815c3160a279bf8cf4f8018a1c5",
+            "reference": "9f8dbf0dceb03815c3160a279bf8cf4f8018a1c5",
             "shasum": ""
         },
         "require": {
@@ -1266,7 +1267,7 @@
             "symfony/property-access": "For accessing properties within comparison constraints",
             "symfony/yaml": ""
         },
-        "time": "2018-07-26T11:58:24+00:00",
+        "time": "2018-10-02T16:33:53+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
