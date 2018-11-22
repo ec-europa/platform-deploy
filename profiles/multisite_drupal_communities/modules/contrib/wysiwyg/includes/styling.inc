@@ -78,7 +78,7 @@ function _wysiwyg_filter_editor_styles(&$elements) {
     return $elements;
   }
   $context = array('theme' => $theme_key);
-  drupal_alter('wysiwyg_editor_styles', $elements, $context); $css = array();
+  drupal_alter('wysiwyg_editor_styles', $elements, $context);
   return $elements;
 }
 
@@ -97,6 +97,7 @@ function _wysiwyg_filter_editor_styles(&$elements) {
  */
 function _wysiwyg_pre_render_styles($elements) {
   global $theme_key;
+  $css = array();
   if (strpos(current_path(), 'wysiwyg_theme/') !== 0) {
     return $elements;
   }
