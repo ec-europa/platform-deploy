@@ -268,7 +268,7 @@
           // We also have to check jQuery version to prevent
           // IE8 + jQuery 1.4.4 to break on other events
           // bound to the submit button.
-          if (jQuery.fn.jquery === '1.4' && typeof event.bubbles === "undefined") {
+          if (jQuery.fn.jquery.substr(0, 3) === '1.4' && typeof event.bubbles === "undefined") {
             $(this.form).trigger('submit');
             return false;
           }
@@ -302,7 +302,7 @@
 
     // Attach behaviors within a modal dialog.
     var settings = response.settings || ajax.settings || Drupal.settings;
-    Drupal.attachBehaviors('#modalContent', settings);
+    Drupal.attachBehaviors($('#modalContent'), settings);
 
     if ($('#modal-content').hasClass('ctools-modal-loading')) {
       $('#modal-content').removeClass('ctools-modal-loading');
