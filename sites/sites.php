@@ -16,7 +16,9 @@ if(file_exists($strippedRoot.'.conf.d/settings.php')) {
         define('FPFIS_SALT_CONFIG_USED', true);
 } else {
     // Old behavior :
-    putenv('DRUPAL_LOCAL_SETTINGS_LOCATION=' . $strippedRoot . '/../settings.common.php');
+    if (!getenv("DRUPAL_LOCAL_SETTINGS_LOCATION")){
+      putenv('DRUPAL_LOCAL_SETTINGS_LOCATION=' . $strippedRoot . '/../settings.common.php');
+    }
     if(!defined("FPFIS_SALT_CONFIG_USED"))
       define('FPFIS_SALT_CONFIG_USED', false);
 }
