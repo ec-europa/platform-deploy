@@ -4,8 +4,13 @@
  * Attach this editor to a target element.
  */
 Drupal.wysiwyg.editor.attach.fckeditor = function(context, params, settings) {
+  var $field = $('#' + params.field);
   if (!settings.Height) {
-    settings.Height = $('#' + params.field).height();
+    settings.Height = $field.height();
+    if (settings.Height < 60) {
+      // Roughly 23px per row + 40 for 1 toolbar row and scrollbar.
+      settings.Height = Math.max(settings.Height, Math.max((parseInt($field.attr('rows'), 10) || 2) * 23 + 40, 60));
+    };
   }
   var FCKinstance = new FCKeditor(params.field, settings.Width, settings.Height, settings.ToolbarSet);
   // Keep track of the settings for this instance.
