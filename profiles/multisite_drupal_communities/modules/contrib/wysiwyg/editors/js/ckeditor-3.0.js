@@ -67,8 +67,13 @@ Drupal.wysiwyg.editor.attach.ckeditor = function(context, params, settings) {
   CKEDITOR.config.customConfig = '';
 
   var $drupalToolbars = $('#toolbar, #admin-menu', Drupal.overlayChild ? window.parent.document : document);
+  var $field = $('#' + params.field);
   if (!settings.height) {
-    settings.height = $('#' + params.field).height();
+    settings.height = $field.height();
+    if (settings.height < 40) {
+      // Rougly 23px per row and 15 for scrollbar.
+      settings.height = Math.max(settings.height, (parseInt($field.attr('rows'), 10) || 2) * 23 + 15);
+    };
   }
   settings.on = {
     instanceReady: function(ev) {

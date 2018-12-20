@@ -10,7 +10,11 @@ Drupal.wysiwyg.editor.attach.epiceditor = function (context, params, settings) {
     $container = $('<div id="' + containerId + '" />');
   $target.hide().after($container);
   if (!settings.height) {
-    settings.height = $('#' + params.field).height();
+    settings.height = $target.height();
+    if (settings.height < 20) {
+      // Roughly 23px per row.
+      settings.height = Math.max(settings.height, (parseInt($target.attr('rows'), 10) || 2) * 23);
+    };
   }
   $container.height(settings.height);
 
