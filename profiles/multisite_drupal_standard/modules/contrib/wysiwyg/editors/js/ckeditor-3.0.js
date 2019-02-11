@@ -21,6 +21,12 @@ var instanceMap;
  */
 Drupal.wysiwyg.editor.init.ckeditor = function(settings, pluginInfo) {
   instanceMap = {};
+
+  // Manually set the cache-busting string to the same value as Drupal.
+  if (Drupal.settings.wysiwyg.ckeditor.hasOwnProperty('timestamp')) {
+    CKEDITOR.timestamp = Drupal.settings.wysiwyg.ckeditor.timestamp;
+  }
+
   // Nothing to do here other than register new plugins etc.
   Drupal.wysiwyg.editor.update.ckeditor(settings, pluginInfo);
 };
