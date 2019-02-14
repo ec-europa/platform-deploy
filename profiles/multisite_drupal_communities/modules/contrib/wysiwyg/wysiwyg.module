@@ -1087,6 +1087,7 @@ function wysiwyg_get_all_editors() {
       'editor path' => wysiwyg_get_path($editors[$editor]['name']),
       'library path' => wysiwyg_get_path($editors[$editor]['name']),
       'libraries' => array(),
+      'installed' => FALSE,
       'version callback' => NULL,
       'themes callback' => NULL,
       'settings form callback' => NULL,
@@ -1098,7 +1099,7 @@ function wysiwyg_get_all_editors() {
       'css path' => $editors[$editor]['path'] . '/css',
     );
     // Check whether library is present.
-    if (!($editors[$editor]['installed'] = file_exists($editors[$editor]['library path']))) {
+    if (!$editors[$editor]['installed'] && !($editors[$editor]['installed'] = file_exists($editors[$editor]['library path']))) {
       // Find the latest supported version.
       ksort($editors[$editor]['versions']);
       $version = key($editors[$editor]['versions']);
@@ -1146,9 +1147,7 @@ function wysiwyg_get_all_editors() {
     $editors[$editor] = array_merge($editors[$editor], $editors[$editor]['versions'][$version]);
     unset($editors[$editor]['versions']);
   }
-
   drupal_alter('wysiwyg_editor', $editors);
-
   return $editors;
 }
 
@@ -1224,6 +1223,7 @@ function wysiwyg_load_includes($type = 'editors', $hook = 'editor', $file = NULL
       }
     }
   }
+  drupal_alter('wysiwyg_load_includes', $info, $hook);
   return $info;
 }
 
