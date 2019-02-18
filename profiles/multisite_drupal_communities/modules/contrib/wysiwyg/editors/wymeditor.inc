@@ -11,8 +11,9 @@
 function wysiwyg_wymeditor_editor() {
   $editor['wymeditor'] = array(
     'title' => 'WYMeditor',
-    'vendor url' => 'https://wymeditor.github.io/wymeditor/',
+    'vendor url' => 'http://wymeditor.github.io/wymeditor/',
     'download url' => 'https://github.com/wymeditor/wymeditor/releases',
+    'library path' => wysiwyg_get_path('wymeditor'),
     'libraries' => array(
       'min' => array(
         'title' => 'Minified',
@@ -31,9 +32,15 @@ function wysiwyg_wymeditor_editor() {
     'plugin callback' => '_wysiwyg_wymeditor_plugins',
     'versions' => array(
       '0.5-rc1' => array(
+        'library path' => wysiwyg_get_path('wymeditor') . '/wymeditor',
         'js files' => array('wymeditor.js'),
       ),
       '1.0.0a1' => array(
+        'library path' => wysiwyg_get_path('wymeditor') . '/wymeditor',
+        'js files' => array('wymeditor-1.js'),
+        'css files' => array('wymeditor.css'),
+      ),
+      '1.0.0b5' => array(
         'js files' => array('wymeditor-1.js'),
         'css files' => array('wymeditor.css'),
       ),
@@ -51,22 +58,23 @@ function wysiwyg_wymeditor_editor() {
  * @return
  *   The installed editor version.
  */
-function wysiwyg_wymeditor_version(&$editor) {
-  $script = $editor['library path'] . '/jquery.wymeditor.js';
+function wysiwyg_wymeditor_version($editor) {
+  $script = $editor['library path'] . '/wymeditor/jquery.wymeditor.js';
   if (!file_exists($script)) {
-    $script = $editor['library path'] . '/wymeditor/jquery.wymeditor.js';
+    $script = $editor['library path'] . '/jquery.wymeditor.js';
     if (!file_exists($script)) {
       return;
     }
-    $editor['library path'] .= '/wymeditor';
-    $editor['editor path'] .= '/wymeditor';
+  }
+  if (!file_exists($script)) {
+    return;
   }
   $script = fopen($script, 'r');
   for ($i = 0; $i < 189; $i++) {
     $line = fgets($script);
     if (preg_match('@version\s+([0-9\.]+(?:-?[a-z0-9\.]+)?[^\.])@', $line, $version)) {
       fclose($script);
-      return trim($version[1]);
+      return $version[1];
     }
   }
   fclose($script);
@@ -140,7 +148,7 @@ function wysiwyg_wymeditor_settings($editor, $config, $theme) {
     'skin' => $theme,
   );
   if (version_compare($editor['installed version'], '1.0.0-b5', '>=')) {
-    drupal_add_css($editor['library path'] . '/skins/' . $settings['skin'] . '/skin.css');
+    drupal_add_css(wysiwyg_get_path('wymeditor') . '/skins/' . $settings['skin'] . '/skin.css');
   }
   else {
     // @todo Does not work in Drupal; jQuery can live anywhere.
