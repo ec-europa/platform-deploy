@@ -6,7 +6,7 @@ hidden = TRUE
 dependencies[] = wysiwyg
 files[] = wysiwyg_test.module
 
-; Information added by drush on 2018-11-11
+; Information added by drush on 2019-02-10
 version = "unknown"
 project = "wysiwyg"
-datestamp = "1541896142"
+datestamp = "1549816974"
