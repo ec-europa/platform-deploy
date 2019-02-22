@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInita5f048ae790dfad876f562c7b05ac48a
+class ComposerStaticInit545493cc98cb7acecfe753c40fdd1ff1
 {
     public static $files = array (
         '32dcc8afd4335739640db7d200c1971d' => __DIR__ . '/..' . '/symfony/polyfill-apcu/bootstrap.php',
@@ -19,6 +19,10 @@ class ComposerStaticInita5f048ae790dfad876f562c7b05ac48a
         'd' => 
         array (
             'drupol\\drupal7_psr3_watchdog\\' => 29,
+        ),
+        'c' => 
+        array (
+            'cweagans\\Composer\\' => 18,
         ),
         'S' => 
         array (
@@ -64,6 +68,10 @@ class ComposerStaticInita5f048ae790dfad876f562c7b05ac48a
         'drupol\\drupal7_psr3_watchdog\\' => 
         array (
             0 => __DIR__ . '/..' . '/drupol/drupal7_psr3_watchdog/src',
+        ),
+        'cweagans\\Composer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/cweagans/composer-patches/src',
         ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
@@ -160,9 +168,9 @@ class ComposerStaticInita5f048ae790dfad876f562c7b05ac48a
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInita5f048ae790dfad876f562c7b05ac48a::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInita5f048ae790dfad876f562c7b05ac48a::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInita5f048ae790dfad876f562c7b05ac48a::$prefixesPsr0;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit545493cc98cb7acecfe753c40fdd1ff1::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit545493cc98cb7acecfe753c40fdd1ff1::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit545493cc98cb7acecfe753c40fdd1ff1::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }
