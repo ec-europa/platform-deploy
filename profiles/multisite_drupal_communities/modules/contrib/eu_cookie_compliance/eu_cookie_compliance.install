@@ -131,6 +131,7 @@ function _eu_cookie_compliance_get_popup_default_setting() {
   }
 
   return array(
+    'info_template' => 'new',
     'popup_info' => array(
       'value' => '<h2>We use cookies on this site to enhance your user experience</h2><p>By clicking any link on this page you are giving your consent for us to set cookies.</p>',
       'format' => $default_filter_format,
@@ -190,6 +191,7 @@ function eu_cookie_compliance_update_7000(&$sandbox = NULL) {
 
 /**
  * Migrate translation handling to Variable API.
+ *
  * NOTE: Make sure the variable_realm and i18n_variable modules are either
  * enabled or in the filesystem if you are using multiple languages.
  */
@@ -206,7 +208,7 @@ function eu_cookie_compliance_update_7001(&$sandbox) {
   else {
     // Multiple languages, need to install variable_realm module.
     $variable_exists = TRUE;
-    if (module_exists('i18n_variable')) {
+    if (!module_exists('i18n_variable')) {
       $variable_exists = module_enable(array('i18n_variable'));
     }
     if ($variable_exists) {
@@ -333,7 +335,9 @@ function eu_cookie_compliance_update_7006() {
     ),
   );
 
-  db_create_table('eu_cookie_compliance_basic_consent', $schema['eu_cookie_compliance_basic_consent']);
+  if (!db_table_exists('eu_cookie_compliance_basic_consent')) {
+    db_create_table('eu_cookie_compliance_basic_consent', $schema['eu_cookie_compliance_basic_consent']);
+  }
   $eu_cookie_settings = variable_get('eu_cookie_compliance', array());
   $eu_cookie_settings['consent_storage_method'] = 'do_not_store';
   variable_set('eu_cookie_compliance', $eu_cookie_settings);
@@ -379,6 +383,11 @@ function eu_cookie_compliance_update_7008() {
   $eu_cookie_settings['withdraw_action_button_label'] = 'Withdraw consent';
   $eu_cookie_settings['withdraw_tab_button_label'] = 'Privacy settings';
   $eu_cookie_settings['withdraw_enabled'] = 1;
+  // Set default info template to 'legacy' for 'consent by default' config
+  // option.
+  if (!array_key_exists('info_template', $eu_cookie_settings)) {
+    $eu_cookie_settings['info_template'] = 'legacy';
+  }
   variable_set('eu_cookie_compliance', $eu_cookie_settings);
 }
 
