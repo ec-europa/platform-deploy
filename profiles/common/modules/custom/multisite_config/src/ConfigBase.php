@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Contains \\Drupal\\multisite_config\\ConfigBase.
+ */
+
+/* @cond DEV */
 namespace Drupal\multisite_config;
 
 /**
@@ -31,3 +37,4 @@ class ConfigBase {
   }
 
 }
+/* @endcond */

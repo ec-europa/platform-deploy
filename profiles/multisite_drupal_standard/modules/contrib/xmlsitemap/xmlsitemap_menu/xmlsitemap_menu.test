@@ -2,35 +2,13 @@
 
 /**
  * @file
- * Unit tests for the xmlsitemap_menu project..
+ * Unit tests for the xmlsitemap_menu module.
  */
 
-/**
- * Menu Functional Test.
- */
 class XMLSitemapMenuFunctionalTest extends XMLSitemapTestHelper {
-
-  /**
-   * Normal User.
-   *
-   * @var string
-   *
-   * @codingStandardsIgnoreStart
-   */
   protected $normal_user;
-
-  /**
-   * Menu Items.
-   *
-   * @var array
-   */
   protected $menu_items = array();
 
-  /**
-   * Get Info.
-   *
-   * @codingStandardsIgnoreEnd
-   */
   public static function getInfo() {
     return array(
       'name' => 'XML sitemap menu',
@@ -39,10 +17,7 @@ class XMLSitemapMenuFunctionalTest extends XMLSitemapTestHelper {
     );
   }
 
-  /**
-   * Setup.
-   */
-  public function setUp($modules = array()) {
+  function setUp($modules = array()) {
     $modules[] = 'xmlsitemap_menu';
     $modules[] = 'menu';
     parent::setUp($modules);
@@ -51,10 +26,7 @@ class XMLSitemapMenuFunctionalTest extends XMLSitemapTestHelper {
     $this->normal_user = $this->drupalCreateUser(array('access content'));
   }
 
-  /**
-   * Menu Settings.
-   */
-  public function testMenuSettings() {
+  function testMenuSettings() {
     $this->drupalLogin($this->admin_user);
 
     $edit = array(
@@ -64,6 +36,7 @@ class XMLSitemapMenuFunctionalTest extends XMLSitemapTestHelper {
       'xmlsitemap[priority]' => '1.0',
     );
     $this->drupalPost('admin/structure/menu/add', $edit, 'Save');
+    $menu = menu_load($edit['menu_name']);
 
     $this->clickLink('Add link');
     $edit = array(
@@ -74,5 +47,4 @@ class XMLSitemapMenuFunctionalTest extends XMLSitemapTestHelper {
     );
     $this->drupalPost(NULL, $edit, 'Save');
   }
-
 }

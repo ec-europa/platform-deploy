@@ -20,7 +20,7 @@ function atomium_atomium_theme_form() {
 /**
  * Implements hook_preprocess_hook().
  */
-function atomium_preprocess_form(array &$variables, $hook) {
+function atomium_preprocess_form(&$variables, $hook) {
   if (isset($variables['element']['#form_id'])) {
     $variables['theme_hook_suggestions'][] = 'form--' . $variables['element']['#form_id'];
   }
@@ -32,7 +32,7 @@ function atomium_preprocess_form(array &$variables, $hook) {
   }
   element_set_attributes($element, array('method', 'id'));
   if (empty($element['#attributes']['accept-charset'])) {
-    $element['#attributes']['accept-charset'] = 'UTF-8';
+    $element['#attributes']['accept-charset'] = "UTF-8";
   }
 
   $variables['atomium']['attributes']['element']->merge($element['#attributes']);

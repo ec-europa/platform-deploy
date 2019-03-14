@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\field\InstanceField\DefaultFieldHandler.
+ */
+
 namespace Drupal\field\InstanceField;
 
 use Drupal\field\FieldHandlerInterface;

@@ -17,6 +17,7 @@ function subscriptions_og_permission() {
   );
 }
 
+
 /**
  * Implements hook_subscriptions().
  */

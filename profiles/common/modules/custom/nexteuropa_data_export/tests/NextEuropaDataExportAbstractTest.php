@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Class \Drupal\nexteuropa_data_export\Tests\NextEuropaDataExportAbstractTest.
+ */
+
 namespace Drupal\nexteuropa_data_export\Tests;
 
 use Behat\Mink\Mink;

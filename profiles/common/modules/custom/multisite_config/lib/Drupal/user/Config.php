@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \\Drupal\\user\\Config.
+ */
+
 namespace Drupal\user;
 
 use Drupal\multisite_config\ConfigBase;

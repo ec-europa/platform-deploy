@@ -53,10 +53,7 @@ function theme_file_entity_file_link($variables) {
     $options['attributes']['title'] = check_plain($file->filename);
   }
 
-  $output = '<span class="file">' . $icon . ' ' . l($link_text, $uri['path'], $uri['options']);
-  $output .= ' ' . '<span class="file-size">(' . format_size($file->filesize) . ')</span>';
-  $output .= '</span>';
-  return $output;
+  return '<span class="file">' . $icon . ' ' . l($link_text, $url, $options) . '</span>';
 }
 
 /**
@@ -134,23 +131,6 @@ function theme_file_entity_file_audio($variables) {
   $audio_attributes = array();
   if ($variables['controls']) {
     $audio_attributes['controls'] = 'controls';
-
-    if (!empty($variables['controls_list'])) {
-      $controls_list = array();
-      foreach ($variables['controls_list'] as $key => $value) {
-        if (!$value) {
-          switch ($key) {
-            case 'download':
-              $controls_list[] = 'nodownload';
-              break;
-            case 'remote_playback':
-              $controls_list[] = 'noremoteplayback';
-              break;
-          }
-        }
-      }
-      $audio_attributes['controlsList'] = implode(' ', $controls_list);
-    }
   }
   if ($variables['autoplay']) {
     $audio_attributes['autoplay'] = 'autoplay';
@@ -197,26 +177,6 @@ function theme_file_entity_file_video($variables) {
   $video_attributes = array();
   if ($variables['controls']) {
     $video_attributes['controls'] = 'controls';
-
-    if (!empty($variables['controls_list'])) {
-      $controls_list = array();
-      foreach ($variables['controls_list'] as $key => $value) {
-        if (!$value) {
-          switch ($key) {
-            case 'fullscreen':
-              $controls_list[] = 'nofullscreen';
-              break;
-            case 'download':
-              $controls_list[] = 'nodownload';
-              break;
-            case 'remote_playback':
-              $controls_list[] = 'noremoteplayback';
-              break;
-          }
-        }
-      }
-      $video_attributes['controlsList'] = implode(' ', $controls_list);
-    }
   }
   if ($variables['autoplay']) {
     $video_attributes['autoplay'] = 'autoplay';

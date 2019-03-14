@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Multisite\Config\Features\nexteuropa_editorial\Config.
+ */
+
 namespace Drupal\nexteuropa_editorial;
 
 use Drupal\multisite_config\ConfigBase;

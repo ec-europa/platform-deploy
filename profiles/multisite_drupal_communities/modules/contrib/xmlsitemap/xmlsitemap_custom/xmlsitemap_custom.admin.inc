@@ -2,12 +2,9 @@
 
 /**
  * @file
- * Administrative page callbacks for the xmlsitemap_custom.
+ * Administrative page callbacks for the xmlsitemap_custom module.
  */
 
-/**
- * List Links.
- */
 function xmlsitemap_custom_list_links() {
   $header = array(
     'loc' => array('data' => t('Location'), 'field' => 'loc', 'sort' => 'asc'),
@@ -65,9 +62,6 @@ function xmlsitemap_custom_list_links() {
   return $build;
 }
 
-/**
- * Edit Link Form.
- */
 function xmlsitemap_custom_edit_link_form($form, &$form_state, $link = array()) {
   module_load_include('inc', 'xmlsitemap', 'xmlsitemap.admin');
   _xmlsitemap_set_breadcrumb('admin/config/search/xmlsitemap/custom');
@@ -122,7 +116,7 @@ function xmlsitemap_custom_edit_link_form($form, &$form_state, $link = array()) 
   );
 
   $form['actions'] = array(
-    '#type' => 'actions',
+    '#type' => 'actions'
   );
   $form['actions']['submit'] = array(
     '#type' => 'submit',
@@ -137,9 +131,6 @@ function xmlsitemap_custom_edit_link_form($form, &$form_state, $link = array()) 
   return $form;
 }
 
-/**
- * Edit Link Form Validate.
- */
 function xmlsitemap_custom_edit_link_form_validate($form, &$form_state) {
   $link = &$form_state['values'];
 
@@ -152,16 +143,12 @@ function xmlsitemap_custom_edit_link_form_validate($form, &$form_state) {
   $menu_item = menu_get_item($link['loc']);
   xmlsitemap_restore_user();
 
-  // Since the menu item access results are cached, manually check the current
-  // path.
+  // Since the menu item access results are cached, manually check the current path.
   if ($menu_item && strpos($link['loc'], 'admin/config/search/xmlsitemap/custom') === 0 && !user_access('administer xmlsitemap', drupal_anonymous_user())) {
     $menu_item['access'] = FALSE;
   }
 
-  if (db_query_range("SELECT 1 FROM {xmlsitemap} WHERE type <> 'custom' AND loc = :loc AND status = 1 AND access = 1 AND language IN (:languages)", 0, 1, array(
-    ':loc' => $link['loc'],
-    ':languages' => array(LANGUAGE_NONE, $link['language']),
-  ))->fetchField()) {
+  if (db_query_range("SELECT 1 FROM {xmlsitemap} WHERE type <> 'custom' AND loc = :loc AND status = 1 AND access = 1 AND language IN (:languages)", 0, 1, array(':loc' => $link['loc'], ':languages' => array(LANGUAGE_NONE, $link['language'])))->fetchField()) {
     form_set_error('loc', t('There is already an existing link in the sitemap with the path %link.', array('%link' => $link['loc'])));
   }
   elseif (empty($menu_item['access']) && !is_readable('./' . $link['loc'])) {
@@ -171,9 +158,6 @@ function xmlsitemap_custom_edit_link_form_validate($form, &$form_state) {
   }
 }
 
-/**
- * Edit Link Form Submit.
- */
 function xmlsitemap_custom_edit_link_form_submit($form, &$form_state) {
   $link = $form_state['values'];
   xmlsitemap_link_save($link);
@@ -181,11 +165,8 @@ function xmlsitemap_custom_edit_link_form_submit($form, &$form_state) {
   $form_state['redirect'] = 'admin/config/search/xmlsitemap/custom';
 }
 
-/**
- * Delete Link Form.
- */
 function xmlsitemap_custom_delete_link_form($form, &$form_state, array $link) {
-  // @todo Remove when https://www.drupal.org/node/576290 is fixed.
+  // @todo Remove when http://drupal.org/node/576290 is fixed.
   _xmlsitemap_set_breadcrumb('admin/config/search/xmlsitemap/custom');
 
   $form['#link'] = $link;
@@ -208,9 +189,6 @@ function xmlsitemap_custom_delete_link_form($form, &$form_state, array $link) {
   );
 }
 
-/**
- * Delete Link Form Submit.
- */
 function xmlsitemap_custom_delete_link_form_submit($form, &$form_state) {
   $link = $form_state['values']['link'];
   xmlsitemap_link_delete('custom', $link['id']);

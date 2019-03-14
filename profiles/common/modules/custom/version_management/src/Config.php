@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \\Drupal\\version_management\\Config.
+ */
+
 namespace Drupal\version_management;
 
 use Drupal\multisite_config\ConfigBase;

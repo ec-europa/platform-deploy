@@ -18,29 +18,25 @@
 function _atomium_theme(&$existing, $type, $theme, $path) {
   $hooks = array();
 
-  foreach (atomium_discover_templates() as $component_data) {
-    $file = \sprintf('%s/%s.component.inc', $component_data['directory'], $component_data['component']);
+  foreach (atomium_find_templates() as $theme => $theme_data) {
+    foreach ($theme_data as $component => $component_data) {
 
-    if (!\file_exists($file)) {
-      continue;
-    }
-
-    include_once $file;
-
-    $function_name = $component_data['theme'] . '_atomium_theme_' . $component_data['component'];
-    if (!\function_exists($function_name)) {
-      continue;
-    }
-
-    $hooks = drupal_array_merge_deep(
-      (array) \call_user_func_array(
-        $function_name,
-        array(&$existing, $type, $component_data['theme'], $path)),
-      $hooks
-    );
-
-    foreach ($hooks as &$hook) {
-      $hook += array('path' => $component_data['directory']);
+      $file = sprintf('%s/%s.component.inc', $component_data['directory'], $component);
+      if (file_exists($file)) {
+        include_once $file;
+        $function_name = $theme . '_atomium_theme_' . $component;
+        if (function_exists($function_name)) {
+          $hooks = drupal_array_merge_deep(
+            (array) call_user_func_array(
+              $function_name,
+              array(&$existing, $type, $theme, $path)),
+            $hooks
+          );
+          foreach ($hooks as &$hook) {
+            $hook += array('path' => $component_data['directory']);
+          }
+        }
+      }
     }
   }
 
@@ -50,33 +46,29 @@ function _atomium_theme(&$existing, $type, $theme, $path) {
 /**
  * Implements hook_theme_registry_alter().
  */
-function atomium_theme_registry_alter(array &$registry) {
-  // Figure out which theme this applies to.
-  $trace = \debug_backtrace(0, 3);
+function atomium_theme_registry_alter(&$registry) {
+  // Retrieve the active theme names.
+  $themes = _atomium_get_base_themes(NULL, TRUE);
 
-  if (!isset($trace[2]['function'], $trace[2]['args'][0])
-    || '_theme_build_registry' !== $trace[2]['function']) {
-    watchdog(
-      'atomium',
-      'hook_theme_registry_alter() was called from an unexpected place. We cannot determine which theme this registry belongs to. Atomium functionality might not work.',
-      array(),
-      WATCHDOG_WARNING
-    );
-
+  // Return the theme registry unaltered if it is not Atomium based.
+  if (!in_array('atomium', $themes)) {
     return;
   }
 
-  /* @see _theme_build_registry() */
-  list($theme, $base_themes) = $trace[2]['args'];
-
   // Process registered hooks in the theme registry.
-  _atomium_process_theme_registry(
-    $registry,
-    \array_merge(
-      $base_themes,
-      array($theme->name => $theme)
-    )
-  );
+  _atomium_process_theme_registry($registry, $themes);
+
+  // Get all themes.
+  $all_themes = list_themes();
+
+  // Compile an array of base themes object.
+  $base_themes = _atomium_get_base_themes($all_themes[$GLOBALS['theme']]->name, TRUE);
+  $base_themes = array_map(function ($theme) use ($all_themes) {
+    return $all_themes[$theme];
+  }, array_combine($base_themes, $base_themes));
+
+  // Extract the current theme.
+  $theme = array_pop($base_themes);
 
   // Apply Atomium sauce.
   _theme_post_process_registry($registry, $base_themes, $theme);
@@ -94,14 +86,11 @@ function atomium_theme_registry_alter(array &$registry) {
  */
 function _theme_post_process_registry(array &$cache, array $base_themes, $theme) {
   $prefixes_data = _atomium_theme_make_prefixes($base_themes, $theme);
-  $theme_hooks = \array_merge(
-    $prefixes_data['theme_engine'],
-    $prefixes_data['base_theme'],
-    $prefixes_data['theme']);
+  $themes = array_merge($prefixes_data['theme_engine'], $prefixes_data['base_theme'], $prefixes_data['theme']);
   $grouped_functions = drupal_group_functions_by_prefix();
 
   // Reverse sort the registry.
-  \krsort($cache);
+  krsort($cache);
 
   // Iterate over each registered hook.
   foreach ($cache as $hook => &$info) {
@@ -115,7 +104,7 @@ function _theme_post_process_registry(array &$cache, array $base_themes, $theme)
 
     // Iterate over each themes objects.
     // This is in order: the theme engine, the base theme(s), the current theme.
-    foreach ($theme_hooks as $theme_hook) {
+    foreach ($themes as $theme_hook) {
       _atomium_theme_find_processors($grouped_functions, $cache, $info, $theme_hook, $hook);
 
       // Ensure "theme path" is set.
@@ -139,40 +128,22 @@ function _theme_post_process_registry(array &$cache, array $base_themes, $theme)
   foreach ($cache as $hook => &$info) {
     // Make sure the includes member of each hook is completed with its
     // parent hook.
-    list($original_hook,) = \explode('__', $hook);
+    list($original_hook,) = explode('__', $hook);
     $info += array('includes' => array());
     $cache[$original_hook] += array('includes' => array());
-    $info['includes'] = \array_unique(
-      \array_merge(
+    $info['includes'] = array_unique(
+      array_merge(
         (array) $info['includes'],
         (array) $cache[$original_hook]['includes']
       )
     );
 
     // Optimize the registry.
-    $info = \array_filter($info);
+    $info = array_filter($info);
   }
 
   // Sort the registry.
-  \ksort($cache);
-
-  \array_walk($cache, function (array &$info) {
-    // Make sure there is a preprocess for each hook.
-    $info += array('preprocess functions' => array());
-
-    $info['preprocess functions'] = \array_filter(
-      $info['preprocess functions'],
-      function ($preprocess) {
-        return 'atomium_preprocess' !== $preprocess;
-      }
-    );
-
-    // The simple preprocess was not used here because theme hooks defined with
-    // a function doesn't trigger all the preprocess callbacks.
-    // It's added at the first place so we make sure it's creating the variables
-    // for hooks defined by templates and functions properly.
-    \array_unshift($info['preprocess functions'], 'atomium_preprocess');
-  });
+  ksort($cache);
 }
 
 /**
@@ -198,8 +169,8 @@ function _atomium_theme_find_processors(array $grouped_functions, array &$cache,
     $prefix = $theme . '_' . $phase;
 
     // Grep only the functions which are within the prefix group.
-    list($first_prefix,) = \explode('_', $prefix, 2);
-    if (isset($grouped_functions[$first_prefix]) && ($matches = \preg_grep(
+    list($first_prefix,) = explode('_', $prefix, 2);
+    if (isset($grouped_functions[$first_prefix]) && ($matches = preg_grep(
         '/^' . $prefix . '_' . $pattern . '/',
         $grouped_functions[$first_prefix]
       ))) {
@@ -237,40 +208,35 @@ function _atomium_theme_add_processors($hook, array &$info = array(), array $pre
         $callbacks[] = $prefix . '_' . $phase;
         // This is the code that ensure preprocess/process inheritance.
         // TODO here detect how to set 'theme path'.
-        \array_map(function ($hook) use (&$callbacks, $phase, $prefix) {
+        array_map(function ($hook) use (&$callbacks, $phase, $prefix) {
           $callbacks[] = $prefix . '_' . $phase . '_' . $hook;
-        }, \array_reverse($hooks_stack));
+        }, array_reverse($hooks_stack));
       }
     }
 
     // This is for dealing with modules implementing hook_theme_registry_alter.
     // By doing this, I make sure that no process callbacks that has been added
     // through this hook are lost.
-    $info[$phase_key] = \array_merge(
+    $info[$phase_key] = array_merge(
       $callbacks,
-      \array_diff($info[$phase_key], $callbacks)
+      array_diff($info[$phase_key], $callbacks)
     );
 
     // Ensure uniqueness of functions.
-    $info[$phase_key] = \array_unique($info[$phase_key]);
-
-    // Make sure that the files to include are included prior filtering
-    // the preprocess callbacks.
-    $info += array('includes' => array());
-    foreach ((array) $info['includes'] as $theme_file) {
-      include_once $theme_file;
-    }
+    $info[$phase_key] = array_unique($info[$phase_key]);
 
     // Filter out functions that does not exist.
-    $info[$phase_key] = \array_filter($info[$phase_key], '\function_exists');
+    $info[$phase_key] = array_filter($info[$phase_key], function ($function) {
+      return function_exists($function);
+    });
 
     // Sadly we remove preprocess and process for hooks that provides
     // a theme function. (like the date module with date_display_single).
     // We could have this in Atomium but some modules badly implementing
     // attributes handling would fail.
     if (isset($info['function'])) {
-      $info[$phase_key] = \array_filter($info[$phase_key], function ($function) use ($phase, $hook) {
-        return FALSE !== \strpos($function, $phase . '_' . $hook);
+      $info[$phase_key] = array_filter($info[$phase_key], function ($function) use ($phase, $hook) {
+        return (FALSE !== strpos($function, $phase . '_' . $hook));
       });
     }
   }
@@ -316,11 +282,9 @@ function _atomium_theme_make_prefixes(array $base_themes, $theme) {
     'theme_engine' => array(
       $theme->engine => $theme->engine,
     ),
-    'base_theme' => \array_map(
-      function ($theme) {
-        return $theme->name;
-      },
-      $base_themes
+    'base_theme' => array_combine(
+      array_keys($base_themes),
+      array_keys($base_themes)
     ),
     'theme' => array(
       $theme->name => $theme->name,
@@ -335,12 +299,12 @@ function _atomium_theme_make_prefixes(array $base_themes, $theme) {
  *   Functions grouped by the first prefix.
  */
 function drupal_group_functions_by_prefix() {
-  $functions = \get_defined_functions();
+  $functions = get_defined_functions();
   $grouped_functions = array();
 
   // Splitting user defined functions into groups by the first prefix.
   foreach ($functions['user'] as $function) {
-    list($first_prefix,) = \explode('_', $function, 2);
+    list($first_prefix,) = explode('_', $function, 2);
     $grouped_functions[$first_prefix][] = $function;
   }
 
@@ -359,9 +323,9 @@ function drupal_group_functions_by_prefix() {
 function drupal_get_hook_parents($hook) {
   $stack = array($hook);
 
-  while ($pos = \strrpos(\current($stack), '__')) {
-    $stack[] = drupal_substr(\current($stack), 0, $pos);
-    \next($stack);
+  while ($pos = strrpos(current($stack), '__')) {
+    $stack[] = drupal_substr(current($stack), 0, $pos);
+    next($stack);
   }
 
   return $stack;
@@ -393,17 +357,19 @@ function drupal_get_hook_parents($hook) {
  *
  * @param array $registry
  *   The theme registry array, passed by reference.
- * @param object[] $themes
- *   The list of Drupal theme to process.
+ * @param string|array $themes
+ *   The name of the theme or list of theme names to process.
  *
  * @see atomium_theme_registry_alter()
  * @see _theme_process_registry()
  * @see _theme_build_registry()
- *
- * @SuppressWarnings(PHPMD.CyclomaticComplexity)
- * @SuppressWarnings(PHPMD.NPathComplexity)
  */
-function _atomium_process_theme_registry(array &$registry, array $themes) {
+function _atomium_process_theme_registry(array &$registry, $themes) {
+  // Convert to an array if needed.
+  if (is_string($themes)) {
+    $themes = array();
+  }
+
   // Processor functions work in two distinct phases with the process
   // functions always being executed after the preprocess functions.
   $variable_process_phases = array(
@@ -416,17 +382,17 @@ function _atomium_process_theme_registry(array &$registry, array $themes) {
   foreach ($variable_process_phases as $phase_key => $phase) {
     foreach ($themes as $theme) {
       // Get the theme's base path.
-      $path = drupal_dirname($theme->filename);
+      $path = drupal_get_path('theme', $theme);
       $regexp = '/\.component\.inc$/';
       // Find theme function overrides.
       foreach (drupal_system_listing($regexp, $path . '/templates', 'name', 0) as $name => $file) {
         // Strip off the extension.
-        if (FALSE !== ($pos = \strpos($name, '.'))) {
+        if (($pos = strpos($name, '.')) !== FALSE) {
           $name = drupal_substr($name, 0, $pos);
         }
 
         // Transform "-" in file names to "_" to match theme hook naming scheme.
-        $hook = \strtr($name, '-', '_');
+        $hook = strtr($name, '-', '_');
 
         // File to be included by core's theme function when a theme hook is
         // invoked.
@@ -439,14 +405,14 @@ function _atomium_process_theme_registry(array &$registry, array $themes) {
           // Include the file now so functions can be discovered below.
           include_once DRUPAL_ROOT . '/' . $file->uri;
 
-          if (!\in_array($file->uri, $registry[$hook]['includes'], TRUE)) {
+          if (!in_array($file->uri, $registry[$hook]['includes'])) {
             $registry[$hook]['includes'][] = $file->uri;
           }
         }
       }
 
       // Process core's normal functionality.
-      _theme_process_registry($registry, $theme->name, $GLOBALS['theme_key'] === $theme->name ? 'theme' : 'base_theme', $theme->name, $path);
+      _theme_process_registry($registry, $theme, $GLOBALS['theme_key'] === $theme ? 'theme' : 'base_theme', $theme, $path);
 
       // Find necessary templates in the theme.
       $registry = drupal_array_merge_deep($registry, drupal_find_theme_templates($registry, '.tpl.php', $path));
@@ -506,24 +472,22 @@ function _atomium_process_theme_registry(array &$registry, array $themes) {
  */
 function _atomium_registry_sort_phase_functions(array &$functions, $hook, $phase, array $themes) {
   // Immediately return if there is nothing to sort.
-  if (\count($functions) < 2) {
+  if (count($functions) < 2) {
     return;
   }
 
-  $theme_functions = array();
+  // Create an associative array of theme functions to ensure sort order.
+  $theme_functions = array_fill_keys($themes, array());
 
   // Iterate over all the themes.
   foreach ($themes as $theme) {
-    // Create an associative array of theme functions to ensure sort order.
-    $theme_functions[$theme->name] = array();
-
     // Only add the function to the array of theme functions if it currently
     // exists in the $functions array.
-    $function = $theme->name . '_' . $phase . '_' . $hook;
-    $key = \array_search($function, $functions, TRUE);
-    if (FALSE !== $key) {
+    $function = $theme . '_' . $phase . '_' . $hook;
+    $key = array_search($function, $functions);
+    if ($key !== FALSE) {
       // Save the theme function to be added later, but sorted.
-      $theme_functions[$theme->name][] = $function;
+      $theme_functions[$theme][] = $function;
 
       // Remove it from the current $functions array.
       unset($functions[$key]);
@@ -533,6 +497,6 @@ function _atomium_registry_sort_phase_functions(array &$functions, $hook, $phase
   // Iterate over all the captured theme functions and place them back into
   // the phase functions array.
   foreach ($theme_functions as $array) {
-    $functions = \array_merge($functions, $array);
+    $functions = array_merge($functions, $array);
   }
 }

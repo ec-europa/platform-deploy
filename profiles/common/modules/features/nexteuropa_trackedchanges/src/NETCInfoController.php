@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains Drupal\nexteuropa_trackedchanges\NETCInfoController.
+ */
+
 namespace Drupal\nexteuropa_trackedchanges;
 
 /**

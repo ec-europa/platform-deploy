@@ -247,7 +247,7 @@ function workbench_moderation_rules_condition_content_is_live_revision($node) {
  *  TRUE/FALSE depending on if the nodes current state matches selected state.
  */
 function workbench_moderation_rules_condition_contents_current_state($node, $moderation_state) {
-  if (!workbench_access_rules_condition_content_is_using_workbench_moderation($node)) {
+  if (!is_object($node)) {
     return FALSE;
   }
 
@@ -277,7 +277,7 @@ function workbench_moderation_rules_condition_contents_current_state($node, $mod
  *  TRUE/FALSE depending on if the nodes previous state matches selected state.
  */
 function workbench_moderation_rules_condition_contents_previous_state($node, $moderation_state) {
-  if (!workbench_access_rules_condition_content_is_using_workbench_moderation($node)) {
+  if (!is_object($node)) {
     return FALSE;
   }
 

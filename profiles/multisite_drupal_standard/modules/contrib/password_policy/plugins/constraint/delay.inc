@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Delay constraint for Password Policy module.
@@ -8,11 +7,10 @@
 $plugin = array(
   'admin form callback' => 'password_policy_delay_admin_form',
   'constraint callback' => 'password_policy_delay_constraint',
-  'message' => t('Password cannot be changed within @delay of the last @threshold change(s).'),
+  'message' => t('Password cannot be changed within @delay of the last change.'),
   'prime value' => 'delay',
   'config' => array(
     'delay' => NULL,
-    'threshold' => 1,
   ),
 );
 
@@ -26,17 +24,9 @@ function password_policy_delay_admin_form($form, &$form_state, $constraint) {
   );
   $sub_form['delay_fieldset']['delay'] = array(
     '#type' => 'textfield',
-    '#title' => t('Time period'),
+    '#title' => t('Minimum time between password changes'),
     '#default_value' => $constraint->config['delay'],
-    '#description' => t('Time period during which the number of password changes is restricted. (Use normal English, like 1 week or 24 hours.)'),
-  );
-  $sub_form['delay_fieldset']['threshold'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Maximum number of times password can be changed per time period'),
-    '#required' => TRUE,
-    '#default_value' => $constraint->config['threshold'],
-    '#description' => t('Password can be changed this many times within period above.'),
-    '#element_validate' => array('element_validate_integer_positive'),
+    '#description' => t('Password cannot be changed until this much time has passed since the last password change (use normal English, like 1 week or 24 hours).'),
   );
   return $sub_form;
 }
@@ -61,24 +51,6 @@ function password_policy_delay_constraint($password, $account, $constraint) {
     return TRUE;
   }
 
-  $password_index = !empty($constraint->config['threshold']) ? $constraint->config['threshold'] - 1 : 0;
-
-  // The threshold cannot be exceeded if the password has been changed fewer
-  // times than the threshold, so don't apply constraint.
-  if (!isset($account->password_history[$password_index])) {
-    return TRUE;
-  }
-
-  // If user has only system-generated password, uses one-time link and has the
-  // token in the URL, don't apply constraint.
-  $is_password_generated = variable_get('user_email_verification', TRUE) && count($account->password_history) == 1;
-  $is_one_time_login = isset($_SESSION['pass_reset_' . $account->uid], $_GET['pass-reset-token']) && $_GET['pass-reset-token'] === $_SESSION['pass_reset_' . $account->uid];
-  if ($is_password_generated && $is_one_time_login) {
-    return TRUE;
-  }
-
-
-  // Apply constraint if last number of password changes defined by threshold
-  // happened too recently.
-  return $account->password_history[$password_index]->created <= strtotime('-' . $constraint->config['delay']);
+  // Apply constraint if most recent password change happened too recently.
+  return $account->password_history[0]->created <= strtotime('-' . $constraint->config['delay']);
 }

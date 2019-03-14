@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Contains PasswordPolicy.
@@ -72,7 +71,7 @@ class PasswordPolicy {
 
     foreach ($this->items as $item) {
       $parent = $item->isType('condition') ? 'condition' : ($item->isType('constraint') ? 'constraint' : 'item');
-      $form[$parent] = $form[$parent] + $item->adminForm($form, $form_state);
+      $form[$parent]  = $form[$parent] + $item->adminForm($form, $form_state);
     }
 
     return $form;
@@ -135,7 +134,7 @@ class PasswordPolicy {
   public function activeConstraints() {
     $constraints = array();
     foreach ($this->getItems('constraint') as $constraint) {
-      // Any constraint with non-default configuration is "active".
+      // Any constraint with non-default configuration is "active"
       if ($constraint->info['config'] != $constraint->config) {
         $constraints[] = $constraint;
       }
@@ -154,7 +153,7 @@ class PasswordPolicy {
    */
   public function match($account) {
     foreach ($this->getItems('condition') as $condition) {
-      // Any condition with non-default configuration is "active".
+      // Any condition with non-default configuration is "active"
       if ($condition->info['config'] != $condition->config) {
         if (!$condition->match($account)) {
           return FALSE;

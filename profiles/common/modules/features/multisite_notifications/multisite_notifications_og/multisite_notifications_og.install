@@ -52,6 +52,7 @@ function multisite_notifications_og_enable() {
   };
 }
 
+
 /**
  * Implements hook_disnable().
  *

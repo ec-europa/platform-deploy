@@ -72,11 +72,6 @@ class EntityReferencePrepopulateInstanceBehavior extends EntityReference_Behavio
 
     $weight = 0;
     foreach ($providers_names as $name) {
-      // Validate that the provider exists.
-      if (!isset($providers[$name])) {
-        continue;
-      }
-
       $provider = $providers[$name];
 
       // Set default values.

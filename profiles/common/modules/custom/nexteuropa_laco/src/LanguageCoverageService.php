@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\nexteuropa_laco\LanguageCoverageService.
+ */
+
 namespace Drupal\nexteuropa_laco;
 
 /**
@@ -58,7 +63,7 @@ class LanguageCoverageService {
   /**
    * {@inheritdoc}
    */
-  public static function getInstance() {
+  static public function getInstance() {
     if (!self::$instance) {
       self::$instance = new static();
     }
@@ -68,7 +73,7 @@ class LanguageCoverageService {
   /**
    * {@inheritdoc}
    */
-  public static  function isServiceRequest() {
+  static public function isServiceRequest() {
     $header = self::getHeaderKey(self::HTTP_HEADER_SERVICE_NAME);
     $result = isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == self::HTTP_METHOD);
     $result = $result && isset($_SERVER[$header]) && ($_SERVER[$header] == self::HTTP_HEADER_SERVICE_VALUE);
@@ -129,7 +134,7 @@ class LanguageCoverageService {
         $this->setDebugHeader('Menu item not found');
         $this->setStatus('404 Not found');
       }
-      drupal_exit();
+      exit;
     }
     else {
       $this->setDebugHeader('Full bootstrap fallback');
@@ -171,26 +176,7 @@ class LanguageCoverageService {
       ->fetchAllAssoc('language');
     $found = $translations && array_key_exists($language, $translations);
     if (!$found) {
-      $tnid = db_select('node', 'n')
-        ->fields('n', ['tnid'])
-        ->condition('n.nid', $nid)
-        ->condition('n.status', 1)
-        ->execute()
-        ->fetchField();
-
-      if (!empty($tnid)) {
-        $translations = db_select('node', 'n')
-          ->fields('n', ['language'])
-          ->condition('n.tnid', $tnid)
-          ->condition('n.status', 1)
-          ->execute()
-          ->fetchAllAssoc('language');
-
-        $found = $translations && array_key_exists($language, $translations);
-      }
-      else {
-        $this->setDebugHeader("Translation for {$path} in {$language} not found or not published");
-      }
+      $this->setDebugHeader("Translation for {$path} in {$language} not found or not published");
     }
     return $found;
   }
@@ -371,7 +357,7 @@ class LanguageCoverageService {
    * @return string
    *   Header name as a $_SERVER array key.
    */
-  protected static function getHeaderKey($header) {
+  static protected function getHeaderKey($header) {
     // @codingStandardsIgnoreLine: The feature gets called before the Drupal wrapper is available.
     $header = 'HTTP_' . strtoupper($header);
     return str_replace('-', '_', $header);

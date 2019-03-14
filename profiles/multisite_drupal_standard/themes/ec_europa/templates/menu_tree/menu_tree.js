@@ -4,11 +4,9 @@
  */
 
 (function ($) {
-    Drupal.behaviors.ecEuropaMenuTree = {
-        attach: function (context) {
-            $('.ecl-navigation-menu__root').once('ecEuropaMenuTree', function() {
-                ECL.megamenu('.ecl-navigation-menu__root');
-            });
-        }
-    };
+  Drupal.behaviors.ecEuropaMenuTree = {
+    attach: function (context) {
+      ECL.megamenu('.ecl-navigation-menu__root');
+    }
+  };
 })(jQuery);

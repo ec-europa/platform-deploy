@@ -2427,7 +2427,7 @@ function workbench_moderation_node_export_node_import_alter(&$node, $original_no
 }
 
 /**
- * Helper function checking if the moderated node revision is current one.
+ * Helper function checking if the node revision is current one.
  *
  * It differs from the "workbench_moderation_node_is_current" function on
  * the tested revision type:
@@ -2435,10 +2435,6 @@ function workbench_moderation_node_export_node_import_alter(&$node, $original_no
  *    revision;
  *  - "workbench_moderation_node_is_current_revision" is focused on the actual
  *    current revision whatever there is a "published" revision or not.
- *  - "workbench_moderation_node_is_current_revision" can only work on
- *    moderated content types.
- *    Then, it can be called after controlling that the tested node is
- *    moderated.
  *
  * @param stdClass $node
  *   The node object to be tested.
@@ -2451,6 +2447,12 @@ function workbench_moderation_node_export_node_import_alter(&$node, $original_no
 function workbench_moderation_node_is_current_revision($node) {
   if (!is_object($node)) {
     return FALSE;
+  }
+
+  // If this node is not moderated, then it is always considered as
+  // the "current" revision.
+  if (!workbench_moderation_node_moderated($node)) {
+    return TRUE;
   }
 
   // If the "is_current" flag is set, then use it.

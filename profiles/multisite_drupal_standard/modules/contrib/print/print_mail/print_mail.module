@@ -116,6 +116,31 @@ function print_mail_variable_info($options) {
 }
 
 /**
+ * Implements hook_requirements().
+ */
+function print_mail_requirements($phase) {
+  $requirements = array();
+  $t = get_t();
+  switch ($phase) {
+    // At runtime, make sure that a PDF generation tool is selected
+    case 'runtime':
+      if (module_exists('mailsystem')) {
+        $mail_system = mailsystem_get();
+        if (($mail_system['default-system'] != 'DefaultMailSystem') && (!isset($mail_system['print_mail']) || ($mail_system['print_mail'] != 'DefaultMailSystem'))) {
+          $requirements['print_mail_mailsystem'] = array(
+            'title' => $t('Printer, email and PDF versions - Send by email'),
+            'value' => $t('Incompatible Mail System setting detected'),
+            'description' => $t('The send by email module requires the use of the DefaultMailSystem, please configure it in the !url.', array('!url' => l($t('Mail System Settings page'), 'admin/config/system/mailsystem'))),
+            'severity' => REQUIREMENT_WARNING,
+          );
+        }
+      }
+  }
+
+  return $requirements;
+}
+
+/**
  * Implements hook_block_info().
  */
 function print_mail_block_info() {
@@ -128,12 +153,11 @@ function print_mail_block_info() {
  * Implements hook_block_view().
  */
 function print_mail_block_view($delta = 0) {
-  $block = array();
   switch ($delta) {
     case 'print_mail-top':
       $block['subject'] = t('Most emailed');
       $result = db_query_range("SELECT path FROM {print_mail_page_counter} LEFT JOIN {node} n ON path = CONCAT('node/', n.nid) WHERE status <> 0 OR status IS NULL ORDER BY sentcount DESC", 0, 3)
-        ->fetchAll();
+                  ->fetchAll();
       if (count($result)) {
         $items = array();
         foreach ($result as $obj) {
@@ -193,66 +217,62 @@ function print_mail_mail($key, &$message, $params) {
     $message['headers']['Reply-To'] = $params['from'];
   }
 
-  $sendlink_plain = '';
-  $sendlink_html = '';
   switch ($key) {
     case 'sendpage':
       $message['body'][] = check_plain($params['body']);
       $message['headers']['Content-Type'] = 'text/html; charset=utf-8';
       break;
-
     case 'sendlink':
-      // Generate plain-text and html versions of message with link.
+      // Generate plain-text and html versions of message with link
       $sendlink_plain = theme('print_mail_sendlink_plain', $params);
       $sendlink_html = theme('print_mail_sendlink_html', $params);
 
-      // Send HTML-only version if MIME library not present.
+      // Send HTML-only version if MIME library not present
       if (!class_exists('Mail_mime')) {
         $message['body'][] = check_plain($sendlink_html);
         $message['headers']['Content-Type'] = 'text/html; charset=utf-8';
         break;
       }
-      // No break on purpose.
+      // no break on purpose
     case 'plain-attachment':
     case 'inline-attachment':
-      // Configure new MIME object.
+      // Configure new MIME object
       $mime = new Mail_mime("\n");
       $mime_params['html_encoding'] = '7bit';
       $mime_params['html_charset'] = 'utf-8';
       $mime_params['text_charset'] = 'utf-8';
 
-      // Pass message contents into MIME object.
+      // Pass message contents into MIME object
       switch ($key) {
         case 'sendlink':
           $mime->setTxtBody($sendlink_plain);
           $mime->setHTMLBody($sendlink_html);
           break;
-
         case 'inline-attachment':
           $mime->setHTMLBody($params['body']);
-          // No break on purpose.
+          // no break on purpose
         case 'plain-attachment':
           $mime->setTxtBody($params['message']);
           $mime->addAttachment($params['body'], 'text/html', 'Attachment.html', FALSE);
           break;
       }
 
-      // Store MIME message output in message array.
+      // Store MIME message output in message array
       $message['body'][] = check_plain($mime->get($mime_params));
       $message['headers'] = $mime->headers($message['headers']);
 
-      // Strip special characters from Content-Type header. Required to prevent
-      // mime_header_encode() from disrupting Content-Type header.
+      // Strip special characters from Content-Type header
+      // Required to prevent mime_header_encode() from disrupting Content-Type header
       $message['headers']['Content-Type'] = preg_replace('/[^\x20-\x7E]/', '', $message['headers']['Content-Type']);
       break;
   }
 }
 
 /**
- * Access callback to check a combination of user_acess() and page access.
+ * Access callback to check a combination of user_acess() and page access
  *
  * @param string $permission
- *   Permission required to view the page.
+ *   permission required to view the page
  *
  * @return bool
  *   TRUE if the user has permission to view the page, FALSE otherwise
@@ -267,18 +287,18 @@ function _print_mail_access($permission) {
       $path = implode('/', $parts);
       if (ctype_digit($parts[1])) {
         if (drupal_lookup_path('source', $path)) {
-          // This is a numeric alias.
+          // This is a numeric alias
           $path = drupal_get_normal_path($path);
         }
         else {
-          // Normal nid.
+          // normal nid
           $path = 'node/' . $path;
         }
       }
       else {
         $path = drupal_get_normal_path($path);
       }
-      // If the destination page is not accessible, don't show the form.
+      // If the destination page is not accessible, don't show the form
       if (!($router_item = menu_get_item($path)) || (!$router_item['access'])) {
         $page_access = FALSE;
       }
@@ -289,7 +309,7 @@ function _print_mail_access($permission) {
 }
 
 /**
- * Auxiliary function to display a formatted send by email link.
+ * Auxiliary function to display a formatted send by email link
  *
  * Function made available so that developers may call this function from
  * their defined pages/blocks.
@@ -300,7 +320,7 @@ function _print_mail_access($permission) {
  *   node object, to be used in checking node access. If the path argument is
  *   not provided, the path used will be node/nid.
  * @param string $location
- *   Where in the page where the link is being inserted ('link', 'corner',
+ *   where in the page where the link is being inserted ('link', 'corner',
  *   'block', 'help').
  *
  * @return string
@@ -310,8 +330,7 @@ function _print_mail_access($permission) {
  */
 function print_mail_insert_link($path = NULL, $node = NULL, $location = '') {
   if (function_exists('print_ui_insert_link')) {
-    return print_ui_insert_link(print_mail_print_link(),
-      array('path' => $path, 'node' => $node, 'location' => $location));
+    return print_ui_insert_link(print_mail_print_link(), array('path' => $path, 'node' => $node, 'location' => $location));
   }
   else {
     return FALSE;
@@ -319,14 +338,14 @@ function print_mail_insert_link($path = NULL, $node = NULL, $location = '') {
 }
 
 /**
- * Check if the link to send by email is allowed depending on the settings.
+ * Check if the link to send by email is allowed depending on the settings
  *
  * @param array $args
- *   Array containing the possible parameters:
- *    view_mode, node, type, path.
+ *   array containing the possible parameters:
+ *    view_mode, node, type, path
  *
  * @return bool
- *   FALSE if not allowed, TRUE otherwise.
+ *   FALSE if not allowed, TRUE otherwise
  */
 function print_mail_link_allowed($args) {
   return (user_access('access send by email'));
@@ -347,7 +366,6 @@ function print_mail_mollom_form_list() {
  * Implemenents hook_mollom_form_info().
  */
 function print_mail_mollom_form_info($form_id) {
-  $form_info = array();
   switch ($form_id) {
     case 'print_mail_form':
       $form_info = array(
@@ -408,7 +426,7 @@ function print_mail_rules_action_info() {
 }
 
 /**
- * Action handler for the print_mail_action_submit.
+ * Action handler for the print_mail_action_submit
  *
  * @ingroup rules
  */

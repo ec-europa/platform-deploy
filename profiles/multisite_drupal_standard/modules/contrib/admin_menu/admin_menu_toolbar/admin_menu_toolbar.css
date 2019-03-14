@@ -1,3 +1,4 @@
+
 /**
  * @file
  * Toolbar style for Administration menu.
@@ -62,9 +63,8 @@ body div#toolbar.toolbar {
   background: url(toolbar.png) no-repeat 0 -45px;
   text-indent: -9999px;
 }
-#admin-menu > div > .dropdown > li > a,
-#admin-menu > div > .dropdown > li > span {
-  border-right: 0; /* LTR */
+#admin-menu > div > .dropdown > li > a {
+  border-right: 0;
   margin-bottom: 4px;
   padding: 2px 10px 3px;
 }
@@ -142,3 +142,4 @@ body div#toolbar.toolbar {
 #admin-menu .shortcut-toolbar a {
   display: block;
 }
+

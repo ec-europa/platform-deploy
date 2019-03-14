@@ -11,7 +11,6 @@
  * @codingStandardsIgnoreFile
  */
 class nexteuropa_formatters_views_timelines_rows extends views_plugin_row {
-
   /**
    * Definition.
    */

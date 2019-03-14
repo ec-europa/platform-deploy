@@ -12,12 +12,12 @@
 namespace Symfony\Component\Validator\Tests\DependencyInjection;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\DependencyInjection\AddConstraintValidatorsPass;
 use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ServiceLocator;
-use Symfony\Component\Validator\DependencyInjection\AddConstraintValidatorsPass;
 
 class AddConstraintValidatorsPassTest extends TestCase
 {
@@ -50,7 +50,7 @@ class AddConstraintValidatorsPassTest extends TestCase
     public function testAbstractConstraintValidator()
     {
         $container = new ContainerBuilder();
-        $container->register('validator.validator_factory')
+        $validatorFactory = $container->register('validator.validator_factory')
             ->addArgument(array());
 
         $container->register('my_abstract_constraint_validator')
@@ -63,16 +63,18 @@ class AddConstraintValidatorsPassTest extends TestCase
 
     public function testThatCompilerPassIsIgnoredIfThereIsNoConstraintValidatorFactoryDefinition()
     {
-        $container = new ContainerBuilder();
+        $definition = $this->getMockBuilder('Symfony\Component\DependencyInjection\Definition')->getMock();
+        $container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')->setMethods(array('hasDefinition', 'findTaggedServiceIds', 'getDefinition'))->getMock();
 
-        $definitionsBefore = \count($container->getDefinitions());
-        $aliasesBefore = \count($container->getAliases());
+        $container->expects($this->never())->method('findTaggedServiceIds');
+        $container->expects($this->never())->method('getDefinition');
+        $container->expects($this->atLeastOnce())
+            ->method('hasDefinition')
+            ->with('validator.validator_factory')
+            ->will($this->returnValue(false));
+        $definition->expects($this->never())->method('replaceArgument');
 
         $addConstraintValidatorsPass = new AddConstraintValidatorsPass();
         $addConstraintValidatorsPass->process($container);
-
-        // the container is untouched (i.e. no new definitions or aliases)
-        $this->assertCount($definitionsBefore, $container->getDefinitions());
-        $this->assertCount($aliasesBefore, $container->getAliases());
     }
 }

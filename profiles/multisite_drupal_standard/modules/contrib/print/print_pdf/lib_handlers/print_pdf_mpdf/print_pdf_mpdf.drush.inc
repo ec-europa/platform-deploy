@@ -2,14 +2,15 @@
 
 /**
  * @file
- * Provides drush integration for print_pdf_mpdf module PDF libraries download.
+ * drush integration for print_pdf_mpdf module PDF libraries download.
  */
 
 /**
- * The PDF project download URL.
+ * The PDF project download URL
  */
-// URI to the the latest mpdf version.
-define('MPDF_DOWNLOAD_URI', 'https://api.github.com/repos/mpdf/mpdf/releases/latest');
+
+// URI to the the latest mpdf version.. Hardcoded version unfortunately
+define('MPDF_DOWNLOAD_URI', 'http://mpdf1.com/repos/MPDF57.zip');
 
 /**
  * Implements hook_drush_command().

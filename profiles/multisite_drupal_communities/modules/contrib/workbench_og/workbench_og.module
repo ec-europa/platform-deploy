@@ -85,25 +85,15 @@ function workbench_og_og_permission() {
  */
 function workbench_og_node_access_records($node) {
 
-  // Grants are only set if node is unpublished.
+  // Grants are only set if node is unpublished.  
   if ($node->status) {
     return;
   }
-
+  
   $grants = array();
   // Fet the groups defined in the node.
   $groups = og_get_entity_groups($entity_type = 'node', $node);
-  // Assign grants to unpublished nodes that belong to no group.
-  $grants[] = array(
-    // Realm to access unpublished content.
-    'realm' => 'workbench_moderation_og_view_own_unpublished',
-    // Assign to node author.
-    'gid' => $node->uid,
-    'grant_view' => 1,
-    'grant_update' => 0,
-    'grant_delete' => 0,
-    'priority' => 2,
-   );
+
   // For each group set a grant.
   if (isset ($groups['node']) && !empty($groups)) {
     foreach ($groups['node'] as $gid => $value) {
@@ -116,25 +106,8 @@ function workbench_og_node_access_records($node) {
         'priority' => 2,
       );
     }
+    return $grants;
   }
-  else {
-    // Assign grants to unpublished nodes that belong to no group.
-    $roles = _workbench_og_view_authorized_roles();
-    foreach ($roles as $key => $value) {
-      $grants[] = array(
-        // Realm to view unpublished content.
-        'realm' => 'workbench_moderation_og_view_all_unpublished',
-        // Assign role gid.
-        'gid' => $key,
-        'grant_view' => 1,
-        'grant_update' => 0,
-        'grant_delete' => 0,
-        'priority' => 2,
-      );
-    }
-  }
-
-  return $grants;
 }
 
 /**
@@ -162,19 +135,6 @@ function workbench_og_node_grants($account, $op) {
       }
     }
   }
-  // Check if the user can view unpublished content.
-  if (user_access('view all unpublished content')) {
-    // Assign grant to access content withe the user uid as gid.
-    $grants['workbench_moderation_og_view_own_unpublished'][] = $account->uid;
-    // Assign grant to access unpublished content.
-    $roles = _workbench_og_view_authorized_roles();
-    $enabled_roles = array_intersect($roles, $account->roles);
-    if (count($enabled_roles) > 0) {
-      foreach ($enabled_roles as $key => $value) {
-        $grants['workbench_moderation_og_view_all_unpublished'][] = $key;
-      }
-    }
-  }
 
   return $grants;
 }
@@ -195,24 +155,4 @@ function workbench_og_help($path, $arg) {
         return '<p>' . t('Workbench moderation OG is active. However you need to configure its permissions and workflow using OG Ui Module which is not active. Please enable it.') . '</p>';
       }
   }
-}
-
-/**
- * Get roles authorized to see unpublished content.
- *
- * @return array
- *   Array with roles ['rid' => 'role name']
- */
-function _workbench_og_view_authorized_roles() {
-  $defined_roles = user_roles();
-  $authorized_roles = array();
-
-  foreach ($defined_roles as $key => $value) {
-    $roles = user_role_permissions(array($key => $value));
-    if (isset($roles[$key]['view all unpublished content']) && $roles[$key]['view all unpublished content'] == 1) {
-      $authorized_roles[$key] = $value;
-    }
-  }
-
-  return $authorized_roles;
 }

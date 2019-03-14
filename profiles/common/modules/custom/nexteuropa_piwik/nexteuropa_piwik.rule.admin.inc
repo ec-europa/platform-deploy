@@ -122,6 +122,7 @@ function nexteuropa_piwik_rule_path_type_selection($form, $form_state) {
   return $form['specifics'];
 }
 
+
 /**
  * Form API submit callback for the cache purge rule editing form.
  */

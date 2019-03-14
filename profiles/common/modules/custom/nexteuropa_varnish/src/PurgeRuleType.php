@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Definition of Drupal\nexteuropa_varnish\PurgeRuleType.
+ */
+
 namespace Drupal\nexteuropa_varnish;
 
 /**

@@ -19,11 +19,8 @@ function atomium_atomium_theme_form_element() {
 
 /**
  * Implements hook_preprocess_hook().
- *
- * @SuppressWarnings(PHPMD.CyclomaticComplexity)
- * @SuppressWarnings(PHPMD.NPathComplexity)
  */
-function atomium_preprocess_form_element(array &$variables, $hook) {
+function atomium_preprocess_form_element(&$variables, $hook) {
   $element = &$variables['element'];
 
   // This function is invoked as theme wrapper, but the rendered form element
@@ -41,17 +38,17 @@ function atomium_preprocess_form_element(array &$variables, $hook) {
   // Date selects need the form-item for the show/hide end date.
   if (isset($element['#type'])) {
     // AND.
-    if ('date_select' == $element['#type'] || 'date_text' == $element['#type'] || 'date_popup' == $element['#type']) {
+    if ($element['#type'] == 'date_select' or $element['#type'] == 'date_text' or $element['#type'] == 'date_popup') {
       $attributes['class'] = array('form-item');
     }
   }
   // Add element's #type and #name as class to aid with JS/CSS selectors.
   $attributes['class'] = array('form-item');
   if (!empty($element['#type'])) {
-    $attributes['class'][] = 'form-type-' . \strtr($element['#type'], '_', '-');
+    $attributes['class'][] = 'form-type-' . strtr($element['#type'], '_', '-');
   }
   if (!empty($element['#name'])) {
-    $attributes['class'][] = 'form-item-' . \strtr(
+    $attributes['class'][] = 'form-item-' . strtr(
       $element['#name'],
         array(' ' => '-', '_' => '-', '[' => '-', ']' => '')
       );

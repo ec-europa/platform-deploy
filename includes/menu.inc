@@ -576,8 +576,7 @@ function _menu_load_objects(&$item, &$map) {
           // 'load arguments' in the hook_menu() entry, but they need
           // some processing. In this case the $function is the key to the
           // load_function array, and the value is the list of arguments.
-          $args = current($function);
-          $function = key($function);
+          list($function, $args) = each($function);
           $load_functions[$index] = $function;
 
           // Some arguments are placeholders for dynamic items to process.
@@ -2403,8 +2402,7 @@ function menu_set_active_trail($new_trail = NULL) {
       // a stripped down menu tree containing the active trail only, in case
       // the given menu has not been built in this request yet.
       $tree = menu_tree_page_data($preferred_link['menu_name'], NULL, TRUE);
-      $curr = current($tree);
-      next($tree);
+      list($key, $curr) = each($tree);
     }
     // There is no link for the current path.
     else {
@@ -2434,8 +2432,7 @@ function menu_set_active_trail($new_trail = NULL) {
         }
         $tree = $curr['below'] ? $curr['below'] : array();
       }
-      $curr = current($tree);
-      next($tree);
+      list($key, $curr) = each($tree);
     }
     // Make sure the current page is in the trail to build the page title, by
     // appending either the preferred link or the menu router item for the

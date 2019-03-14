@@ -1,8 +1,4 @@
-/**
- * @file
- */
-
-(function ($) {
+(function($) {
 
 /**
  * Live preview of Administration menu components.
@@ -49,9 +45,9 @@ Drupal.behaviors.adminMenuPermissionsSetupHelp = {
               // Figure out which is the other, check whether it still disabled,
               // and if so, ask whether to auto-enable it.
               var other = (this == $admin[index] ? $menu[index] : $admin[index]);
-              if (!other.checked && confirm(Drupal.t('Also allow @name role to @permission?', {
-                '@name': $roles[index].textContent,
-                '@permission': (this == $admin[index] ? menuPermission : adminPermission)
+              if (!other.checked && confirm(Drupal.t('Also allow !name role to !permission?', {
+                '!name': $roles[index].textContent,
+                '!permission': (this == $admin[index] ? menuPermission : adminPermission)
               }))) {
                 other.checked = 'checked';
               }

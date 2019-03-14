@@ -12,10 +12,9 @@ Drupal.behaviors.scheduler_settings = {
   attach: function (context) {
 
     // Add the theme name as an additional class to the vertical-tabs div. This
-    // was originally used in scheduler.css to rectify the style for collapsible
-    // fieldsets. Left here in case any custom themes are still using it.
-    // See https://www.drupal.org/node/1172040 and
-    // https://www.drupal.org/node/2715479
+    // can then be used in scheduler.css to rectify the style for collapsible
+    // fieldsets where different themes need slightly different fixes. The theme
+    // is available in ajaxPageState.
     var theme = Drupal.settings.ajaxPageState['theme'];
     $('div.vertical-tabs').addClass(theme);
 

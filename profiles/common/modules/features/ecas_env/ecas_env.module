@@ -72,29 +72,13 @@ function ecas_env_menu_alter(&$items) {
 }
 
 /**
- * Check to see if we need to display the normal logout menu.
- *
- * @see ecas_menu_logout_check()
- *
- * @return bool
- *   TRUE if the user is logged in but not via ECAS,
- *   FALSE otherwise.
+ * Function normal_menu_logout_check().
  */
 function normal_menu_logout_check() {
   global $user;
-
-  if (!user_is_logged_in()) {
-    return FALSE;
-  }
-
-  // We provide access to this menu entry only if we are not logged via ECAS.
-  if (isset($_SESSION['phpCAS']) && isset($user->name)) {
-    if ($_SESSION['phpCAS']['user'] === $user->name) {
-      return FALSE;
-    }
-  }
-
-  return TRUE;
+  $access_ecas = (isset($_SESSION['phpCAS']) && $_SESSION['phpCAS']['user'] === $user->name);
+  $access = (user_is_logged_in() && !$access_ecas);
+  return $access;
 }
 
 /**

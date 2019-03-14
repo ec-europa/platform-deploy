@@ -2,7 +2,7 @@
 
 /**
  * @file
- * CTools content-type plugin to provide a comment-reply form (replying either
+ * Ctools content-type plugin to provide a comment-reply form (replying either
  * to a node or to another comment).
  */
 

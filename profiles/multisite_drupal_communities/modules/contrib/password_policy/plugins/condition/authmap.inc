@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Authmap-based condition for Password Policy module.

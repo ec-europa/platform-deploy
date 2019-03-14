@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \\Drupal\\scheduler\\Config.
+ */
+
 namespace Drupal\scheduler;
 
 use Drupal\multisite_config\ConfigBase;

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Case sensitivity constraint for Password Policy module.

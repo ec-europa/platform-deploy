@@ -60,7 +60,7 @@ function cce_basic_config_field_default_field_bases() {
         0 => 'format',
       ),
     ),
-    'locked' => 1,
+    'locked' => 0,
     'module' => 'text',
     'settings' => array(
       'max_length' => 512,
@@ -206,7 +206,7 @@ function cce_basic_config_field_default_field_bases() {
         0 => 'tid',
       ),
     ),
-    'locked' => 1,
+    'locked' => 0,
     'module' => 'taxonomy',
     'settings' => array(
       'allowed_values' => array(

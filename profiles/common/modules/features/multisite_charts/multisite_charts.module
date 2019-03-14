@@ -18,6 +18,7 @@ function multisite_charts_theme($existing, $type, $theme, $path) {
   );
 }
 
+
 /**
  * Chart rendering function.
  *

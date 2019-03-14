@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\nexteuropa_token\Entity\LinkTokenHandler.
+ */
+
 namespace Drupal\nexteuropa_token\Entity;
 
 /**
@@ -51,10 +56,7 @@ class LinkTokenHandler extends TokenAbstractHandler {
           if ($entity = $entity_info['load hook']($entity_id)) {
             $label = entity_label($entity_type, $entity);
             $uri = entity_uri($entity_type, $entity);
-            $link_from_token = l($label, $uri['path'], array('absolute' => TRUE));
-            // Use trim() in order to remove unwanted characters around the
-            // link that the "link" theming could add.
-            $replacements[$original] = rtrim($link_from_token);
+            $replacements[$original] = l($label, $uri['path'], array('absolute' => TRUE));
           }
           else {
             $this->watchdogTokenNotFound($data, $original);

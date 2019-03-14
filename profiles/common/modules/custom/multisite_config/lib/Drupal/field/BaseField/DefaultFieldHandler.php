@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\field\BaseField\DefaultFieldHandler.
+ */
+
 namespace Drupal\field\BaseField;
 
 use Drupal\field\FieldHandlerInterface;

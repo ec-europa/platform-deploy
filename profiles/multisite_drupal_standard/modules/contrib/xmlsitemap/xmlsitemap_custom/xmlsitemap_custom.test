@@ -2,17 +2,10 @@
 
 /**
  * @file
- * Unit tests for the xmlsitemap_custom.
+ * Unit tests for the xmlsitemap_custom module.
  */
 
-/**
- * Class with Functional Test for XML Sitemap Custom.
- */
 class XMLSitemapCustomFunctionalTest extends XMLSitemapTestHelper {
-
-  /**
-   * Get Info.
-   */
   public static function getInfo() {
     return array(
       'name' => 'XML sitemap custom interface tests',
@@ -21,10 +14,7 @@ class XMLSitemapCustomFunctionalTest extends XMLSitemapTestHelper {
     );
   }
 
-  /**
-   * Setup.
-   */
-  public function setUp($modules = array()) {
+  function setUp($modules = array()) {
     $modules[] = 'xmlsitemap_custom';
     $modules[] = 'path';
     parent::setUp($modules);
@@ -33,10 +23,7 @@ class XMLSitemapCustomFunctionalTest extends XMLSitemapTestHelper {
     $this->drupalLogin($this->admin_user);
   }
 
-  /**
-   * Test Custom Links.
-   */
-  public function testCustomLinks() {
+  function testCustomLinks() {
     // Set a path alias for the node page.
     $alias = array('source' => 'system/files', 'alias' => 'public-files');
     path_save($alias);
@@ -70,12 +57,7 @@ class XMLSitemapCustomFunctionalTest extends XMLSitemapTestHelper {
     $links = xmlsitemap_link_load_multiple(array('type' => 'custom', 'loc' => 'system/files'));
     $this->assertEqual(count($links), 1, t('Custom link saved in the database.'));
     $link = reset($links);
-    $this->assertSitemapLinkValues('custom', $link['id'], array(
-      'priority' => 0.5,
-      'changefreq' => 0,
-      'access' => 1,
-      'status' => 1,
-    ));
+    $this->assertSitemapLinkValues('custom', $link['id'], array('priority' => 0.5, 'changefreq' => 0, 'access' => 1, 'status' => 1));
 
     $this->clickLink('Edit');
     $edit = array(
@@ -84,12 +66,7 @@ class XMLSitemapCustomFunctionalTest extends XMLSitemapTestHelper {
     );
     $this->drupalPost(NULL, $edit, t('Save'));
     $this->assertText('The custom link for system/files was saved');
-    $this->assertSitemapLinkValues('custom', $link['id'], array(
-      'priority' => 0.1,
-      'changefreq' => XMLSITEMAP_FREQUENCY_ALWAYS,
-      'access' => 1,
-      'status' => 1,
-    ));
+    $this->assertSitemapLinkValues('custom', $link['id'], array('priority' => 0.1, 'changefreq' => XMLSITEMAP_FREQUENCY_ALWAYS, 'access' => 1, 'status' => 1));
 
     $this->clickLink('Delete');
     $this->drupalPost(NULL, array(), t('Delete'));
@@ -100,7 +77,7 @@ class XMLSitemapCustomFunctionalTest extends XMLSitemapTestHelper {
   /**
    * Test adding files as custom links.
    */
-  public function testCustomFileLinks() {
+  function testCustomFileLinks() {
     // Test an invalid file.
     $edit['loc'] = $this->randomName();
     $this->drupalPost('admin/config/search/xmlsitemap/custom/add', $edit, t('Save'));
@@ -108,12 +85,11 @@ class XMLSitemapCustomFunctionalTest extends XMLSitemapTestHelper {
     $this->assertNoSitemapLink(array('type' => 'custom', 'loc' => $edit['loc']));
 
     // Test an unaccessible file .
-    // @codingStandardsIgnoreStart
-    // $edit['loc'] = '.htaccess';
-    // $this->drupalPost('admin/config/search/xmlsitemap/custom/add', $edit, t('Save'));
-    // $this->assertText(t('The custom link @link is either invalid or it cannot be accessed by anonymous users.', array('@link' => $edit['loc'])));
-    // $this->assertNoSitemapLink(array('type' => 'custom', 'loc' => $edit['loc']));
-    // @codingStandardsIgnoreEnd
+    //$edit['loc'] = '.htaccess';
+    //$this->drupalPost('admin/config/search/xmlsitemap/custom/add', $edit, t('Save'));
+    //$this->assertText(t('The custom link @link is either invalid or it cannot be accessed by anonymous users.', array('@link' => $edit['loc'])));
+    //$this->assertNoSitemapLink(array('type' => 'custom', 'loc' => $edit['loc']));
+
     // Test a valid file.
     $edit['loc'] = 'misc/drupal.js';
     $this->drupalPost('admin/config/search/xmlsitemap/custom/add', $edit, t('Save'));
@@ -128,5 +104,4 @@ class XMLSitemapCustomFunctionalTest extends XMLSitemapTestHelper {
     $links = xmlsitemap_link_load_multiple(array('type' => 'custom', 'loc' => $edit['loc']));
     $this->assertEqual(count($links), 1, t('Custom link saved in the database.'));
   }
-
 }

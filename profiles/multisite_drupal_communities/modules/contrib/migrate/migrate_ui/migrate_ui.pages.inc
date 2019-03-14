@@ -201,8 +201,17 @@ function migrate_ui_migrate_group($form, &$form_state, $group_name) {
 
     $row['status'] = $status;
     $machine_name = $migration->getMachineName();
+    $name_length = strlen($machine_name);
+    $group_length = strlen($group_name);
+    if ($name_length != $group_length &&
+        !strncasecmp($group_name, $machine_name, $group_length)) {
+      $display_name = substr($machine_name, $group_length);
+    }
+    else {
+      $display_name = $machine_name;
+    }
     $row['machinename'] =
-      l($machine_name, "admin/content/migrate/groups/$group_name/$machine_name");
+      l($display_name, "admin/content/migrate/groups/$group_name/$machine_name");
     $row['importrows'] = (int) $total;
     $row['imported'] = (int) $imported;
     $row['unprocessed'] = (int) $unprocessed;
@@ -1615,7 +1624,7 @@ function migrate_ui_messages($group_name, $migration_name) {
   // Add a table header for each source key in the migration's map.
   foreach ($source_key as $key => $map_info) {
     $header[] = array(
-      'data' => isset($map_info['description']) ? filter_xss_admin($map_info['description']) : t('Source ID'),
+      'data' => filter_xss_admin($map_info['description']),
       'field' => $source_key_map[$key],
       'sort' => 'asc',
     );

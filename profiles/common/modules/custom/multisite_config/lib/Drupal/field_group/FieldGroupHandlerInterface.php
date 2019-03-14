@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\field_group\FieldGroupHandlerInterface.
+ */
+
 namespace Drupal\field_group;
 
 /**

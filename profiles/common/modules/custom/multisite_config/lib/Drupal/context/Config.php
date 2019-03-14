@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \\Drupal\\context\\Config.
+ */
+
 namespace Drupal\context;
 
 use Drupal\multisite_config\ConfigBase;
@@ -85,6 +90,7 @@ class Config extends ConfigBase {
   public function saveContext($context) {
     return context_save($context);
   }
+
 
   /**
    * Add a content type as condition to trigger a context.

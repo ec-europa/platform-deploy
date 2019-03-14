@@ -7,17 +7,14 @@
 
 /**
  * Implements hook_preprocess_hook().
- *
- * @SuppressWarnings(PHPMD.CyclomaticComplexity)
- * @SuppressWarnings(PHPMD.NPathComplexity)
  */
-function atomium_preprocess_block(array &$variables, $hook) {
-  $variables['classes_array'] = \preg_grep('/^block-/', $variables['classes_array'], PREG_GREP_INVERT);
+function atomium_preprocess_block(&$variables, $hook) {
+  $variables['classes_array'] = preg_grep('/^block-/', $variables['classes_array'], PREG_GREP_INVERT);
   $variables['classes_array'][] = $variables['block_html_id'];
   $variables['classes_array'][] = $variables['block_zebra'];
 
-  if (isset($variables['block']->classes) && \is_array($variables['block']->classes)) {
-    $variables['classes_array'] = \array_merge($variables['classes_array'], (array) $variables['block']->classes);
+  if (isset($variables['block']->classes) && is_array($variables['block']->classes)) {
+    $variables['classes_array'] = array_merge($variables['classes_array'], (array) $variables['block']->classes);
   }
 
   if (isset($variables['block']->atomium)) {
@@ -40,11 +37,11 @@ function atomium_preprocess_block(array &$variables, $hook) {
   }
 
   if (
-    ('system' == $variables['elements']['#block']->module && 'navigation' == $variables['elements']['#block']->delta) ||
-    ('system' == $variables['elements']['#block']->module && 'main-menu' == $variables['elements']['#block']->delta) ||
-    ('system' == $variables['elements']['#block']->module && 'user-menu' == $variables['elements']['#block']->delta) ||
-    ('admin' == $variables['elements']['#block']->module && 'menu' == $variables['elements']['#block']->delta) ||
-    'menu_block' == $variables['elements']['#block']->module
+    ($variables['elements']['#block']->module == "system" and $variables['elements']['#block']->delta == "navigation") or
+    ($variables['elements']['#block']->module == "system" and $variables['elements']['#block']->delta == "main-menu") or
+    ($variables['elements']['#block']->module == "system" and $variables['elements']['#block']->delta == "user-menu") or
+    ($variables['elements']['#block']->module == "admin" and $variables['elements']['#block']->delta == "menu") or
+    $variables['elements']['#block']->module == "menu_block"
   ) {
     $variables['theme_hook_suggestions'][] = 'block__menu';
   }
@@ -65,16 +62,13 @@ function atomium_preprocess_block(array &$variables, $hook) {
         case 'help':
         case 'powered-by':
           $variables['atomium']['attributes']['wrapper']->append('role', 'complementary');
-
           break;
 
         default:
           // Any other "system" block is a menu block.
           $variables['atomium']['attributes']['wrapper']->append('role', 'navigation');
-
           break;
       }
-
       break;
 
     case 'menu':
@@ -86,12 +80,10 @@ function atomium_preprocess_block(array &$variables, $hook) {
     case 'shortcut':
     case 'statistics':
       $variables['atomium']['attributes']['wrapper']->append('role', 'navigation');
-
       break;
 
     case 'search':
       $variables['atomium']['attributes']['wrapper']->append('role', 'search');
-
       break;
 
     case 'help':
@@ -100,38 +92,31 @@ function atomium_preprocess_block(array &$variables, $hook) {
     case 'poll':
     case 'profile':
       $variables['atomium']['attributes']['wrapper']->append('role', 'complementary');
-
       break;
 
     case 'node':
       switch ($variables['block']->delta) {
         case 'syndicate':
           $variables['atomium']['attributes']['wrapper']->append('role', 'complementary');
-
           break;
 
         case 'recent':
           $variables['atomium']['attributes']['wrapper']->append('role', 'navigation');
-
           break;
       }
-
       break;
 
     case 'user':
       switch ($variables['block']->delta) {
         case 'login':
           $variables['atomium']['attributes']['wrapper']->append('role', 'form');
-
           break;
 
         case 'new':
         case 'online':
           $variables['atomium']['attributes']['wrapper']->append('role', 'complementary');
-
           break;
       }
-
       break;
   }
 

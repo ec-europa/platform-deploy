@@ -23,7 +23,7 @@ function nexteuropa_faq_field_default_field_bases() {
         0 => 'tid',
       ),
     ),
-    'locked' => 1,
+    'locked' => 0,
     'module' => 'taxonomy',
     'settings' => array(
       'allowed_values' => array(

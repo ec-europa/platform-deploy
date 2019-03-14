@@ -23,15 +23,15 @@ function atomium_atomium_theme_mark() {
 /**
  * Implements hook_preprocess_hook().
  */
-function atomium_preprocess_mark(array &$variables, $hook) {
+function atomium_preprocess_mark(&$variables, $hook) {
   global $user;
   $type = $variables['type'];
 
   if ($user->uid) {
-    if (MARK_NEW == $type) {
+    if ($type == MARK_NEW) {
       $variables['title'] = !empty($variables['title']) ? $variables['title'] : t('new');
     }
-    elseif (MARK_UPDATED == $type) {
+    elseif ($type == MARK_UPDATED) {
       $variables['title'] = !empty($variables['title']) ? $variables['title'] : t('updated');
     }
   }

@@ -1776,13 +1776,13 @@ function theme_link($variables) {
  *     http://www.w3.org/TR/WCAG-TECHS/H42.html for more information.
  */
 function theme_links($variables) {
-  $links = (array) $variables['links'];
-  $attributes = (array) $variables['attributes'];
+  $links = $variables['links'];
+  $attributes = $variables['attributes'];
   $heading = $variables['heading'];
   global $language_url;
   $output = '';
 
-  if (!empty($links)) {
+  if (count($links) > 0) {
     // Treat the heading first if it is present to prepend it to the
     // list of links.
     if (!empty($heading)) {
@@ -1995,7 +1995,7 @@ function theme_table($variables) {
   $empty = $variables['empty'];
 
   // Add sticky headers, if applicable.
-  if (!empty($header) && $sticky) {
+  if (count($header) && $sticky) {
     drupal_add_js('misc/tableheader.js');
     // Add 'sticky-enabled' class to the table to identify it for JS.
     // This is needed to target tables constructed by this function.
@@ -2009,7 +2009,7 @@ function theme_table($variables) {
   }
 
   // Format the table columns:
-  if (!empty($colgroups)) {
+  if (count($colgroups)) {
     foreach ($colgroups as $number => $colgroup) {
       $attributes = array();
 
@@ -2044,40 +2044,38 @@ function theme_table($variables) {
   }
 
   // Add the 'empty' row message if available.
-  if (empty($rows) && $empty) {
+  if (!count($rows) && $empty) {
     $header_count = 0;
-    if (!empty($header)) {
-      foreach ($header as $header_cell) {
-        if (is_array($header_cell)) {
-          $header_count += isset($header_cell['colspan']) ? $header_cell['colspan'] : 1;
-        }
-        else {
-          $header_count++;
-        }
+    foreach ($header as $header_cell) {
+      if (is_array($header_cell)) {
+        $header_count += isset($header_cell['colspan']) ? $header_cell['colspan'] : 1;
+      }
+      else {
+        $header_count++;
       }
     }
     $rows[] = array(array('data' => $empty, 'colspan' => $header_count, 'class' => array('empty', 'message')));
   }
 
   // Format the table header:
-  if (!empty($header)) {
+  if (count($header)) {
     $ts = tablesort_init($header);
     // HTML requires that the thead tag has tr tags in it followed by tbody
     // tags. Using ternary operator to check and see if we have any rows.
-    $output .= (!empty($rows) ? ' <thead><tr>' : ' <tr>');
+    $output .= (count($rows) ? ' <thead><tr>' : ' <tr>');
     foreach ($header as $cell) {
       $cell = tablesort_header($cell, $header, $ts);
       $output .= _theme_table_cell($cell, TRUE);
     }
     // Using ternary operator to close the tags based on whether or not there are rows
-    $output .= (!empty($rows) ? " </tr></thead>\n" : "</tr>\n");
+    $output .= (count($rows) ? " </tr></thead>\n" : "</tr>\n");
   }
   else {
     $ts = array();
   }
 
   // Format the table rows:
-  if (!empty($rows)) {
+  if (count($rows)) {
     $output .= "<tbody>\n";
     $flip = array('even' => 'odd', 'odd' => 'even');
     $class = 'even';
@@ -2097,7 +2095,7 @@ function theme_table($variables) {
         $attributes = array();
         $no_striping = FALSE;
       }
-      if (!empty($cells)) {
+      if (count($cells)) {
         // Add odd/even class
         if (!$no_striping) {
           $class = $flip[$class];

@@ -2,29 +2,19 @@
 
 /**
  * @file
- * Unit tests for the xmlsitemap_i18n project.
+ * Unit tests for the xmlsitemap_i18n module.
  */
 
 /**
  * Common base test class for XML sitemap internationalization tests.
  */
 class XMLSitemapI18nWebTestCase extends XMLSitemapTestHelper {
-
-  /**
-   * Admin User.
-   *
-   * @var string
-   *
-   * @codingStandardsIgnoreStart
-   */
   protected $admin_user;
 
   /**
    * Set up an administrative user account and testing keys.
-   *
-   * @codingStandardsIgnoreEnd
    */
-  public function setUp($modules = array()) {
+  function setUp($modules = array()) {
     // Call parent::setUp() allowing test cases to pass further modules.
     $modules[] = 'locale';
     $modules[] = 'translation';
@@ -39,8 +29,7 @@ class XMLSitemapI18nWebTestCase extends XMLSitemapTestHelper {
     variable_set('language_negotiation', LOCALE_LANGUAGE_NEGOTIATION_URL_PREFIX);
 
     // Create the two different language-context sitemaps.
-    db_delete('xmlsitemap_sitemap')->execute();
-
+    db_query("DELETE FROM {xmlsitemap_sitemap}");
     $sitemap = new stdClass();
     $sitemap->context = array('language' => 'en');
     xmlsitemap_sitemap_save($sitemap);
@@ -48,17 +37,9 @@ class XMLSitemapI18nWebTestCase extends XMLSitemapTestHelper {
     $sitemap->context = array('language' => 'fr');
     xmlsitemap_sitemap_save($sitemap);
   }
-
 }
 
-/**
- * I18n Test.
- */
 class XMLSitemapI18nTest extends XMLSitemapI18nWebTestCase {
-
-  /**
-   * Get Info.
-   */
   public static function getInfo() {
     return array(
       'name' => 'XML sitemap i18n tests',
@@ -68,10 +49,7 @@ class XMLSitemapI18nTest extends XMLSitemapI18nWebTestCase {
     );
   }
 
-  /**
-   * Language Selection.
-   */
-  public function testLanguageSelection() {
+  function testLanguageSelection() {
     // Create our three different language nodes.
     $node = $this->addSitemapLink(array('type' => 'node', 'language' => LANGUAGE_NONE));
     $node_en = $this->addSitemapLink(array('type' => 'node', 'language' => 'en'));
@@ -126,17 +104,9 @@ class XMLSitemapI18nTest extends XMLSitemapI18nWebTestCase {
     $this->assertRawSitemapLinks($node_fr, $link, $link_fr);
     $this->assertNoRawSitemapLinks($node, $node_en, $link_en);
   }
-
 }
 
-/**
- * Node Test.
- */
 class XMLSitemapI18nNodeTest extends XMLSitemapI18nWebTestCase {
-
-  /**
-   * Get Info.
-   */
   public static function getInfo() {
     return array(
       'name' => 'XML sitemap i18n node tests',
@@ -146,10 +116,7 @@ class XMLSitemapI18nNodeTest extends XMLSitemapI18nWebTestCase {
     );
   }
 
-  /**
-   * Setup.
-   */
-  public function setUp($modules = array()) {
+  function setUp($modules = array()) {
     $modules[] = 'xmlsitemap_node';
     parent::setUp($modules);
 
@@ -158,10 +125,7 @@ class XMLSitemapI18nNodeTest extends XMLSitemapI18nWebTestCase {
     $this->drupalLogin($this->admin_user);
   }
 
-  /**
-   * Node Language Data.
-   */
-  public function testNodeLanguageData() {
+  function testNodeLanguageData() {
     $node = $this->drupalCreateNode(array());
 
     $this->drupalPost('node/' . $node->nid . '/edit', array('language' => 'en'), t('Save'));
@@ -172,5 +136,4 @@ class XMLSitemapI18nNodeTest extends XMLSitemapI18nWebTestCase {
     $link = $this->assertSitemapLink('node', $node->nid);
     $this->assertIdentical($link['language'], 'fr');
   }
-
 }

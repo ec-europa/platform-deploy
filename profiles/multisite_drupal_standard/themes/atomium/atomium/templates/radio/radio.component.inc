@@ -20,7 +20,7 @@ function atomium_atomium_theme_radio() {
 /**
  * Implements hook_preprocess_hook().
  */
-function atomium_preprocess_radio(array &$variables, $hook) {
+function atomium_preprocess_radio(&$variables, $hook) {
   _form_set_class($variables['element'], array('form-radio'));
   element_set_attributes(
     $variables['element'],
@@ -41,7 +41,7 @@ function atomium_preprocess_radio(array &$variables, $hook) {
   $variables['atomium']['attributes']['element']->merge($attributes);
 
   if (isset($variables['element']['#return_value']) &&
-    FALSE !== $variables['element']['#value'] &&
+    $variables['element']['#value'] !== FALSE &&
     $variables['element']['#value'] == $variables['element']['#return_value']) {
     $variables['atomium']['attributes']['element']->setAttribute('checked');
   }

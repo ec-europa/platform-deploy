@@ -140,6 +140,7 @@ class TaxonomyBrowserFeatureTest extends DrupalWebTestCase {
     $this->assertText(t('Tags'), t('Taxonomy browser settings content is successfully loaded.'));
   }
 
+
   /**
    * Create content for tests.
    */

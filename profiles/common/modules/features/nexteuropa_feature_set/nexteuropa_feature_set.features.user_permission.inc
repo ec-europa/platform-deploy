@@ -174,6 +174,15 @@ function nexteuropa_feature_set_user_default_permissions() {
     'module' => 'multisite_drupal_features_set_standard',
   );
 
+  // Exported permission: 'manage feature multisite_crop_and_resize'.
+  $permissions['manage feature multisite_crop_and_resize'] = array(
+    'name' => 'manage feature multisite_crop_and_resize',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'multisite_drupal_features_set_standard',
+  );
+
   // Exported permission: 'manage feature multisite_maxlength'.
   $permissions['manage feature multisite_maxlength'] = array(
     'name' => 'manage feature multisite_maxlength',
@@ -204,6 +213,15 @@ function nexteuropa_feature_set_user_default_permissions() {
   // Exported permission: 'manage feature multisite_metatags'.
   $permissions['manage feature multisite_metatags'] = array(
     'name' => 'manage feature multisite_metatags',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'multisite_drupal_features_set_standard',
+  );
+
+  // Exported permission: 'manage feature multisite_multilingual_references'.
+  $permissions['manage feature multisite_multilingual_references'] = array(
+    'name' => 'manage feature multisite_multilingual_references',
     'roles' => array(
       'administrator' => 'administrator',
     ),
@@ -295,7 +313,7 @@ function nexteuropa_feature_set_user_default_permissions() {
   $permissions['manage feature nexteuropa_dgt_connector'] = array(
     'name' => 'manage feature nexteuropa_dgt_connector',
     'roles' => array(
-      'administrator' => 'administrator',
+      'cem' => 'cem',
     ),
     'module' => 'multisite_drupal_features_set_standard',
   );

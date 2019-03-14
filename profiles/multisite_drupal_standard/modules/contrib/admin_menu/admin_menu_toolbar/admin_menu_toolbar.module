@@ -115,3 +115,4 @@ function admin_menu_toolbar_admin_menu_output_alter(&$content) {
     $content['account']['account']['#options']['html'] = TRUE;
   }
 }
+

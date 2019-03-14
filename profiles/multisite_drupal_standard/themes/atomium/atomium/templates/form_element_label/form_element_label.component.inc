@@ -20,17 +20,17 @@ function atomium_atomium_theme_form_element_label() {
 /**
  * Implements hook_preprocess_hook().
  */
-function atomium_preprocess_form_element_label(array &$variables, $hook) {
+function atomium_preprocess_form_element_label(&$variables, $hook) {
   $element = &$variables['element']['element'];
   // This is also used in the installer, pre-database setup.
   $t = get_t();
 
   // Style the label as class option to display inline with the element.
-  if ('after' == $element['#title_display']) {
+  if ($element['#title_display'] == 'after') {
     $variables['atomium']['attributes']['wrapper']->append('class', 'option');
   }
   // Show label only to screen readers to avoid disruption in visual flows.
-  elseif ('invisible' == $element['#title_display']) {
+  elseif ($element['#title_display'] == 'invisible') {
     $variables['atomium']['attributes']['wrapper']->append('class', 'element-invisible');
   }
 

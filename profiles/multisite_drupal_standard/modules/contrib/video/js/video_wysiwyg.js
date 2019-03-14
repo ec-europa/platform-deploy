@@ -41,9 +41,8 @@
       $dialog.dialog({
         close: function(event, ui) {
           var nid = Drupal.settings.wysiwyg.plugins.drupal.video.golbal.selectedId;
-          if(nid.length) {
+          if(nid.length)
             onSelect(nid, data, settings, instanceId);
-          }
         }
       });
     }

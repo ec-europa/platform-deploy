@@ -32,40 +32,35 @@ function mimemail_rules_action_info() {
           'label' => t('CC Recipient'),
           'description' => t("The mail's carbon copy address. You may separate multiple addresses with comma."),
           'optional' => TRUE,
-          'allow null' => TRUE,
         ),
         'bcc' => array(
           'type' => 'text',
           'label' => t('BCC Recipient'),
           'description' => t("The mail's blind carbon copy address. You may separate multiple addresses with comma."),
           'optional' => TRUE,
-          'allow null' => TRUE,
         ),
         'from_name' => array(
           'type' => 'text',
           'label' => t('Sender name'),
           'description' => t("The sender's name. Leave it empty to use the site-wide configured name."),
           'optional' => TRUE,
-          'allow null' => TRUE,
         ),
         'from_mail' => array(
           'type' => 'text',
           'label' => t('Sender e-mail address'),
           'description' => t("The sender's address. Leave it empty to use the site-wide configured address."),
           'optional' => TRUE,
-          'allow null' => TRUE,
         ),
         'reply_to' => array(
           'type' => 'text',
           'label' => t('Reply e-mail address'),
           'description' => t("The address to reply to. Leave it empty to use the sender's address."),
           'optional' => TRUE,
-          'allow null' => TRUE,
         ),
         'list_unsubscribe' => array(
           'type' => 'text',
           'label' => t('Unsubscription e-mail and/or URL'),
-          'description' => t("An e-mail address and/or a URL which can be used for unsubscription. Values must be enclosed by angle brackets and separated by a comma."),
+          'description' => t("An e-mail address and/or a URL which can be used for unsubscription. Values must be enclosed by angel brackets and separated by a comma."),
           'optional' => TRUE,
         ),
         'subject' => array(
@@ -105,12 +100,6 @@ function mimemail_rules_action_info() {
           'default mode' => 'selector',
         ),
       ),
-      'provides' => array(
-        'send_status' => array(
-          'type' => 'boolean',
-          'label' => t('Send status'),
-        ),
-      ),
       'base' => 'rules_action_mimemail',
       'access callback' => 'rules_system_integration_access',
     ),
@@ -131,7 +120,7 @@ function mimemail_rules_action_info() {
         ),
         'active' => array(
           'type' => 'boolean',
-          'label' => t('Send to active users'),
+          'label' =>('Send to active users'),
           'description' => t('Send mail only to active users.'),
         ),
         'from_name' => array(
@@ -139,21 +128,12 @@ function mimemail_rules_action_info() {
           'label' => t('Sender name'),
           'description' => t("The sender's name. Leave it empty to use the site-wide configured name."),
           'optional' => TRUE,
-          'allow null' => TRUE,
         ),
         'from_mail' => array(
           'type' => 'text',
           'label' => t('Sender e-mail address'),
           'description' => t("The sender's address. Leave it empty to use the site-wide configured address."),
           'optional' => TRUE,
-          'allow null' => TRUE,
-        ),
-        'reply_to' => array(
-          'type' => 'text',
-          'label' => t('Reply e-mail address'),
-          'description' => t("The address to reply to. Leave it empty to use the sender's address."),
-          'optional' => TRUE,
-          'allow null' => TRUE,
         ),
         'subject' => array(
           'type' => 'text',
@@ -194,12 +174,6 @@ function mimemail_rules_action_info() {
           'optional' => TRUE,
           'default value' => LANGUAGE_NONE,
           'default mode' => 'selector',
-        ),
-      ),
-      'provides' => array(
-        'send_status' => array(
-          'type' => 'boolean',
-          'label' => t('Send status'),
         ),
       ),
       'base' => 'rules_action_mimemail_to_users_of_role',
@@ -305,15 +279,13 @@ function rules_action_mimemail($key, $to, $cc = NULL, $bcc = NULL, $from_name = 
     'attachments' => $attachments,
   );
 
-  $message = drupal_mail('mimemail', $key, $to, $language, $params, $from);
-
-  return array('send_status' => !empty($message['result']));
+  drupal_mail('mimemail', $key, $to, $language, $params, $from);
 }
 
 /**
  * Action: Send HTML mail to all users of a specific role group(s).
  */
-function rules_action_mimemail_to_users_of_role($key, $roles, $active, $from_name = NULL, $from_mail = NULL, $reply_to = NULL, $subject, $body, $plaintext = NULL, $attachments = array(), $use_userlang = FALSE, $langcode= NULL, $settings, RulesState $state, RulesPlugin $element) {
+function rules_action_mimemail_to_users_of_role($key, $roles, $active, $from_name = NULL, $from_mail = NULL, $subject, $body, $plaintext = NULL, $attachments = array(), $use_userlang = FALSE, $langcode= NULL, $settings, RulesState $state, RulesPlugin $element) {
   module_load_include('inc', 'mimemail');
 
   // Set the sender name and from address.
@@ -354,7 +326,6 @@ function rules_action_mimemail_to_users_of_role($key, $roles, $active, $from_nam
       'action' => $element,
       'state' => $state,
     ),
-    'reply-to' => $reply_to,
     'plaintext' => $plaintext,
     'attachments' => $attachments,
   );
@@ -381,8 +352,6 @@ function rules_action_mimemail_to_users_of_role($key, $roles, $active, $from_nam
     $role_names = array_intersect_key(user_roles(TRUE), array_flip($roles));
     watchdog('rules', 'Successfully sent HTML email to the role(s) %roles.', array('%roles' => implode(', ', $role_names)));
   }
-
-  return array('send_status' => !empty($message['result']));
 }
 
 /**

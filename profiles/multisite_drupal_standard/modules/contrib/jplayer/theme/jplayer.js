@@ -4,17 +4,11 @@
  */
 
 (function ($) {
-  'use strict';
+  
   Drupal.jPlayer = Drupal.jPlayer || {};
   
   Drupal.behaviors.jPlayer = {
-    settings: {},
-    instances: {},
-
     attach: function(context, settings) {
-      this.settings = Drupal.settings.jPlayer;
-      this.instances = Drupal.settings.jplayerInstances;
-      var self = this;
       // Set time format settings
       $.jPlayer.timeFormat.showHour = Drupal.settings.jPlayer.showHour;
       $.jPlayer.timeFormat.showMin = Drupal.settings.jPlayer.showMin;
@@ -27,13 +21,15 @@
       $.jPlayer.timeFormat.sepHour = Drupal.settings.jPlayer.sepHour;
       $.jPlayer.timeFormat.sepMin = Drupal.settings.jPlayer.sepMin;
       $.jPlayer.timeFormat.sepSec = Drupal.settings.jPlayer.sepSec;
-
+      
       // INITIALISE
-      $('.jp-jplayer', context).once('jp-player--loaded', function() {
+      
+      $('.jp-jplayer:not(.jp-jplayer-processed)', context).each(function() {
+        $(this).addClass('jp-jplayer-processed');
         var wrapper = this.parentNode;
         var player = this;
         var playerId = $(this).attr('id');
-        var playerSettings = self.instances[playerId];
+        var playerSettings = Drupal.settings.jplayerInstances[playerId];
         var type = $(this).parent().attr('class');
         player.playerType = $(this).parent().attr('class');
         
@@ -41,11 +37,13 @@
           // Initialise single player
           $(player).jPlayer({
             ready: function() {
-              Drupal.jPlayer.setFiles(wrapper, player, 0, playerSettings.autoplay);
+              $(this).jPlayer("setMedia", playerSettings.files);
+              
               // Make sure we pause other players on play
               $(player).bind($.jPlayer.event.play, function() {
                 $(this).jPlayer("pauseOthers");
               });
+
               Drupal.attachBehaviors(wrapper);
 
               // Repeat?
@@ -60,7 +58,7 @@
                 $(this).jPlayer("play");
               }
             },
-            swfPath: self.settings.swfPath,
+            swfPath: Drupal.settings.jPlayer.swfPath,
             cssSelectorAncestor: '#'+playerId+'_interface',
             solution: playerSettings.solution,
             supplied: playerSettings.supplied,
@@ -81,8 +79,7 @@
               });
 
               // Add playlist selection
-              // TODO: make this a $playlist object for easier user below.
-              $('#' + playerId + '_playlist').find('a').click(function(){
+              $('#'+playerId+'_playlist').find('a').click(function(){
                 var index = $(this).attr('id').split('_')[2];
                 Drupal.jPlayer.setFiles(wrapper, player, index, true);
                 $(this).blur();
@@ -90,32 +87,21 @@
               });
 
               Drupal.attachBehaviors(wrapper);
-              if (playerSettings.continuous == 1) {
-                $(player).bind($.jPlayer.event.ended, function(e) {
-                  // TODO: Combine all ended event in one location.
-                  if(!$('li:last', $('#'+playerId+'_playlist')).hasClass('jp-playlist-current')) {
-                    Drupal.jPlayer.next(wrapper, player);
+
+              // Repeat?
+              if (playerSettings.repeat != 'none') {
+                $(player).bind($.jPlayer.event.ended, function() {
+                  if (playerSettings.repeat == 'single') {
                     $(this).jPlayer("play");
                   }
-                  else if($('li:last', $('#'+playerId+'_playlist')).hasClass('jp-playlist-current')) {
-                    // We are at the end of the playlist, so move to the first
-                    // track but stop playing if repeat is disabled.
+                  else {
                     Drupal.jPlayer.next(wrapper, player);
-                    if (playerSettings.repeat == 'none') {
-                      $(this).jPlayer("pause");
-                    }
                   }
                 });
               }
-
-              // Repeat a single track?
-              if (playerSettings.repeat == 'single') {
-                $(player).bind($.jPlayer.event.ended, function() {
-                  $(this).jPlayer("play");
-                });
-              }
+              
             },
-            swfPath: self.settings.swfPath,
+            swfPath: Drupal.settings.jPlayer.swfPath,
             cssSelectorAncestor: '#'+playerId+'_interface',
             solution: playerSettings.solution,
             supplied: playerSettings.supplied,
@@ -150,24 +136,27 @@
     $(wrapper).find('.jp-playlist-current').removeClass('jp-playlist-current');
     $('#'+playerId+'_item_'+index).parent().addClass('jp-playlist-current');
     $('#'+playerId+'_item_'+index).addClass('jp-playlist-current');
-    $(player).jPlayer("setMedia", playerSettings.files[index]);
-    var key ='';
+    $(player).jPlayer("setMedia", playerSettings.files[index])
+    
     for (key in playerSettings.files[index]) {
       if (key != 'poster') {
         type = key;
       }
     }
-    var kind = '';
+    
     if (type in {'m4v':'', 'mp4':'','ogv':'','webmv':''}) {
-      kind = 'video jp-video-360p';
+      var kind = 'video jp-video-360p';
     }
     else if (type in {'mp3':'', 'm4a':'','oga':'','webmv':'','wav':''}) {
-      kind = 'audio';
+      var kind = 'audio';
     }
     
     if (kind == 'audio') {
       $(wrapper).find('img').remove();
     }
+    
+    //$(wrapper).parent().attr('class', 'jp-'+kind);
+    
     if (play == true) {
       $(player).jPlayer('play');
     }
@@ -181,7 +170,7 @@
     var index = (current + 1 < playerSettings.files.length) ? current + 1 : 0;
     
     Drupal.jPlayer.setFiles(wrapper, player, index, true);
-  };
+  }
   
   Drupal.jPlayer.previous = function(wrapper, player) {
     var playerId = $(player).attr('id');
@@ -191,7 +180,7 @@
     var index = (current - 1 >= 0) ? current - 1 : playerSettings.files.length - 1;
     
     Drupal.jPlayer.setFiles(wrapper, player, index, true);
-  };
+  }
   
 })(jQuery);
 

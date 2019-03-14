@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \\Drupal\\menu\\Config.
+ */
+
 namespace Drupal\menu;
 
 use Drupal\multisite_config\ConfigBase;

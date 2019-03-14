@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\nexteuropa_core\Config.
+ */
+
 namespace Drupal\nexteuropa_core;
 
 use Psr\Log\AbstractLogger;

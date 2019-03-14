@@ -17,16 +17,17 @@ if (module_exists('comment')) {
 }
 
 function ctools_node_comment_form_content_type_render($subtype, $conf, $panel_args, $context) {
-  if (empty($context->data->nid)) {
-    return;
-  }
-  $node = clone $context->data;
+  $node = isset($context->data) ? clone $context->data : NULL;
   $block = new stdClass();
   $block->module = 'comments';
   $block->delta  = $node->nid;
+
   $block->title = t('Add comment');
 
-  if ($node->comment == COMMENT_NODE_OPEN) {
+  if (empty($node)) {
+    $block->content = t('Comment form here.');
+  }
+  else if ($node->comment == COMMENT_NODE_OPEN) {
     if (user_access('post comments')) {
       $comment = new stdClass();
       $comment->nid = $node->nid;

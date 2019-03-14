@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\nexteuropa_token\Tests\HashTokenHandlerTest.
+ */
+
 namespace Drupal\nexteuropa_token\Tests;
 
 use Drupal\nexteuropa_token\HashTokenHandler;

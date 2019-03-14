@@ -8,7 +8,7 @@
 /**
  * Implements hook_preprocess_hook().
  */
-function atomium_bootstrap_preprocess_button(array &$variables, $hook) {
+function atomium_bootstrap_preprocess_button(&$variables, $hook) {
   $variables['atomium']['attributes']['element']->append('class', 'btn');
 
   if (isset($variables['element']['#attributes']['id'])) {

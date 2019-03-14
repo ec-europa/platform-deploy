@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Role-based condition for Password Policy module.

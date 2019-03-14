@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Numeric count constraint for Password Policy module.

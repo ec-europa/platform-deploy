@@ -53,13 +53,11 @@ function scheduler_default_rules_configuration() {
   $rule = rule(array(
     'scheduler_node' => array(
       'type' => 'node',
-      'label' => t('Node'),
-      'description' => t('The node for publishing via Scheduler.'),
+      'label' => 'The node for publishing via Scheduler',
     ),
     'scheduler_publish_on_date' => array(
       'type' => 'date',
-      'label' => t('Publish-on Date'),
-      'description' => t('The publishing date to be used by Scheduler.'),
+      'label' => 'The publishing date to be used by Scheduler',
     ),
   ));
   $rule->label = t('Set scheduled publishing date');
@@ -81,13 +79,11 @@ function scheduler_default_rules_configuration() {
   $rule = rule(array(
     'scheduler_node' => array(
       'type' => 'node',
-      'label' => t('Node'),
-      'description' => t('The node for unpublishing via Scheduler.'),
+      'label' => 'The node for unpublishing via Scheduler',
     ),
     'scheduler_unpublish_on_date' => array(
       'type' => 'date',
-      'label' => t('Unpublish-on Date'),
-      'description' => t('The unpublishing date to be used by Scheduler.'),
+      'label' => 'The unpublishing date to be used by Scheduler',
     ),
   ));
   $rule->label = t('Set scheduled unpublishing date');
@@ -106,8 +102,7 @@ function scheduler_default_rules_configuration() {
   $rule = rule(array(
     'scheduler_node' => array(
       'type' => 'node',
-      'label' => t('The scheduled node'),
-      'description' => t('The node scheduled for publishing via Scheduler.'),
+      'label' => 'The node scheduled for publishing via Scheduler',
     ),
   ));
   $rule->label = t('Remove scheduled publishing date');
@@ -125,8 +120,7 @@ function scheduler_default_rules_configuration() {
   $rule = rule(array(
     'scheduler_node' => array(
       'type' => 'node',
-      'label' => t('The scheduled node'),
-      'description' => t('The node scheduled for unpublishing via Scheduler.'),
+      'label' => 'The node scheduled for unpublishing via Scheduler',
     ),
   ));
   $rule->label = t('Remove scheduled unpublishing date');

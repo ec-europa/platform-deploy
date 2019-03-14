@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Provides Next Europa TMGMT DGT FTT translator listener.
+ */
+
 namespace Drupal\ne_tmgmt_dgt_ftt_translator\TMGMTDefaultSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -25,7 +30,7 @@ class TMGMTDgtFttSubscriber implements EventSubscriberInterface {
   /**
    * Implements the event onTranslationReceivedEvent.
    *
-   * @param \EC\Poetry\Events\Notifications\TranslationReceivedEvent $event
+   * @param TranslationReceivedEvent $event
    *   The event for the translation Received.
    */
   public function onTranslationReceivedEvent(TranslationReceivedEvent $event) {
@@ -59,7 +64,7 @@ class TMGMTDgtFttSubscriber implements EventSubscriberInterface {
   /**
    * Implements the event onStatusUpdatedEvent.
    *
-   * @param \EC\Poetry\Events\Notifications\StatusUpdatedEvent $event
+   * @param StatusUpdatedEvent $event
    *   The event for the Status Update.
    */
   public function onStatusUpdatedEvent(StatusUpdatedEvent $event) {

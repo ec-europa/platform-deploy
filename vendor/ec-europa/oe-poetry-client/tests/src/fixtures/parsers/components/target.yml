@@ -26,6 +26,7 @@
     getAcceptedDelay : "10/07/2007"
     getAcceptedDelayFormat : "dd/mm/YYYY"
     getTranslatedFile : "File"
+    getRemark : "Remark"
   - getType : "webService"
     getUser : "Username"
     getPassword : "Password"

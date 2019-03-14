@@ -611,9 +611,8 @@ function drupal_parse_url($url) {
   }
   // The 'q' parameter contains the path of the current page if clean URLs are
   // disabled. It overrides the 'path' of the URL when present, even if clean
-  // URLs are enabled, due to how Apache rewriting rules work. The path
-  // parameter must be a string.
-  if (isset($options['query']['q']) && is_string($options['query']['q'])) {
+  // URLs are enabled, due to how Apache rewriting rules work.
+  if (isset($options['query']['q'])) {
     $options['path'] = $options['query']['q'];
     unset($options['query']['q']);
   }
@@ -867,10 +866,8 @@ function drupal_http_request($url, array $options = array()) {
       // Make the socket connection to a proxy server.
       $socket = 'tcp://' . $proxy_server . ':' . variable_get('proxy_port', 8080);
       // The Host header still needs to match the real request.
-      if (!isset($options['headers']['Host'])) {
-        $options['headers']['Host'] = $uri['host'];
-        $options['headers']['Host'] .= isset($uri['port']) && $uri['port'] != 80 ? ':' . $uri['port'] : '';
-      }
+      $options['headers']['Host'] = $uri['host'];
+      $options['headers']['Host'] .= isset($uri['port']) && $uri['port'] != 80 ? ':' . $uri['port'] : '';
       break;
 
     case 'http':
@@ -880,18 +877,14 @@ function drupal_http_request($url, array $options = array()) {
       // RFC 2616: "non-standard ports MUST, default ports MAY be included".
       // We don't add the standard port to prevent from breaking rewrite rules
       // checking the host that do not take into account the port number.
-      if (!isset($options['headers']['Host'])) {
-        $options['headers']['Host'] = $uri['host'] . ($port != 80 ? ':' . $port : '');
-      }
+      $options['headers']['Host'] = $uri['host'] . ($port != 80 ? ':' . $port : '');
       break;
 
     case 'https':
       // Note: Only works when PHP is compiled with OpenSSL support.
       $port = isset($uri['port']) ? $uri['port'] : 443;
       $socket = 'ssl://' . $uri['host'] . ':' . $port;
-      if (!isset($options['headers']['Host'])) {
-        $options['headers']['Host'] = $uri['host'] . ($port != 443 ? ':' . $port : '');
-      }
+      $options['headers']['Host'] = $uri['host'] . ($port != 443 ? ':' . $port : '');
       break;
 
     default:
@@ -1094,11 +1087,6 @@ function drupal_http_request($url, array $options = array()) {
       elseif ($options['max_redirects']) {
         // Redirect to the new location.
         $options['max_redirects']--;
-
-        // We need to unset the 'Host' header
-        // as we are redirecting to a new location.
-        unset($options['headers']['Host']);
-
         $result = drupal_http_request($location, $options);
         $result->redirect_code = $code;
       }
@@ -1599,8 +1587,6 @@ function _filter_xss_attributes($attr) {
   $attrarr = array();
   $mode = 0;
   $attrname = '';
-  $skip = FALSE;
-  $skip_protocol_filtering = FALSE;
 
   while (strlen($attr) != 0) {
     // Was the last operation successful?
@@ -1612,20 +1598,6 @@ function _filter_xss_attributes($attr) {
         if (preg_match('/^([-a-zA-Z]+)/', $attr, $match)) {
           $attrname = strtolower($match[1]);
           $skip = ($attrname == 'style' || substr($attrname, 0, 2) == 'on');
-
-          // Values for attributes of type URI should be filtered for
-          // potentially malicious protocols (for example, an href-attribute
-          // starting with "javascript:"). However, for some non-URI
-          // attributes performing this filtering causes valid and safe data
-          // to be mangled. We prevent this by skipping protocol filtering on
-          // such attributes.
-          // See filter_xss_bad_protocol() and
-          // http://www.w3.org/TR/html4/index/attributes.html.
-          $skip_protocol_filtering = substr($attrname, 0, 5) === 'data-' || in_array($attrname, array(
-            'title',
-            'alt',
-          ));
-
           $working = $mode = 1;
           $attr = preg_replace('/^[-a-zA-Z]+/', '', $attr);
         }
@@ -1651,7 +1623,7 @@ function _filter_xss_attributes($attr) {
       case 2:
         // Attribute value, a URL after href= for instance.
         if (preg_match('/^"([^"]*)"(\s+|$)/', $attr, $match)) {
-          $thisval = $skip_protocol_filtering ? $match[1] : filter_xss_bad_protocol($match[1]);
+          $thisval = filter_xss_bad_protocol($match[1]);
 
           if (!$skip) {
             $attrarr[] = "$attrname=\"$thisval\"";
@@ -1663,7 +1635,7 @@ function _filter_xss_attributes($attr) {
         }
 
         if (preg_match("/^'([^']*)'(\s+|$)/", $attr, $match)) {
-          $thisval = $skip_protocol_filtering ? $match[1] : filter_xss_bad_protocol($match[1]);
+          $thisval = filter_xss_bad_protocol($match[1]);
 
           if (!$skip) {
             $attrarr[] = "$attrname='$thisval'";
@@ -1674,7 +1646,7 @@ function _filter_xss_attributes($attr) {
         }
 
         if (preg_match("%^([^\s\"']+)(\s+|$)%", $attr, $match)) {
-          $thisval = $skip_protocol_filtering ? $match[1] : filter_xss_bad_protocol($match[1]);
+          $thisval = filter_xss_bad_protocol($match[1]);
 
           if (!$skip) {
             $attrarr[] = "$attrname=\"$thisval\"";
@@ -1735,38 +1707,6 @@ function filter_xss_bad_protocol($string, $decode = TRUE) {
     $string = decode_entities($string);
   }
   return check_plain(drupal_strip_dangerous_protocols($string));
-}
-
-/**
- * Applies a very permissive XSS/HTML filter to data-attributes.
- *
- * Contrib modules which allow rich text fields to be edited using client-side
- * WYSIWYG editors must apply XSS filtering to the contents of data-attributes
- * since they can contain encoded HTML markup that could be decoded and
- * interpreted by editors.
- *
- * @param string $html
- *   The string to apply the data-attributes filtering to.
- *
- * @return string
- *   The filtered string.
- */
-function filter_xss_data_attributes($html) {
-  if (stristr($html, 'data-') !== FALSE) {
-    $dom = filter_dom_load($html);
-    $xpath = new DOMXPath($dom);
-    foreach ($xpath->query('//@*[starts-with(name(.), "data-")]') as $node) {
-      // The data-attributes contain an HTML-encoded value, so we need to
-      // decode the value, apply XSS filtering and then re-save as encoded
-      // value. There is no need to explicitly decode $node->value, since the
-      // DOMAttr::value getter returns the decoded value.
-      $value = filter_xss_admin($node->value);
-      $node->value = check_plain($value);
-    }
-    $html = filter_dom_serialize($dom);
-  }
-
-  return $html;
 }
 
 /**
@@ -2370,10 +2310,7 @@ function url($path = NULL, array $options = array()) {
     $language = isset($options['language']) && isset($options['language']->language) ? $options['language']->language : '';
     $alias = drupal_get_path_alias($original_path, $language);
     if ($alias != $original_path) {
-      // Strip leading slashes from internal path aliases to prevent them
-      // becoming external URLs without protocol. /example.com should not be
-      // turned into //example.com.
-      $path = ltrim($alias, '/');
+      $path = $alias;
     }
   }
 

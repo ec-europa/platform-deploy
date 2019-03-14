@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \\Drupal\\field\\Config.
+ */
+
 namespace Drupal\field;
 
 use Drupal\multisite_config\ConfigBase;

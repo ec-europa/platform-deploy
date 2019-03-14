@@ -95,11 +95,6 @@ if (typeof tinymce !== 'undefined' && tinymce.majorVersion == "3") {
 Drupal.wysiwyg.plugins.media = {
 
   /**
-   * The selected text string.
-   */
-  selectedText: null,
-
-  /**
    * Determine whether a DOM element belongs to this plugin.
    *
    * @param node
@@ -137,9 +132,6 @@ Drupal.wysiwyg.plugins.media = {
         insert.onSelect([media_file]);
       }
       else {
-        // Store currently selected text.
-        this.selectedText = data.content;
-
         // Insert new media.
         insert.prompt(settings.global);
       }
@@ -207,8 +199,7 @@ InsertMedia.prototype = {
           fid: this.mediaFile.fid,
           view_mode: formatted_media.type,
           attributes: this.mediaFile.attributes,
-          fields: formatted_media.options,
-          link_text: Drupal.wysiwyg.plugins.media.selectedText
+          fields: formatted_media.options
         });
     // Get the markup and register it for the macro / placeholder handling.
     var markup = Drupal.media.filter.getWysiwygHTML(element);

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Provide drush integration for print_pdf module PDF libraries download.
+ * drush integration for print_pdf module PDF libraries download.
  */
 
 /**
@@ -23,25 +23,21 @@ function print_pdf_drush_command() {
       'path' => dt('A path to the download folder. If omitted Drush will use the default location (@path).', array('@path' => 'sites/all/libraries')),
     ),
     'aliases' => array('pdfdl'),
-    // No site or config needed.
-    'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT,
+    'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT, // No site or config needed.
   );
 
   return $items;
 }
 
 /**
- * Implements drush_hook_COMMAND_validate().
+ * Implements of drush_hook_COMMAND_validate().
  */
 function drush_print_pdf_download_validate($library = NULL) {
   if (is_null($library)) {
     $pdf_libs = array();
     drush_command_invoke_all_ref('drush_pdf_libs_alter', $pdf_libs);
 
-    drush_set_error('DRUSH_PDFDL_MISSING_ARG', dt("Usage: drush !cmd <library>\nWhere <library> is one of the following: !libs\n\nTry 'drush !cmd --help' for more information.", array(
-      '!cmd' => 'print-pdf-download',
-      '!libs' => implode(', ', array_keys($pdf_libs)),
-    )));
+    drush_set_error('DRUSH_PDFDL_MISSING_ARG', dt("Usage: drush !cmd <library>\nWhere <library> is one of the following: !libs\n\nTry 'drush !cmd --help' for more information.", array('!cmd' => 'print-pdf-download', '!libs' => implode(', ', array_keys($pdf_libs)))));
   }
 }
 
@@ -49,7 +45,7 @@ function drush_print_pdf_download_validate($library = NULL) {
  * Download and extract PDF archive.
  *
  * @param string $library
- *   Library to download.
+ *   library to download
  */
 function drush_print_pdf_download($library) {
   $pdf_libs = array();

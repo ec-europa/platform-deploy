@@ -17,24 +17,16 @@ function nexteuropa_varnish_admin_settings_form($form, $form_state) {
   $form['purge_cache'] = array(
     '#type' => 'fieldset',
     '#title' => t('Purge caches'),
-    '#description' => t('The operation will clear Varnish cache.
-    Click the checkbox to also clear Drupal cache.'),
+    '#description' => t('Flush all caches (Drupal & Varnish)'),
   );
 
   // If the purge mechanism is prevented to work, then the button must be
   // disabled and a warning message must be displayed.
   $disabled = _nexteuropa_varnish_temporary_message();
 
-  $form['purge_cache']['purge_drupal'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Clear drupal cache as well'),
-    '#return_value' => 1,
-    '#default_value' => 0,
-  );
-
   $form['purge_cache']['purge'] = array(
     '#type' => 'submit',
-    '#value' => t('Purge caches'),
+    '#value' => t('Purge all caches'),
     '#submit' => array('nexteuropa_varnish_purge_all_confirm'),
     '#disabled' => $disabled,
   );
@@ -54,6 +46,7 @@ function nexteuropa_varnish_admin_settings_form($form, $form_state) {
   );
 
   $form['#submit'][] = 'nexteuropa_varnish_admin_settings_cache_clear_submit';
+
   return system_settings_form($form);
 }
 
@@ -70,21 +63,15 @@ function nexteuropa_varnish_admin_settings_cache_clear_submit($form, &$form_stat
  * Redirect the user from "General" page to the "purge all" confirmation form.
  */
 function nexteuropa_varnish_purge_all_confirm($form, &$form_state) {
-  if ($form_state['values']['purge_drupal']) {
-    $form_state['redirect'] = 'admin/config/system/nexteuropa-varnish/purge/all';
-  }
-  else {
-    $form_state['redirect'] = 'admin/config/system/nexteuropa-varnish/purge/varnish';
-  }
+  $form_state['redirect'] = 'admin/config/system/nexteuropa-varnish/purge_all';
 }
 
 /**
  * Generates the form allowing triggering the full cache purge.
  */
-function nexteuropa_varnish_purge_all_form($form, &$form_state, $arg) {
+function nexteuropa_varnish_purge_all_form($form, &$form_state) {
   $description = t("The action you are about to perform has a deep impact on the site's performance!");
-  $arg == 'all' ? $type = "Varnish and Drupal" : $type = "Varnish";
-  $confirm_message = t("Are you sure you want to purge !type cache ?", array('!type' => $type));
+  $confirm_message = t("Are you sure you want to purge all site's caches (Varnish included)?");
   return confirm_form($form,
     $confirm_message,
     'admin/config/system/nexteuropa-varnish/general',
@@ -95,21 +82,17 @@ function nexteuropa_varnish_purge_all_form($form, &$form_state, $arg) {
 }
 
 /**
- * Processes the flush cache triggered by the "Purge caches" button.
+ * Processes the full flush cache triggered by the "Purge all caches" button.
  *
  * @see nexteuropa_varnish_admin_settings_form()
  */
 function nexteuropa_varnish_purge_all_form_submit($form, &$form_state) {
-  $arg = $form_state['build_info']['args'][0];
-  $arg == 'all' ? $type = "Drupal and Varnish" : $type = "Varnish";
-  $confirm_message = t('The !type caches have been fully flushed.', array('!type' => $type));
+  $confirm_message = t('The Drupal and Varnish caches have been fully flushed.');
   $message_level = 'status';
   // First clear the actual backend cache (usually DrupalDatabaseCache).
   // Otherwise the web frontend cache will receive again outdated cached
   // versions of pages.
-  if ($arg == 'all') {
-    drupal_flush_all_caches();
-  }
+  drupal_flush_all_caches();
 
   // Treating Varnish flushing (inspired by "flexibe_purge" contrib module).
   $send_success = _nexteuropa_varnish_varnish_requests_send();

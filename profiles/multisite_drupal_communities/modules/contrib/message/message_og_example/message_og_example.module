@@ -104,3 +104,4 @@ function message_og_example_group_list(Message $message) {
   }
   return implode(', ', $items);
 }
+

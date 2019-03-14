@@ -5,9 +5,9 @@ core = 7.x
 configure = admin/config/media/video/transcoders
 dependencies[] = libraries (2.x)
 
-; Information added by Drupal.org packaging script on 2017-04-08
-version = "7.x-2.13"
+; Information added by Drupal.org packaging script on 2015-01-14
+version = "7.x-2.11"
 core = "7.x"
 project = "video"
-datestamp = "1491658093"
+datestamp = "1421234306"
 

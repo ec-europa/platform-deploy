@@ -16,10 +16,7 @@ class AdminMenuWebTestCase extends DrupalWebTestCase {
     'admin_menu' => 'access administration menu',
   );
 
-  /**
-   *
-   */
-  public function setUp() {
+  function setUp() {
     // Enable admin menu module and any other modules.
     $modules = func_get_args();
     $modules = isset($modules[0]) ? $modules[0] : $modules;
@@ -111,17 +108,12 @@ class AdminMenuWebTestCase extends DrupalWebTestCase {
     $xpath = '//div[@id="admin-menu"]/div/ul' . implode('/parent::li/ul', $xpath);
     $this->assertNoElementByXPath($xpath, $args, $message . ' link not found.');
   }
-
 }
 
 /**
  * Tests menu links depending on user permissions.
  */
 class AdminMenuPermissionsTestCase extends AdminMenuWebTestCase {
-
-  /**
-   *
-   */
   public static function getInfo() {
     return array(
       'name' => 'Menu link access permissions',
@@ -130,17 +122,14 @@ class AdminMenuPermissionsTestCase extends AdminMenuWebTestCase {
     );
   }
 
-  /**
-   *
-   */
-  public function setUp() {
+  function setUp() {
     parent::setUp(array('node'));
   }
 
   /**
    * Test that the links are added to the page (no JS testing).
    */
-  public function testPermissions() {
+  function testPermissions() {
     module_enable(array('contact'));
     $this->resetAll();
 
@@ -151,7 +140,7 @@ class AdminMenuPermissionsTestCase extends AdminMenuWebTestCase {
     // Create a user who
     // - can access content overview
     // - cannot access drupal.org links
-    // - cannot administer Contact module.
+    // - cannot administer Contact module
     $permissions = $this->basePermissions + array(
       'access content overview',
     );
@@ -167,7 +156,7 @@ class AdminMenuPermissionsTestCase extends AdminMenuWebTestCase {
     // Create a user "reversed" to the above; i.e., who
     // - cannot access content overview
     // - can access drupal.org links
-    // - can administer Contact module.
+    // - can administer Contact module
     $permissions = $this->basePermissions + array(
       'display drupal links',
       'administer contact forms',
@@ -183,7 +172,7 @@ class AdminMenuPermissionsTestCase extends AdminMenuWebTestCase {
   /**
    * Tests handling of links pointing to category/overview pages.
    */
-  public function testCategories() {
+  function testCategories() {
     // Create a user with minimum permissions.
     $admin_user = $this->drupalCreateUser($this->basePermissions);
     $this->drupalLogin($admin_user);
@@ -212,7 +201,7 @@ class AdminMenuPermissionsTestCase extends AdminMenuWebTestCase {
   /**
    * Tests that user role and permission changes are properly taken up.
    */
-  public function testPermissionChanges() {
+  function testPermissionChanges() {
     // Create a user who is able to change permissions.
     $permissions = $this->basePermissions + array(
       'administer permissions',
@@ -264,17 +253,12 @@ class AdminMenuPermissionsTestCase extends AdminMenuWebTestCase {
     // Verify that Structure » Content types does not appear.
     $this->assertNoLinkTrailByTitle(array(t('Structure'), t('Content types')));
   }
-
 }
 
 /**
  * Tests appearance, localization, and escaping of dynamic links.
  */
 class AdminMenuDynamicLinksTestCase extends AdminMenuWebTestCase {
-
-  /**
-   *
-   */
   public static function getInfo() {
     return array(
       'name' => 'Dynamic links',
@@ -283,17 +267,14 @@ class AdminMenuDynamicLinksTestCase extends AdminMenuWebTestCase {
     );
   }
 
-  /**
-   *
-   */
-  public function setUp() {
+  function setUp() {
     parent::setUp(array('node'));
   }
 
   /**
    * Tests node type links.
    */
-  public function testNode() {
+  function testNode() {
     $type = $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
     // Create a content-type with special characters.
     $type = $this->drupalCreateContentType(array('type' => 'special', 'name' => 'Cool & Special'));
@@ -343,7 +324,7 @@ class AdminMenuDynamicLinksTestCase extends AdminMenuWebTestCase {
   /**
    * Tests Add content links.
    */
-  public function testNodeAdd() {
+  function testNodeAdd() {
     $type = $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
 
     // Verify that "Add content" does not appear for unprivileged users.
@@ -378,17 +359,12 @@ class AdminMenuDynamicLinksTestCase extends AdminMenuWebTestCase {
       t('Add content'),
     ));
   }
-
 }
 
 /**
  * Tests appearance of different types of links.
  */
 class AdminMenuLinkTypesTestCase extends AdminMenuWebTestCase {
-
-  /**
-   *
-   */
   public static function getInfo() {
     return array(
       'name' => 'Link types',
@@ -397,10 +373,7 @@ class AdminMenuLinkTypesTestCase extends AdminMenuWebTestCase {
     );
   }
 
-  /**
-   *
-   */
-  public function setUp() {
+  function setUp() {
     parent::setUp(array('help'));
 
     $permissions = module_invoke_all('permission');
@@ -412,7 +385,7 @@ class AdminMenuLinkTypesTestCase extends AdminMenuWebTestCase {
   /**
    * Tests appearance of different router item link types.
    */
-  public function testLinkTypes() {
+  function testLinkTypes() {
     // Verify that MENU_NORMAL_ITEMs appear.
     $this->assertLinkTrailByTitle(array(
       t('Configuration'),
@@ -447,17 +420,12 @@ class AdminMenuLinkTypesTestCase extends AdminMenuWebTestCase {
       ':title' => t('Index'),
     ), "Icon » Index link found.");
   }
-
 }
 
 /**
  * Tests customized menu links.
  */
 class AdminMenuCustomizedTestCase extends AdminMenuWebTestCase {
-
-  /**
-   *
-   */
   public static function getInfo() {
     return array(
       'name' => 'Customized links',
@@ -466,10 +434,7 @@ class AdminMenuCustomizedTestCase extends AdminMenuWebTestCase {
     );
   }
 
-  /**
-   *
-   */
-  public function setUp() {
+  function setUp() {
     parent::setUp(array('menu'));
 
     $this->admin_user = $this->drupalCreateUser($this->basePermissions + array(
@@ -481,7 +446,7 @@ class AdminMenuCustomizedTestCase extends AdminMenuWebTestCase {
   /**
    * Test disabled custom links.
    */
-  public function testCustomDisabled() {
+  function testCustomDisabled() {
     $type = $this->drupalCreateContentType();
     $node = $this->drupalCreateNode(array('type' => $type->type));
     $text = $this->randomName();
@@ -523,7 +488,7 @@ class AdminMenuCustomizedTestCase extends AdminMenuWebTestCase {
   /**
    * Tests external links.
    */
-  public function testCustomExternal() {
+  function testCustomExternal() {
     // Add a custom link to the node to the menu.
     $edit = array(
       'link_path' => 'http://example.com',
@@ -551,5 +516,5 @@ class AdminMenuCustomizedTestCase extends AdminMenuWebTestCase {
       ':path' => $path,
     ))->fetchField();
   }
-
 }
+

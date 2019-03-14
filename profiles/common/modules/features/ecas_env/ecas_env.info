@@ -1,5 +1,5 @@
-name = EU login (ECAS_env)
-description = Environment for using EU Login
+name = ECAS_env
+description = Environment for using ECAS
 core = 7.x
 package = Multisite Core Features
 dependencies[] = ecas

@@ -10,7 +10,6 @@ use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
 use Drupal\DrupalExtension\Context\RawDrupalContext;
 use Drupal\nexteuropa_laco\LanguageCoverageService as Service;
 use Behat\Gherkin\Node\TableNode;
-use GuzzleHttp\Client;
 
 /**
  * Behat step definitions for the NextEuropa Multilingual module.
@@ -32,7 +31,7 @@ class NextEuropaLacoSubContext extends RawDrupalContext implements DrupalSubCont
   /**
    * Constructs a NextEuropaLacoSubContext object.
    *
-   * @param \Drupal\DrupalDriverManager $drupal
+   * @param DrupalDriverManager $drupal
    *   The Drupal driver manager.
    */
   public function __construct(DrupalDriverManager $drupal) {
@@ -56,7 +55,7 @@ class NextEuropaLacoSubContext extends RawDrupalContext implements DrupalSubCont
   public function assertLanguageCoverage($code, $language, $path, $message = '') {
     global $base_url;
 
-    $client = new Client([
+    $client = new \GuzzleHttp\Client([
       'headers' => [
         Service::HTTP_HEADER_SERVICE_NAME => Service::HTTP_HEADER_SERVICE_VALUE,
         Service::HTTP_HEADER_LANGUAGE_NAME => $language,

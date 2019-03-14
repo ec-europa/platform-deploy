@@ -17,10 +17,8 @@ class CreateReviewRequest extends CreateTranslationRequest
      */
     public function __construct(Identifier $identifier, Settings $settings)
     {
-        if (empty($identifier->getProduct())) {
-            $identifier->setProduct('REV');
-        }
         parent::__construct($identifier, $settings);
+        $identifier->setProduct('REV');
     }
 
     /**

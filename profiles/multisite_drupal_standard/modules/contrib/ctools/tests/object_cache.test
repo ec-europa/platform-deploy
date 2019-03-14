@@ -1,36 +1,27 @@
 <?php
+/**
+ * @file
+ * Tests for different parts of the ctools object caching system.
+ */
 
 /**
  * Test object cache storage.
  */
 class CtoolsObjectCache extends DrupalWebTestCase {
-
-  /**
-   * {@inheritDoc}
-   */
   public static function getInfo() {
     return array(
-      'name' => 'Object cache storage (UI tests)',
+      'name' => 'Ctools object cache storage',
       'description' => 'Verify that objects are written, readable and lockable.',
-      'group' => 'ctools',
-      'dependencies' => array('ctools'),
+      'group' => 'Chaos Tools Suite',
     );
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  function setUp(array $modules = array()) {
-    $modules[] = 'ctools';
-    parent::setUp($modules);
+  public function setUp() {
+    // Additionally enable ctools module.
+    parent::setUp('ctools');
   }
 
-  /**
-   *
-   */
   public function testObjectStorage() {
-    ctools_include('cache');
-
     $account1 = $this->drupalCreateUser(array());
     $this->drupalLogin($account1);
 

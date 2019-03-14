@@ -97,7 +97,8 @@ class TMGMTPoetryTranslatorPluginController extends TMGMTDefaultTranslatorPlugin
       if ($results) {
         foreach ($results as $result) {
           if ($job = tmgmt_job_load($result->tjid)) {
-            if ($job->getTranslator() && $job->getState() == 1) {
+            $translator = $job->getTranslator();
+            if ($translator && $translator->plugin == 'poetry' && $job->getState() == 1) {
               // Check the poetry status.
               $result_ps = db_select('poetry_status', 'ps')
                 ->fields('ps', array('status'))
@@ -129,7 +130,7 @@ class TMGMTPoetryTranslatorPluginController extends TMGMTDefaultTranslatorPlugin
       ));
     }
     else {
-      return t('A pending translation for this item already exists');
+      return t('An active translation for this item already exists');
     }
   }
 
@@ -555,7 +556,7 @@ xsi:noNamespaceSchemaLocation=\"http://intragate.ec.europa.eu/DGT/poetry_service
       $processed_lang = [];
       foreach ($new_languages as $language) {
         // Create a job and a job item for the given language.
-        _tmgmt_poetry_create_job_and_item($language, $job, $delivery_date);
+        _tmgmt_poetry_create_job_and_item($language, $job);
         // Helper array to store processed languages.
         $processed_lang[] = $languages[$language]->name;
       }
@@ -574,10 +575,6 @@ xsi:noNamespaceSchemaLocation=\"http://intragate.ec.europa.eu/DGT/poetry_service
    *
    * @param \SimpleXMLElement $poetry_xml
    *   Main XML document.
-   * @param string $poetry_user
-   *   The poetry user.
-   * @param int $poetry_password
-   *   The user password.
    *
    * @return mixed
    *   FALSE or string with XML response.

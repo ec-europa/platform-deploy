@@ -31,23 +31,23 @@ function atomium_atomium_theme_item_list() {
 /**
  * Implements hook_preprocess_hook().
  */
-function atomium_preprocess_item_list(array &$variables, $hook) {
+function atomium_preprocess_item_list(&$variables, $hook) {
   // Only output the list container and title, if there are any list items.
   // Check to see whether the block title exists before adding a header.
   // Empty headers are not semantic and present accessibility challenges.
   if (!empty($variables['items'])) {
-    $num_items = \count($variables['items']);
+    $num_items = count($variables['items']);
     $i = 0;
     foreach ($variables['items'] as $key => $item) {
       $i++;
-      if (1 == $i) {
+      if ($i == 1) {
         $variables['atomium']['attributes'][$key]->append('class', 'first');
       }
       if ($i == $num_items) {
         $variables['atomium']['attributes'][$key]->append('class', 'last');
       }
 
-      if (\is_array($item) && isset($item['data'])) {
+      if (is_array($item) && isset($item['data'])) {
         $item += array('class' => array());
         $variables['atomium']['attributes'][$key]->append('class', $item['class']);
         $variables['items'][$key] = array(
@@ -62,7 +62,7 @@ function atomium_preprocess_item_list(array &$variables, $hook) {
         );
       }
 
-      if (\is_string($item)) {
+      if (is_string($item)) {
         $variables['items'][$key] = array(
           '#theme' => _atomium_extend_theme_hook('html_tag', $variables['theme_hook_original']),
           '#tag' => 'li',

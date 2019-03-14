@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\nexteuropa_token\Tests\ViewModeEntityTokenHandlerTest.
+ */
+
 namespace Drupal\nexteuropa_token\Tests\Entity;
 
 use Drupal\nexteuropa_token\Entity\ViewModeTokenHandler;
@@ -104,6 +109,7 @@ class ViewModeEntityTokenHandlerTest extends TokenHandlerAbstractTest {
       array('[node:123:view-modeee:full]', '', ''),
     );
   }
+
 
   /**
    * Data provider: provides list of entity machine names.

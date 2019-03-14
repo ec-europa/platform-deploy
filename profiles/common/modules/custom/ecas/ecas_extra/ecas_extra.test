@@ -229,6 +229,7 @@ class EcasExtraFunctionalTest extends DrupalWebTestCase {
     return $account;
   }
 
+
   /**
    * {@inheritdoc}
    */

@@ -71,13 +71,6 @@ class MigrateSourceSpreadsheet extends MigrateSource {
   protected $columns;
 
   /**
-   * The first row from where the table starts. It's a "zero based" value.
-   *
-   * @var int
-   */
-  protected $headerRows = 0;
-
-  /**
    * Simple initialization.
    *
    * @param string $path
@@ -85,18 +78,13 @@ class MigrateSourceSpreadsheet extends MigrateSource {
    * @param string $sheet_name
    *   The name of the sheet to be processed.
    * @param array $options
-   *   Options applied to this source. If the source data begins on different
-   *   row than the first row, pass this "zero based" value as 'header_rows' in
-   *   options, along with other options inherited from MigrateSource.
+   *   Options applied to this source.
    */
   public function __construct($path, $sheet_name, $columns = array(), array $options = array()) {
     parent::__construct($options);
     $this->file = $path;
     $this->sheetName = $sheet_name;
     $this->columns = $columns;
-    if (!empty($options['header_rows'])) {
-      $this->headerRows = $options['header_rows'];
-    }
 
     // Load the workbook.
     if ($this->load()) {
@@ -106,7 +94,7 @@ class MigrateSourceSpreadsheet extends MigrateSource {
 
       // Map field names to their column index.
       for ($col = 0; $col < $this->cols; ++$col) {
-        $this->fields[$col] = trim($this->worksheet->getCellByColumnAndRow($col, $this->headerRows + 1)->getValue());
+        $this->fields[$col] = trim($this->worksheet->getCellByColumnAndRow($col, 1)->getValue());
       }
 
       $this->unload();
@@ -202,8 +190,8 @@ class MigrateSourceSpreadsheet extends MigrateSource {
    * Returns a count of all available source records.
    */
   public function computeCount() {
-    // Subtract the non-data rows (rows before header and the header).
-    return $this->rows - $this->headerRows - 1;
+    // Subtract 1 for the header.
+    return $this->rows - 1;
   }
 
   /**
@@ -217,7 +205,7 @@ class MigrateSourceSpreadsheet extends MigrateSource {
       $this->load();
     }
 
-    $this->rowNumber = $this->headerRows + 1;
+    $this->rowNumber = 1;
   }
 
   /**

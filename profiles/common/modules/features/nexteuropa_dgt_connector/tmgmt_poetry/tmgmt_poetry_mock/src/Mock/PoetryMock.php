@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains Drupal\tmgmt_poetry_mock\Mock\PoetryMock.
+ */
+
 namespace Drupal\tmgmt_poetry_mock\Mock;
 
 /**
@@ -115,8 +120,6 @@ class PoetryMock {
    *
    * @param string $message
    *   XML request.
-   * @param string $reference
-   *   The XML file name.
    */
   public static function saveTranslationRequest($message, $reference) {
     $path = TMGMT_POETRY_MOCK_REQUESTS_PATH . $reference . '.xml';
@@ -145,7 +148,7 @@ class PoetryMock {
    */
   public function sendRequestToDrupal($message) {
     $this->instantiateClient($this->settings['drupal_wsdl']);
-    $translator = tmgmt_translator_load(self::TRANSLATOR_NAME);
+    $translator = tmgmt_translator_load(\Drupal\tmgmt_poetry_mock\Mock\PoetryMock::TRANSLATOR_NAME);
     $settings = $translator->getSetting('settings');
     try {
       $response = $this->client->{self::SOAP_METHOD}(
@@ -169,7 +172,7 @@ class PoetryMock {
    * @param string $lg_code
    *   Language code. If ALL then all languages will be processed one by one.
    *
-   * @return array
+   * @return array Array with translation response data.
    *   Array with translation response data.
    */
   public static function prepareTranslationResponseData($message, $lg_code) {
@@ -210,7 +213,7 @@ class PoetryMock {
    * @param string $message
    *   Translation request XML data.
    *
-   * @return array
+   * @return array Array with translation response data.
    *   Array with translation response data.
    */
   public static function prepareRefuseJobResponseData($message) {
@@ -733,21 +736,21 @@ class PoetryMock {
   public static function importMockTranslator() {
     /** @var \EntityDrupalWrapper $translator */
     $translator = entity_import('tmgmt_translator', '{
-    "name" : "' . self::TRANSLATOR_NAME . '",
-    "label" : "' . self::TRANSLATOR_LABEL . '",
+    "name" : "' . \Drupal\tmgmt_poetry_mock\Mock\PoetryMock::TRANSLATOR_NAME . '",
+    "label" : "' . \Drupal\tmgmt_poetry_mock\Mock\PoetryMock::TRANSLATOR_LABEL . '",
     "description" : "",
     "weight" : "-999",
     "plugin" : "poetry",
     "settings" : {
       "auto_accept" : 0,
       "settings" : {
-        "counter" : "' . self::COUNTER_STRING . '",
+        "counter" : "' . \Drupal\tmgmt_poetry_mock\Mock\PoetryMock::COUNTER_STRING . '",
         "code" : "WEB",
         "website_identifier" : "my-website",
-        "callback_user" : "' . self::CALLBACK_USER . '",
-        "callback_password" : "' . self::CALLBACK_PASSWORD . '",
-        "poetry_user" : "' . self::POETRY_USER . '",
-        "poetry_password" : "' . self::POETRY_PASSWORD . '"
+        "callback_user" : "' . \Drupal\tmgmt_poetry_mock\Mock\PoetryMock::CALLBACK_USER . '",
+        "callback_password" : "' . \Drupal\tmgmt_poetry_mock\Mock\PoetryMock::CALLBACK_PASSWORD . '",
+        "poetry_user" : "' . \Drupal\tmgmt_poetry_mock\Mock\PoetryMock::POETRY_USER . '",
+        "poetry_password" : "' . \Drupal\tmgmt_poetry_mock\Mock\PoetryMock::POETRY_PASSWORD . '"
       },
       "organization" : {
         "responsable" : "DIGIT",
@@ -768,7 +771,6 @@ class PoetryMock {
     },
     "rdf_mapping" : []
   }');
-
     $translator->save();
   }
 

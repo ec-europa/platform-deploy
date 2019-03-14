@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \\Drupal\\comment\\Config.
+ */
+
 namespace Drupal\comment;
 
 use Drupal\multisite_config\ConfigBase;

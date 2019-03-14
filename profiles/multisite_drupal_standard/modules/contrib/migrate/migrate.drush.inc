@@ -1145,8 +1145,6 @@ function drush_migrate_pre_migrate_import($args = NULL) {
  *  A comma delimited list of machine names, or the special name 'all'
  */
 function drush_migrate_import($args = NULL) {
-  $status = NULL;
-
   try {
     if (drush_get_option('notify', FALSE)) {
       // Capture non-informational output for mailing
@@ -1168,18 +1166,14 @@ function drush_migrate_import($args = NULL) {
     if ($limit) {
       $parts = explode(' ', $limit);
       $options['limit']['value'] = $parts[0];
-      // Default unit.
-      if (!isset($parts[1])) {
-        $parts[1] = 'items';
-      }
       $options['limit']['unit'] = $parts[1];
-      // Validation.
-      if (!in_array($options['limit']['unit'], array(
-        'seconds',
-        'second',
-        'items',
-        'item'
-      ))) {
+      if (!$options['limit']['unit']) {
+        $options['limit']['unit'] = 'items';
+      }
+      elseif ($options['limit']['unit'] != 'seconds' &&
+              $options['limit']['unit'] != 'second' &&
+              $options['limit']['unit'] != 'items' &&
+              $options['limit']['unit'] != 'item') {
         drush_set_error(NULL, dt("Invalid limit unit '!unit'",
           array('!unit' => $options['limit']['unit'])));
         return;
@@ -1316,8 +1310,6 @@ function drush_migrate_import($args = NULL) {
   if (drush_get_option('notify')) {
     _drush_migrate_notify();
   }
-
-  return $status;
 }
 
 /**

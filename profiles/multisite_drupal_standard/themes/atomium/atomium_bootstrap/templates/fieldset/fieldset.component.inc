@@ -7,10 +7,8 @@
 
 /**
  * Implements hook_preprocess_hook().
- *
- * @SuppressWarnings(PHPMD)
  */
-function atomium_bootstrap_preprocess_fieldset(array &$variables, $hook) {
+function atomium_bootstrap_preprocess_fieldset(&$variables, $hook) {
   $element = &$variables['element'];
 
   // Set the element's attributes.

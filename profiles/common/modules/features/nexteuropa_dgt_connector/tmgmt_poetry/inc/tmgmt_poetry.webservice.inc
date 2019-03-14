@@ -5,8 +5,6 @@
  * Webservice definition and behaviour.
  */
 
-use Drupal\tmgmt_poetry_mock\Mock\PoetryMock;
-
 /**
  * Log message severity -- Emergency: system is unusable.
  */
@@ -109,7 +107,7 @@ function FPFISPoetryIntegrationRequest($user, $password, $msg) {
 
   // Use the Poetry Mock translator if the tmgmt_poetry_mock is enabled.
   if (module_exists('tmgmt_poetry_mock')) {
-    $poetry_translator = tmgmt_translator_load(PoetryMock::TRANSLATOR_NAME);
+    $poetry_translator = tmgmt_translator_load(\Drupal\tmgmt_poetry_mock\Mock\PoetryMock::TRANSLATOR_NAME);
   }
 
   // Authenticate the request.
@@ -131,7 +129,7 @@ function FPFISPoetryIntegrationRequest($user, $password, $msg) {
     // Get main job in order to register the messages.
     $main_reference = 'MAIN_%_POETRY_%' . $reference;
     $language_job = $request->status['lgCode'];
-    $ids = tmgmt_poetry_obtain_related_translation_jobs($language_job, $reference)
+    $ids = _tmgmt_poetry_obtain_related_translation_jobs($language_job, $reference)
       ->fetchAll();
 
     // Handling the case where we can't find the corresponding job.
@@ -216,7 +214,7 @@ function FPFISPoetryIntegrationRequest($user, $password, $msg) {
           if ($cancelled) {
             $reference = '%' . $reference;
 
-            $ids = tmgmt_poetry_obtain_related_translation_jobs(array(), $reference)
+            $ids = _tmgmt_poetry_obtain_related_translation_jobs(array(), $reference)
               ->fetchAll();
             foreach ($ids as $id) {
               $job = tmgmt_job_load($id->tjid);
@@ -225,7 +223,7 @@ function FPFISPoetryIntegrationRequest($user, $password, $msg) {
           }
           elseif ($message_job->isAborted()) {
             $reference = '%' . $reference;
-            $ids = tmgmt_poetry_obtain_related_translation_jobs(array(), $reference)
+            $ids = _tmgmt_poetry_obtain_related_translation_jobs(array(), $reference)
               ->fetchAll();
 
             foreach ($ids as $id) {
@@ -253,7 +251,7 @@ function FPFISPoetryIntegrationRequest($user, $password, $msg) {
             $reference = 'MAIN_%_POETRY_%' . $reference;
             $language_job = array();
           }
-          $ids = tmgmt_poetry_obtain_related_translation_jobs($language_job, $reference)
+          $ids = _tmgmt_poetry_obtain_related_translation_jobs($language_job, $reference)
             ->fetchAll();
           $ids = array_shift($ids);
           $job = tmgmt_job_load($ids->tjid);
@@ -287,7 +285,7 @@ function FPFISPoetryIntegrationRequest($user, $password, $msg) {
       $language_code = $poetry_translator->mapToLocalLanguage($language_code);
       $language_job = array($language_code);
 
-      $ids = tmgmt_poetry_obtain_related_translation_jobs($language_job, $reference)
+      $ids = _tmgmt_poetry_obtain_related_translation_jobs($language_job, $reference)
         ->fetchAll();
       $ids = array_shift($ids);
       $job = tmgmt_job_load($ids->tjid);
@@ -597,7 +595,6 @@ function _tmgmt_poetry_wsdl() {
  * Local Exception class.
  */
 class TMGMTPoetryException extends Exception {
-
   /**
    * Override of the parent __construct method.
    */

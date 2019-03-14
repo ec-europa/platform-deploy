@@ -24,7 +24,7 @@ function news_og_field_default_field_bases() {
         0 => 'value',
       ),
     ),
-    'locked' => 1,
+    'locked' => 0,
     'module' => 'list',
     'settings' => array(
       'allowed_values' => array(

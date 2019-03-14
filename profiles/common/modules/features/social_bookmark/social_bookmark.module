@@ -238,6 +238,7 @@ function _social_bookmark_bar_contents() {
   }
 }
 
+
 /**
  * Display auxiliar function for _social_bookmark_bar_contents().
  */

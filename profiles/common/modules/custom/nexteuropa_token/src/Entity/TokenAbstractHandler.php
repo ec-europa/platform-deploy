@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\nexteuropa_token\Entity\TokenAbstractHandler.
+ */
+
 namespace Drupal\nexteuropa_token\Entity;
 
 use Drupal\nexteuropa_token\TokenAbstractHandler as BaseTokenAbstractHandler;

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\nexteuropa_integration\ClosureDecoratedMigrateSourceBackend.
+ */
+
 namespace Drupal\nexteuropa_integration;
 
 use Drupal\integration_consumer\Migrate\MigrateSourceBackend;
@@ -13,23 +18,23 @@ class ClosureDecoratedMigrateSourceBackend extends MigrateSourceBackend {
   /**
    * The actual MigrateSourceBackend to decorate.
    *
-   * @var \Drupal\integration_consumer\Migrate\MigrateSourceBackend
+   * @var MigrateSourceBackend
    */
   protected $wrappedSource;
 
   /**
    * Closure to replace each document from the MigrateSourceBackend.
    *
-   * @var \Closure
+   * @var Closure
    */
   protected $closure;
 
   /**
    * ClosureDecoratedMigrateSourceBackend constructor.
    *
-   * @param \Drupal\integration_consumer\Migrate\MigrateSourceBackend $wrapped_source
+   * @param MigrateSourceBackend $wrapped_source
    *   The actual MigrateSourceBackend to decorate.
-   * @param \Closure $closure
+   * @param Closure $closure
    *   The closure which will be used to decorate the documents.
    */
   public function __construct(MigrateSourceBackend $wrapped_source, Closure $closure) {

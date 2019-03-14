@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \\Drupal\\entity_translation\\Config.
+ */
+
 namespace Drupal\entity_translation;
 
 use Drupal\multisite_config\ConfigBase;

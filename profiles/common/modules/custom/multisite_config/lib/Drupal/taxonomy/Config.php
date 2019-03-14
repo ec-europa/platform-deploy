@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \\Drupal\\taxonomy\\Config.
+ */
+
 namespace Drupal\taxonomy;
 
 use Drupal\multisite_config\ConfigBase;

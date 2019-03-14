@@ -7,11 +7,8 @@
 
 /**
  * Implements hook_preprocess_hook().
- *
- * @SuppressWarnings(PHPMD.CyclomaticComplexity)
- * @SuppressWarnings(PHPMD.NPathComplexity)
  */
-function atomium_bartik_preprocess_html(array &$variables, $hook) {
+function atomium_bartik_preprocess_html(&$variables, $hook) {
   if (!empty($variables['page']['featured'])) {
     $variables['atomium']['attributes']['body']->append('class', 'featured');
   }
@@ -66,7 +63,7 @@ function atomium_bartik_preprocess_html(array &$variables, $hook) {
 /**
  * Implements hook_process_html().
  */
-function atomium_bartik_process_html(array &$variables, $hook) {
+function atomium_bartik_process_html(&$variables, $hook) {
   // Hook into color.module.
   if (module_exists('color')) {
     _color_html_alter($variables);
