@@ -314,6 +314,7 @@ function link_field_validate($entity_type, $entity, $field, $instance, $langcode
       _link_validate($items[$delta], $delta, $field, $entity, $instance, $langcode, $optional_field_found, $errors);
     }
   }
+
   foreach ($items as $delta => $value) {
     if (isset($value['attributes']) && is_string($value['attributes'])) {
       $errors[$field['field_name']][$langcode][$delta][] = array(
