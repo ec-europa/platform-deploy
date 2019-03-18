@@ -58,6 +58,9 @@ Drupal.views.ajaxView = function(settings) {
 
   // Add the ajax to exposed forms.
   this.$exposed_form = $('.exp-dom-id-' + settings.view_dom_id + '#views-exposed-form-'+ settings.view_name.replace(/_/g, '-') + '-' + settings.view_display_id.replace(/_/g, '-'));
+  if (this.$exposed_form.length === 0) {
+    this.$exposed_form = $('#views-exposed-form-'+ settings.view_name.replace(/_/g, '-') + '-' + settings.view_display_id.replace(/_/g, '-'));
+  }
   this.$exposed_form.once(jQuery.proxy(this.attachExposedFormAjax, this));
 
   // Store Drupal.ajax objects here for all pager links.
