@@ -1,51 +1,5 @@
 [
     {
-        "name": "cweagans/composer-patches",
-        "version": "1.6.5",
-        "version_normalized": "1.6.5.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/cweagans/composer-patches.git",
-            "reference": "2ec4f00ff5fb64de584c8c4aea53bf9053ecb0b3"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/cweagans/composer-patches/zipball/2ec4f00ff5fb64de584c8c4aea53bf9053ecb0b3",
-            "reference": "2ec4f00ff5fb64de584c8c4aea53bf9053ecb0b3",
-            "shasum": ""
-        },
-        "require": {
-            "composer-plugin-api": "^1.0",
-            "php": ">=5.3.0"
-        },
-        "require-dev": {
-            "composer/composer": "~1.0",
-            "phpunit/phpunit": "~4.6"
-        },
-        "time": "2018-05-11T18:00:16+00:00",
-        "type": "composer-plugin",
-        "extra": {
-            "class": "cweagans\\Composer\\Patches"
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "cweagans\\Composer\\": "src"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Cameron Eagans",
-                "email": "me@cweagans.net"
-            }
-        ],
-        "description": "Provides a way to patch Composer packages."
-    },
-    {
         "name": "drupol/drupal7_psr3_watchdog",
         "version": "1.1.0",
         "version_normalized": "1.1.0.0",
@@ -608,23 +562,23 @@
     },
     {
         "name": "psr/log",
-        "version": "1.0.2",
-        "version_normalized": "1.0.2.0",
+        "version": "1.1.0",
+        "version_normalized": "1.1.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/php-fig/log.git",
-            "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d"
+            "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/php-fig/log/zipball/4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
-            "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
+            "url": "https://api.github.com/repos/php-fig/log/zipball/6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
+            "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2016-10-10T12:19:37+00:00",
+        "time": "2018-11-20T15:27:04+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -707,17 +661,17 @@
     },
     {
         "name": "symfony/cache",
-        "version": "v3.4.18",
-        "version_normalized": "3.4.18.0",
+        "version": "v3.4.19",
+        "version_normalized": "3.4.19.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/cache.git",
-            "reference": "4f29972d3fae5febec5c18db70e7dd2957e74ad6"
+            "reference": "96d1fec87e98b9ee526b48ac011174b5ea8c61b1"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/cache/zipball/4f29972d3fae5febec5c18db70e7dd2957e74ad6",
-            "reference": "4f29972d3fae5febec5c18db70e7dd2957e74ad6",
+            "url": "https://api.github.com/repos/symfony/cache/zipball/96d1fec87e98b9ee526b48ac011174b5ea8c61b1",
+            "reference": "96d1fec87e98b9ee526b48ac011174b5ea8c61b1",
             "shasum": ""
         },
         "require": {
@@ -740,7 +694,7 @@
             "doctrine/dbal": "~2.4",
             "predis/predis": "~1.0"
         },
-        "time": "2018-09-25T07:13:51+00:00",
+        "time": "2018-11-20T16:10:26+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -779,17 +733,17 @@
     },
     {
         "name": "symfony/dom-crawler",
-        "version": "v3.4.18",
-        "version_normalized": "3.4.18.0",
+        "version": "v3.4.19",
+        "version_normalized": "3.4.19.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/dom-crawler.git",
-            "reference": "c705bee03ade5b47c087807dd9ffaaec8dda2722"
+            "reference": "b6e94248eb4f8602a5825301b0bea1eb8cc82cfa"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/c705bee03ade5b47c087807dd9ffaaec8dda2722",
-            "reference": "c705bee03ade5b47c087807dd9ffaaec8dda2722",
+            "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/b6e94248eb4f8602a5825301b0bea1eb8cc82cfa",
+            "reference": "b6e94248eb4f8602a5825301b0bea1eb8cc82cfa",
             "shasum": ""
         },
         "require": {
@@ -803,7 +757,7 @@
         "suggest": {
             "symfony/css-selector": ""
         },
-        "time": "2018-10-02T12:28:39+00:00",
+        "time": "2018-11-26T10:17:44+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -838,17 +792,17 @@
     },
     {
         "name": "symfony/event-dispatcher",
-        "version": "v3.4.18",
-        "version_normalized": "3.4.18.0",
+        "version": "v3.4.19",
+        "version_normalized": "3.4.19.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/event-dispatcher.git",
-            "reference": "db9e829c8f34c3d35cf37fcd4cdb4293bc4a2f14"
+            "reference": "d365fc4416ec4980825873962ea5d1b1bca46f1a"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/db9e829c8f34c3d35cf37fcd4cdb4293bc4a2f14",
-            "reference": "db9e829c8f34c3d35cf37fcd4cdb4293bc4a2f14",
+            "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/d365fc4416ec4980825873962ea5d1b1bca46f1a",
+            "reference": "d365fc4416ec4980825873962ea5d1b1bca46f1a",
             "shasum": ""
         },
         "require": {
@@ -868,7 +822,7 @@
             "symfony/dependency-injection": "",
             "symfony/http-kernel": ""
         },
-        "time": "2018-10-30T16:50:50+00:00",
+        "time": "2018-11-26T10:17:44+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -903,24 +857,24 @@
     },
     {
         "name": "symfony/expression-language",
-        "version": "v3.4.18",
-        "version_normalized": "3.4.18.0",
+        "version": "v3.4.19",
+        "version_normalized": "3.4.19.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/expression-language.git",
-            "reference": "d60e37ab9838338d959f2cc177a66cf498293788"
+            "reference": "859770c96849a8d253d685bed4f3d0fc2c642cfa"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/expression-language/zipball/d60e37ab9838338d959f2cc177a66cf498293788",
-            "reference": "d60e37ab9838338d959f2cc177a66cf498293788",
+            "url": "https://api.github.com/repos/symfony/expression-language/zipball/859770c96849a8d253d685bed4f3d0fc2c642cfa",
+            "reference": "859770c96849a8d253d685bed4f3d0fc2c642cfa",
             "shasum": ""
         },
         "require": {
             "php": "^5.5.9|>=7.0.8",
             "symfony/cache": "~3.1|~4.0"
         },
-        "time": "2018-07-26T09:06:28+00:00",
+        "time": "2018-11-11T19:48:54+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1134,17 +1088,17 @@
     },
     {
         "name": "symfony/translation",
-        "version": "v3.4.18",
-        "version_normalized": "3.4.18.0",
+        "version": "v3.4.19",
+        "version_normalized": "3.4.19.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/translation.git",
-            "reference": "94bc3a79008e6640defedf5e14eb3b4f20048352"
+            "reference": "bdbe940ed3ef4179f86032086c32d3a858becc0f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/translation/zipball/94bc3a79008e6640defedf5e14eb3b4f20048352",
-            "reference": "94bc3a79008e6640defedf5e14eb3b4f20048352",
+            "url": "https://api.github.com/repos/symfony/translation/zipball/bdbe940ed3ef4179f86032086c32d3a858becc0f",
+            "reference": "bdbe940ed3ef4179f86032086c32d3a858becc0f",
             "shasum": ""
         },
         "require": {
@@ -1169,7 +1123,7 @@
             "symfony/config": "",
             "symfony/yaml": ""
         },
-        "time": "2018-10-02T16:33:53+00:00",
+        "time": "2018-11-26T10:17:44+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1204,17 +1158,17 @@
     },
     {
         "name": "symfony/validator",
-        "version": "v3.4.18",
-        "version_normalized": "3.4.18.0",
+        "version": "v3.4.19",
+        "version_normalized": "3.4.19.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/validator.git",
-            "reference": "6ab5fee7c0763d90753f37fce6db9fdbca1b1a4c"
+            "reference": "05a6285201cbfd7c564d095de5ad76a589ad9adb"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/validator/zipball/6ab5fee7c0763d90753f37fce6db9fdbca1b1a4c",
-            "reference": "6ab5fee7c0763d90753f37fce6db9fdbca1b1a4c",
+            "url": "https://api.github.com/repos/symfony/validator/zipball/05a6285201cbfd7c564d095de5ad76a589ad9adb",
+            "reference": "05a6285201cbfd7c564d095de5ad76a589ad9adb",
             "shasum": ""
         },
         "require": {
@@ -1256,7 +1210,7 @@
             "symfony/property-access": "For accessing properties within comparison constraints",
             "symfony/yaml": ""
         },
-        "time": "2018-10-14T18:32:13+00:00",
+        "time": "2018-11-20T16:01:59+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
