@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_form_element() {
+function atomium_atomium_theme_form_element(array $existing, $type, $theme, $path) {
   return array(
     'form_element' => array(
       'template' => 'form-element',
@@ -41,14 +41,14 @@ function atomium_preprocess_form_element(array &$variables, $hook) {
   // Date selects need the form-item for the show/hide end date.
   if (isset($element['#type'])) {
     // AND.
-    if ('date_select' == $element['#type'] || 'date_text' == $element['#type'] || 'date_popup' == $element['#type']) {
+    if ($element['#type'] === 'date_select' || $element['#type'] === 'date_text' || $element['#type'] === 'date_popup') {
       $attributes['class'] = array('form-item');
     }
   }
   // Add element's #type and #name as class to aid with JS/CSS selectors.
   $attributes['class'] = array('form-item');
   if (!empty($element['#type'])) {
-    $attributes['class'][] = 'form-type-' . \strtr($element['#type'], '_', '-');
+    $attributes['class'][] = 'form-type-' . \str_replace($element['#type'], '_', '-');
   }
   if (!empty($element['#name'])) {
     $attributes['class'][] = 'form-item-' . \strtr(
