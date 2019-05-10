@@ -30,8 +30,8 @@ settings[test1][setting7] = settingG
 settings[test2][] = value1
 settings[test2][] = value2
 
-; Information added by Drupal.org packaging script on 2019-05-03
-version = "7.x-2.24"
+; Information added by Drupal.org packaging script on 2019-05-10
+version = "7.x-2.25"
 core = "7.x"
 project = "atomium"
-datestamp = "1556890088"
+datestamp = "1557473293"
