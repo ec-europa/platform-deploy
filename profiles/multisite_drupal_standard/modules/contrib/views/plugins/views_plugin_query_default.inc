@@ -1214,7 +1214,10 @@ class views_plugin_query_default extends views_plugin_query {
       }
       // This is a formula, using no tables.
       elseif (empty($field['table'])) {
-        if (!in_array($fieldname, $non_aggregates)) {
+        if (Database::getConnection()->databaseType() != 'pgsql') {
+          $non_aggregates[] = $fieldname;
+        }
+        elseif (!in_array($fieldname, $non_aggregates)) {
           $non_aggregates[] = $fieldname;
         }
         $placeholders = !empty($field['placeholders']) ? $field['placeholders'] : array();
@@ -1224,13 +1227,16 @@ class views_plugin_query_default extends views_plugin_query {
       elseif ($this->distinct && !in_array($fieldname, $this->groupby)) {
         // d7cx: This code was there, apparently needed for PostgreSQL
         // $string = db_driver() == 'pgsql' ? "FIRST($string)" : $string;
-        if (!in_array($string, $non_aggregates)) {
+        if (Database::getConnection()->databaseType() == 'pgsql' && !in_array($string, $non_aggregates)) {
           $non_aggregates[] = $string;
         }
         $query->addField(!empty($field['table']) ? $field['table'] : $this->base_table, $field['field'], $fieldname);
       }
       elseif (empty($field['aggregate'])) {
-        if (!in_array($string, $non_aggregates)) {
+        if (Database::getConnection()->databaseType() != 'pgsql') {
+          $non_aggregates[] = $fieldname;
+        }
+        elseif (!in_array($string, $non_aggregates)) {
           $non_aggregates[] = $string;
         }
         $query->addField(!empty($field['table']) ? $field['table'] : $this->base_table, $field['field'], $fieldname);

@@ -1392,9 +1392,7 @@ class views_handler_filter extends views_handler {
         $session[$this->options['expose']['operator_id']] = $input[$this->options['expose']['operator_id']];
       }
 
-      if (isset($input[$this->options['expose']['identifier']])) {
-        $session[$this->options['expose']['identifier']] = $input[$this->options['expose']['identifier']];
-      }
+      $session[$this->options['expose']['identifier']] = $input[$this->options['expose']['identifier']];
     }
   }
 
