@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_link() {
+function atomium_atomium_theme_link(array $existing, $type, $theme, $path) {
   return array(
     'link' => array(
       'template' => 'link',
@@ -27,8 +27,6 @@ function atomium_atomium_theme_link() {
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 function atomium_preprocess_link(array &$variables, $hook) {
-  global $language_url;
-
   $variables += array('options' => array('html' => FALSE));
   $variables['options'] += array(
     'html' => FALSE,
@@ -41,12 +39,12 @@ function atomium_preprocess_link(array &$variables, $hook) {
   $path = url($variables['path'], $variables['options']);
 
   // Append active class.
-  if (($path == '/' . $_GET['q'] || ($path == url('<front>', $variables['options']) && drupal_is_front_page())) &&
-    (empty($variables['options']['language']) || $variables['options']['language']->language == $language_url->language)) {
+  if (($path === '/' . $_GET['q'] || ($path === url('<front>', $variables['options']) && drupal_is_front_page())) &&
+    (empty($variables['options']['language']) || $variables['options']['language']->language === $GLOBALS['language_url']->language)) {
     $variables['atomium']['attributes']['element']->append('class', 'active');
   }
 
-  if ((0 === \strpos($variables['path'], '#')) || (0 === \strpos($variables['path'], 'javascript:'))) {
+  if ((\strpos($variables['path'], '#') === 0) || (\strpos($variables['path'], 'javascript:') === 0)) {
     $path = $variables['path'];
   }
 
@@ -54,7 +52,9 @@ function atomium_preprocess_link(array &$variables, $hook) {
 
   if (\is_string($variables['text'])) {
     $variables['text'] = array(
-      '#markup' => ($variables['options']['html'] ? $variables['text'] : check_plain($variables['text'])),
+      '#markup' => $variables['options']['html'] ?
+      $variables['text'] :
+      check_plain($variables['text']),
     );
   }
 }
