@@ -8,27 +8,11 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_radio(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_radio() {
   return array(
     'radio' => array(
       'render element' => 'element',
       'template' => 'radio',
-    ),
-  );
-}
-
-/**
- * Implements hook_atomium_definition_hook().
- */
-function atomium_atomium_definition_radio() {
-  return array(
-    'label' => 'Radio',
-    'description' => 'Radio.',
-    'preview' => array(
-      'radio' => array(
-        'title' => 'Radio title',
-        'description' => 'Radio description.',
-      ),
     ),
   );
 }
@@ -57,8 +41,8 @@ function atomium_preprocess_radio(array &$variables, $hook) {
   $variables['atomium']['attributes']['element']->merge($attributes);
 
   if (isset($variables['element']['#return_value']) &&
-    $variables['element']['#value'] !== FALSE &&
-    (string) $variables['element']['#value'] === (string) $variables['element']['#return_value']) {
+    FALSE !== $variables['element']['#value'] &&
+    $variables['element']['#value'] == $variables['element']['#return_value']) {
     $variables['atomium']['attributes']['element']->setAttribute('checked');
   }
 }

@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function ec_europa_atomium_theme_footer(array $existing, $type, $theme, $path) {
+function ec_europa_atomium_theme_footer() {
   return array(
     'footer' => array(
       'variables' => array(
@@ -78,7 +78,7 @@ function ec_europa_preprocess_footer(array &$variables, $hook) {
   }
 
   $variables['footer_left'] = array(
-    '#theme' => 'html_tag',
+    '#theme' => _atomium_extend_theme_hook('html_tag'),
     '#tag' => 'h4',
     '#attributes' => array(
       'class' => array(
@@ -86,7 +86,16 @@ function ec_europa_preprocess_footer(array &$variables, $hook) {
       ),
     ),
     array(
-      '#markup' => variable_get('site_name', ''),
+      '#theme' => _atomium_extend_theme_hook('link', array('footer_left', $variables['theme_hook_original'])),
+      '#path' => '<front>',
+      '#text' => variable_get('site_name', ''),
+      '#options' => array(
+        'attributes' => array(
+          'class' => array(
+            'ecl-footer__link',
+          ),
+        ),
+      ),
     ),
   );
 }

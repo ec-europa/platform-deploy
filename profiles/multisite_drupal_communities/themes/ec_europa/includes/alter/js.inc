@@ -10,7 +10,7 @@
  *
  * @SuppressWarnings(PHPMD)
  */
-function ec_europa_js_alter(array &$js) {
+function ec_europa_js_alter(&$js) {
   if (module_exists('libraries') && ($path_fancybox = libraries_get_path('fancybox'))) {
     unset(
       $js[$path_fancybox . '/jquery.fancybox.pack.js'],

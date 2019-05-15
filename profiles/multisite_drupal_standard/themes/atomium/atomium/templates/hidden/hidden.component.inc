@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_hidden(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_hidden() {
   return array(
     'hidden' => array(
       'render element' => 'element',

@@ -26,11 +26,11 @@ function atomium_preprocess_block(array &$variables, $hook) {
         $total = $variables['block']->atomium['total_blocks_in_regions'];
         $index = $variables['block']->atomium['block_index_in_region'];
 
-        if ($index === 0) {
+        if (0 == $index) {
           $variables['atomium']['attributes']['wrapper']->append('class', 'first');
         }
 
-        if ($total === $index + 1) {
+        if ($total == $index) {
           $variables['atomium']['attributes']['wrapper']->append('class', 'last');
         }
 
@@ -40,11 +40,11 @@ function atomium_preprocess_block(array &$variables, $hook) {
   }
 
   if (
-    $variables['elements']['#block']->module === 'menu_block' ||
-    ($variables['elements']['#block']->module === 'system' && $variables['elements']['#block']->delta === 'navigation') ||
-    ($variables['elements']['#block']->module === 'system' && $variables['elements']['#block']->delta === 'main-menu') ||
-    ($variables['elements']['#block']->module === 'system' && $variables['elements']['#block']->delta === 'user-menu') ||
-    ($variables['elements']['#block']->module === 'admin' && $variables['elements']['#block']->delta === 'menu')
+    ('system' == $variables['elements']['#block']->module && 'navigation' == $variables['elements']['#block']->delta) ||
+    ('system' == $variables['elements']['#block']->module && 'main-menu' == $variables['elements']['#block']->delta) ||
+    ('system' == $variables['elements']['#block']->module && 'user-menu' == $variables['elements']['#block']->delta) ||
+    ('admin' == $variables['elements']['#block']->module && 'menu' == $variables['elements']['#block']->delta) ||
+    'menu_block' == $variables['elements']['#block']->module
   ) {
     $variables['theme_hook_suggestions'][] = 'block__menu';
   }

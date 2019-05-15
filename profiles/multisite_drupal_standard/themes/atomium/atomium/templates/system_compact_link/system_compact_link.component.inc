@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_system_compact_link(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_system_compact_link() {
   return array(
     'system_compact_link' => array(
       'variables' => array('link' => array()),

@@ -8,27 +8,11 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_fieldset(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_fieldset() {
   return array(
     'fieldset' => array(
       'render element' => 'element',
       'template' => 'fieldset',
-    ),
-  );
-}
-
-/**
- * Implements hook_atomium_definition_hook().
- */
-function atomium_atomium_definition_fieldset() {
-  return array(
-    'label' => 'Fieldset',
-    'description' => 'Fieldset.',
-    'preview' => array(
-      'fieldset' => array(
-        'title' => 'Fieldset title',
-        'description' => 'Fieldset description.',
-      ),
     ),
   );
 }

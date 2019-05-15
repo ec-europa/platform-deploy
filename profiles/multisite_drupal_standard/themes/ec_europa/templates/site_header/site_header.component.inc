@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function ec_europa_atomium_theme_site_header(array $existing, $type, $theme, $path) {
+function ec_europa_atomium_theme_site_header() {
   return array(
     'site_header' => array(
       'template' => 'site-header',
@@ -23,11 +23,7 @@ function ec_europa_atomium_theme_site_header(array $existing, $type, $theme, $pa
           '#theme' => _atomium_extend_theme_hook('logo'),
           '#title' => t('Home - European Commission'),
           '#attributes' => array(
-            'class' => array(
-              'ecl-site-header__logo',
-              'ecl-logo--logotype',
-              'ecl-logo',
-            ),
+            'class' => array('ecl-site-header__logo', 'ecl-logo--logotype', 'ecl-logo'),
           ),
         ),
         'lang_select_site' => array(
@@ -45,9 +41,6 @@ function ec_europa_atomium_theme_site_header(array $existing, $type, $theme, $pa
               'ecl-site-header__search',
             ),
           ),
-        ),
-        'site_slogan' => array(
-          '#theme' => _atomium_extend_theme_hook('site_slogan'),
         ),
       ),
     ),

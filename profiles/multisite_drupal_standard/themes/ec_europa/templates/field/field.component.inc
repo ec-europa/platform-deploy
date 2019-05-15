@@ -7,8 +7,6 @@
 
 /**
  * Implements hook_preprocess_hook().
- *
- * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 function ec_europa_preprocess_field(array &$variables, $hook) {
   $element = &$variables['element'];
@@ -23,24 +21,23 @@ function ec_europa_preprocess_field(array &$variables, $hook) {
     case 'field_core_social_network_links':
       $element['before'] = t('Follow the latest progress and get involved.');
       $element['after'] = l(t('Other social networks'), variable_get('dt_core_other_social_networks_link', 'http://europa.eu/contact/social-networks/index_en.htm'));
-
       break;
   }
 
-  if ($element['#field_type'] !== 'ds') {
-    if ($element['#field_type'] === 'entityreference' && $element['#field_translatable'] === 0) {
+  if ('ds' != $element['#field_type']) {
+    if ('entityreference' == $element['#field_type'] && 0 == $element['#field_translatable']) {
       if (isset($element['#language'])
-        && $element['#language'] !== LANGUAGE_NONE
-        && $GLOBALS['language_content']->language !== $element['#language']
+        && LANGUAGE_NONE != $element['#language']
+        && $GLOBALS['language_content']->language != $element['#language']
       ) {
         $variables['attributes']['lang'] = $element['#language'];
       }
     }
 
     // Inject a specific class when a field might use the WYSIWYG editor.
-    if (\in_array($element['#field_type'], array('text_with_summary', 'text_long'), TRUE)) {
-      foreach (\array_keys($variables['items']) as $delta) {
-        $variables[$variables['base_hook']][$variables['base_hook']]['#atomium']['attributes'][$delta]['class'][] = 'ecl-editor';
+    if (in_array($element['#field_type'], array('text_with_summary', 'text_long'))) {
+      foreach (array_keys($variables['items']) as $delta) {
+        $variables['atomium']['attributes'][$delta]->append('class', 'ecl-editor');
       }
     }
   }
@@ -133,7 +130,7 @@ function _ec_europa_preprocess_taxonomy_term_reference_plain(array &$variables, 
   $variables['tags'] = array(
     '#theme' => _atomium_extend_theme_hook('tags', array('facet', $variables['theme_hook_original'])),
     '#label' => $variables['label'],
-    '#items' => \array_map(function ($item) {
+    '#items' => array_map(function ($item) {
       return array(
         'href' => '',
         'value' => $item['#markup'],
@@ -149,12 +146,12 @@ function ec_europa_preprocess_field__list_boolean__list_default__group_access__n
   if ($object = $variables['element']['#object']) {
     $wrapper = entity_metadata_wrapper('node', $object);
 
-    \array_walk($variables['items'], function (&$item) use ($wrapper) {
+    array_walk($variables['items'], function (&$item) use ($wrapper) {
       $item = array(
         '#content' => $item['#markup'],
       );
       // @todo: Should we compute the value from $wrapper for each items ?
-      $variant = ($wrapper->group_access->value() === 0) ? 'closed' : 'open';
+      $variant = (0 == $wrapper->group_access->value()) ? 'closed' : 'open';
       $item['#theme'] = _atomium_extend_theme_hook('labels', $variant);
     });
   }

@@ -6,6 +6,8 @@ use Drupal\atomium\AttributesContainer;
 
 /**
  * Class AttributesContainerTest.
+ *
+ * @package Drupal\Tests\atomium
  */
 class AttributesContainerTest extends AbstractUnitTest {
 
@@ -16,6 +18,16 @@ class AttributesContainerTest extends AbstractUnitTest {
     $attributesContainer = new AttributesContainer();
 
     self::assertInstanceOf('drupal\atomium\AttributesContainer', $attributesContainer);
+  }
+
+  /**
+   * Test AttributesContainer class.
+   */
+  public function testSetAttributes() {
+    $attributesContainer = new AttributesContainer();
+    $attributesContainer['attributes'] = array('class', 'example');
+
+    self::assertInstanceOf('drupal\atomium\Attributes', $attributesContainer['attributes']);
   }
 
   /**
@@ -41,16 +53,6 @@ class AttributesContainerTest extends AbstractUnitTest {
 
     self::assertInstanceOf('drupal\atomium\Attributes', $container['foo']);
     self::assertEmpty($container['foo']->getStorage());
-  }
-
-  /**
-   * Test AttributesContainer class.
-   */
-  public function testSetAttributes() {
-    $attributesContainer = new AttributesContainer();
-    $attributesContainer['attributes'] = array('class', 'example');
-
-    self::assertInstanceOf('drupal\atomium\Attributes', $attributesContainer['attributes']);
   }
 
   /**

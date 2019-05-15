@@ -22,7 +22,7 @@ function atomium_preprocess_html(array &$variables, $hook) {
   ));
 
   // Return early, so the maintenance page does not call any of the code below.
-  if ($hook !== 'html') {
+  if ('html' !== $hook) {
     return;
   }
 
@@ -44,13 +44,13 @@ function atomium_preprocess_html(array &$variables, $hook) {
     // Add unique class for each page.
     $path = drupal_get_path_alias($_GET['q']);
     // Add unique class for each website section.
-    list($section) = \explode('/', $path, 1);
+    list($section,) = \explode('/', $path, 2);
     $arg = \explode('/', $_GET['q']);
-    if ($arg[0] === 'node' && isset($arg[1])) {
-      if ($arg[1] === 'add') {
+    if ('node' === $arg[0] && isset($arg[1])) {
+      if ('add' === $arg[1]) {
         $section = 'node-add';
       }
-      elseif (isset($arg[2]) && \is_numeric($arg[1]) && ($arg[2] === 'edit' || $arg[2] === 'delete')) {
+      elseif (isset($arg[2]) && \is_numeric($arg[1]) && ('edit' === $arg[2] || 'delete' === $arg[2])) {
         $section = 'node-' . $arg[2];
       }
     }
@@ -90,7 +90,7 @@ function atomium_preprocess_html(array &$variables, $hook) {
   $headers = drupal_get_http_header();
   if (isset($headers['status'])) {
     $variables['classes_array'][] = 'status-' . $headers['status'];
-    if ($headers['status'] === '404 Not Found') {
+    if ('404 Not Found' === $headers['status']) {
       $variables['theme_hook_suggestions'][] = 'html__404';
     }
   }

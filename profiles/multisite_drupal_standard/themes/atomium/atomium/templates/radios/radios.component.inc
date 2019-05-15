@@ -8,42 +8,13 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_radios(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_radios() {
   return array(
     'radios' => array(
       'render element' => 'element',
       'template' => 'radios',
     ),
   );
-}
-
-/**
- * Implements hook_atomium_definition_hook().
- */
-function atomium_atomium_definition_radios() {
-  return array(
-    'label' => 'Radio group',
-    'description' => 'Radio group.',
-  );
-}
-
-/**
- * Implements hook_atomium_definition_form_hook().
- */
-function atomium_atomium_definition_form_radios(array $form, array &$form_state) {
-  $form['element1'] = array(
-    '#title' => 'Radios',
-    '#description' => 'Radios description',
-    '#type' => 'radios',
-    '#options' => array(
-      'item1' => 'Item 1',
-      'item2' => 'Item 2',
-      'item3' => 'Item 3',
-    ),
-    '#default_value' => 'item2',
-  );
-
-  return $form;
 }
 
 /**
