@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function ec_europa_atomium_theme_splash(array $existing, $type, $theme, $path) {
+function ec_europa_atomium_theme_splash() {
   return array(
     'splash' => array(
       'template' => 'splash',
@@ -62,9 +62,9 @@ function ec_europa_preprocess_splash(array &$variables, $hook) {
     );
   }
 
-  $variables['languages_list'] = \array_chunk(
+  $variables['languages_list'] = array_chunk(
     $variables['languages_list'],
-    \round(\count($variables['languages_list']) / 2)
+    round(count($variables['languages_list']) / 2)
   );
 
   foreach ($variables['languages_list'] as $index => &$language) {

@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_mark(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_mark() {
   return array(
     'mark' => array(
       'template' => 'mark',
@@ -21,30 +21,17 @@ function atomium_atomium_theme_mark(array $existing, $type, $theme, $path) {
 }
 
 /**
- * Implements hook_atomium_definition_hook().
- */
-function atomium_atomium_definition_mark() {
-  return array(
-    'label' => 'Mark',
-    'description' => 'Mark description.',
-    'preview' => array(
-      'title' => 'New stuff!',
-      'type' => MARK_NEW,
-    ),
-  );
-}
-
-/**
  * Implements hook_preprocess_hook().
  */
 function atomium_preprocess_mark(array &$variables, $hook) {
+  global $user;
   $type = $variables['type'];
 
-  if ($GLOBALS['user']->uid) {
-    if ($type === MARK_NEW) {
+  if ($user->uid) {
+    if (MARK_NEW == $type) {
       $variables['title'] = !empty($variables['title']) ? $variables['title'] : t('new');
     }
-    elseif ($type === MARK_UPDATED) {
+    elseif (MARK_UPDATED == $type) {
       $variables['title'] = !empty($variables['title']) ? $variables['title'] : t('updated');
     }
   }

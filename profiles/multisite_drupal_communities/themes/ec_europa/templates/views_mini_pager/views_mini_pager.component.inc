@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function ec_europa_atomium_theme_views_mini_pager(array $existing, $type, $theme, $path) {
+function ec_europa_atomium_theme_views_mini_pager() {
   return array(
     'views_mini_pager' => array(
       'variables' => array(

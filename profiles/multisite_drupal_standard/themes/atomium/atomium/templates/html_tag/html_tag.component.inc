@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_html_tag(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_html_tag() {
   return array(
     'html_tag' => array(
       'render element' => 'element',
@@ -64,7 +64,7 @@ function atomium_preprocess_html_tag(array &$variables, $hook) {
 
   // Remove media="all" but leave others unaffected.
   if (isset($element['#attributes']['media']) &&
-    $element['#attributes']['media'] === 'all') {
+    'all' === $element['#attributes']['media']) {
     unset($element['#attributes']['media']);
   }
 }

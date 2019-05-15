@@ -8,31 +8,11 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_select(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_select() {
   return array(
     'select' => array(
       'render element' => 'element',
       'template' => 'select',
-    ),
-  );
-}
-
-/**
- * Implements hook_atomium_definition_hook().
- */
-function atomium_atomium_definition_select() {
-  return array(
-    'label' => 'Select',
-    'description' => 'Select description.',
-    'preview' => array(
-      array(
-        'title' => 'Select title',
-        'options' => array(
-          'option 1' => 'option 1',
-          'option 2' => 'option 2',
-          'option 3' => 'option 3',
-        ),
-      ),
     ),
   );
 }

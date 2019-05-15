@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function ec_europa_atomium_theme_labels(array $existing, $type, $theme, $path) {
+function ec_europa_atomium_theme_labels() {
   return array(
     'labels' => array(
       'template' => 'labels',

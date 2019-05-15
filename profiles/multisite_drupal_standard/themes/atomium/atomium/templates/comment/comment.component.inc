@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_comment(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_comment() {
   return array(
     'comment' => array(
       'render element' => 'elements',
@@ -23,9 +23,10 @@ function atomium_atomium_theme_comment(array $existing, $type, $theme, $path) {
 function atomium_preprocess_comment(array &$variables, $hook) {
   if (isset($variables['elements']['#comment']->new) && $variables['elements']['#comment']->new) {
     $variables['classes_array'][] = 'new';
+
   }
 
-  if ($variables['status'] === 'comment-unpublished') {
+  if ('comment-unpublished' == $variables['status']) {
     $variables['classes_array'][] = 'unpublished';
   }
 

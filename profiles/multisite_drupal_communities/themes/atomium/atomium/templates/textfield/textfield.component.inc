@@ -8,27 +8,11 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_textfield(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_textfield() {
   return array(
     'textfield' => array(
       'render element' => 'element',
       'template' => 'textfield',
-    ),
-  );
-}
-
-/**
- * Implements hook_atomium_definition_hook().
- */
-function atomium_atomium_definition_textfield() {
-  return array(
-    'label' => 'Textfield',
-    'description' => 'Text field description.',
-    'preview' => array(
-      array(
-        'title' => 'Text field',
-        'description' => 'Text field description',
-      ),
     ),
   );
 }

@@ -25,11 +25,13 @@ function atomium_include($theme, $path) {
 
   if ($themes[$theme] && ($file = DRUPAL_ROOT . '/' . $themes[$theme] . '/' . $path) && \file_exists($file)) {
     if (\is_dir($file)) {
-      foreach (\glob($file . '/*.{inc,php}', GLOB_BRACE) as $file_to_include) {
+      foreach (\glob($file . '/*.{inc}', GLOB_BRACE) as $file_to_include) {
+        include_once $file_to_include;
+      }
+      foreach (\glob($file . '/*.{php}', GLOB_BRACE) as $file_to_include) {
         include_once $file_to_include;
       }
     }
-
     if (\is_file($file)) {
       include_once $file;
     }
@@ -55,14 +57,10 @@ function atomium_include($theme, $path) {
 function _atomium_get_base_themes($theme_key = NULL, $include_theme_key = FALSE) {
   static $themes;
 
-  $theme_key = $theme_key ?: $GLOBALS['theme_key'];
+  $theme_key = ($theme_key) ?: $GLOBALS['theme_key'];
 
   if (!isset($themes[$theme_key])) {
-    $themes[$theme_key] = \array_unique(
-      \array_filter(
-        (array) atomium_get_theme_info($theme_key, 'base theme')
-      )
-    );
+    $themes[$theme_key] = \array_unique(\array_filter((array) atomium_get_theme_info($theme_key, 'base theme')));
   }
 
   if ($include_theme_key) {
@@ -92,58 +90,69 @@ function _atomium_get_base_themes($theme_key = NULL, $include_theme_key = FALSE)
  */
 function atomium_get_theme_info($theme_key = NULL, $key = NULL, $base_themes = TRUE) {
   // If no $theme_key is given, use the current theme if we can determine it.
-  if ($theme_key === NULL) {
-    $theme_key = !empty($GLOBALS['theme_key']) ? $GLOBALS['theme_key'] : NULL;
+  if (!isset($theme_key)) {
+    $theme_key = !empty($GLOBALS['theme_key']) ? $GLOBALS['theme_key'] : FALSE;
   }
 
-  if ($theme_key === NULL) {
-    return FALSE;
-  }
+  if ($theme_key) {
+    $themes = list_themes();
+    if (!empty($themes[$theme_key])) {
+      $theme = $themes[$theme_key];
+      // If a key name was specified, return just that array.
+      if ($key) {
+        $value = FALSE;
+        // Recursively add base theme values.
+        if ($base_themes && isset($theme->base_themes)) {
+          foreach (\array_keys($theme->base_themes) as $base_theme) {
+            $value = atomium_get_theme_info($base_theme, $key);
+          }
+        }
+        if (!empty($themes[$theme_key])) {
+          $info = $themes[$theme_key]->info;
+          // Allow array traversal.
+          $keys = \explode('][', $key);
+          foreach ($keys as $parent) {
+            if (isset($info[$parent])) {
+              $info = $info[$parent];
+            }
+            else {
+              $info = FALSE;
+            }
+          }
+          if (\is_array($value)) {
+            if (!empty($info)) {
+              if (!\is_array($info)) {
+                $info = array($info);
+              }
+              $value = drupal_array_merge_deep($value, $info);
+            }
+          }
+          else {
+            if (!empty($info)) {
+              if (empty($value)) {
+                $value = $info;
+              }
+              else {
+                if (!\is_array($value)) {
+                  $value = array($value);
+                }
+                if (!\is_array($info)) {
+                  $info = array($info);
+                }
+                $value = drupal_array_merge_deep($value, $info);
+              }
+            }
+          }
+        }
 
-  $themes = list_themes();
-  if (empty($themes[$theme_key])) {
-    return FALSE;
-  }
-
-  $theme = $themes[$theme_key];
-
-  if ($key === NULL) {
-    return $theme->info;
-  }
-
-  $value = FALSE;
-
-  // Recursively add base theme values.
-  if ($base_themes === TRUE && isset($theme->base_themes)) {
-    foreach (\array_keys($theme->base_themes) as $base_theme) {
-      $value = atomium_get_theme_info($base_theme, $key);
+        return $value;
+      }
+      // If no info $key was specified, just return the entire info array.
+      return $theme->info;
     }
   }
 
-  $info = $themes[$theme_key]->info;
-  // Allow array traversal.
-  foreach (\explode('][', $key) as $parent) {
-    if (isset($info[$parent])) {
-      $info = (array) $info[$parent];
-    }
-    else {
-      $info = array();
-    }
-  }
-
-  if (!empty($info)) {
-    if (\is_array($value)) {
-      $value = drupal_array_merge_deep($value, $info);
-    }
-    elseif (empty($value)) {
-      $value = $info;
-    }
-    else {
-      $value = drupal_array_merge_deep((array) $value, $info);
-    }
-  }
-
-  return $value;
+  return FALSE;
 }
 
 /**
@@ -163,8 +172,6 @@ function atomium_get_theme_info($theme_key = NULL, $key = NULL, $base_themes = T
  *   The attributes array. Passed by reference.
  */
 function &_atomium_get_attributes(array &$element, $property = 'attributes') {
-  $hash_property = '#' . $property;
-
   // Attempt to retrieve a renderable element attributes first.
   if (
     isset($element['#type']) ||
@@ -172,23 +179,22 @@ function &_atomium_get_attributes(array &$element, $property = 'attributes') {
     isset($element['#pre_render']) ||
     isset($element['#markup']) ||
     isset($element['#theme_wrappers']) ||
-    isset($element[$hash_property])
+    isset($element['#' . $property])
   ) {
     $element += array(
-      $hash_property => array(),
+      '#' . $property => array(),
     );
 
-    return $element[$hash_property];
+    return $element['#' . $property];
   }
-
   // Treat $element as if it were a [pre]process function $variables parameter
   // and look for a renderable "element".
-  if (isset($element['element'])) {
+  elseif (isset($element['element'])) {
     $element['element'] += array(
-      $hash_property => array(),
+      '#' . $property => array(),
     );
 
-    return $element['element'][$hash_property];
+    return $element['element']['#' . $property];
   }
 
   // If all else fails, create (if needed) a default "attributes" array. This
@@ -227,7 +233,6 @@ function atomium_discover_templates() {
         'theme' => $theme,
         'component' => $directory,
         'directory' => $component_directory,
-        'includes' => \glob($component_directory . '/*.component.inc'),
       );
     }
   }
@@ -279,7 +284,7 @@ function atomium_menu_get_active_breadcrumb() {
 
     // Don't show a link to the current page in the breadcrumb trail.
     $end = \end($active_trail);
-    if ($item['href'] === $end['href']) {
+    if ($item['href'] == $end['href']) {
       \array_pop($active_trail);
     }
 
@@ -296,7 +301,7 @@ function atomium_menu_get_active_breadcrumb() {
     // (commonly MENU_DEFAULT_LOCAL_TASK). In order to also hide the parent link
     // itself, we always remove the last link in the trail, if the current
     // router item links to its parent.
-    if (($item['type'] & MENU_LINKS_TO_PARENT) === MENU_LINKS_TO_PARENT) {
+    if (($item['type'] & MENU_LINKS_TO_PARENT) == MENU_LINKS_TO_PARENT) {
       \array_pop($active_trail);
     }
 
@@ -342,7 +347,7 @@ function atomium_recursive_foreach(array &$variables, callable $callback) {
         '#atomium_recursive' => $variables['#atomium_recursive'],
       );
 
-      if ($value['#atomium_recursive'] === TRUE) {
+      if (TRUE == $value['#atomium_recursive']) {
         atomium_recursive_foreach($value, $callback);
       }
 
@@ -447,16 +452,13 @@ function _atomium_block_get_render_array($module, $delta, $region = NULL, $block
  *   The extended strings.
  */
 function _atomium_extend_with_suggestions(array $items = array(''), array $suggestions = array()) {
-  array_walk_recursive(
-    $items,
-    function (&$base_hook) use ($suggestions) {
-      if ($hook = _atomium_extend_theme_hook($base_hook, $suggestions)) {
-        $base_hook = $hook[0];
-      }
+  return \array_map(function ($base_hook) use ($suggestions) {
+    if ($hook = _atomium_extend_theme_hook($base_hook, $suggestions)) {
+      return $hook[0];
     }
-  );
 
-  return $items;
+    return NULL;
+  }, $items);
 }
 
 /**
@@ -543,7 +545,7 @@ function _atomium_array_flatten(array $array, array &$storage, $parentKey = '') 
     $itemKey = $parentKey;
 
     if (!\is_numeric($key)) {
-      $itemKey .= ($parentKey ? '.' : '') . $key;
+      $itemKey .= (($parentKey) ? '.' : '') . $key;
     }
 
     if (\is_array($value)) {
@@ -635,48 +637,35 @@ function atomium_get_settings($setting_keys, $base_themes = TRUE, array $value_c
  *   The base hook.
  */
 function atomium_get_base_hook($hook) {
-  if (FALSE !== $pos = \strpos($hook, '__')) {
-    return \substr($hook, 0, $pos);
+  while ($pos = \strrpos($hook, '__')) {
+    $hook = drupal_substr($hook, 0, $pos);
   }
 
   return $hook;
 }
 
 /**
- * Recursive element_children() function.
+ * Discover templates based on directory name.
  *
- * As the default element_children() from Drupal is fine for single dimension
- * arrays, this function deal with multiple dimensions arrays.
- * It applies a callback to each Drupal element found in it.
- * The variable $context['parents'] of type string[] will hold the parents
- * hierarchy of the element.
+ * It is important that directories have the name of the hook for the moment.
  *
- * @param array $root_element
- *   The root element.
- * @param callable $callback
- *   A custom callback to apply to each element.
- * @param string|null $root_element_key
- *   The root element key.
- * @param array $context
- *   The context.
+ * @deprecated Use atomium_discover_templates()
  */
-function _atomium_recursive_element_children(array &$root_element, callable $callback, $root_element_key = NULL, array &$context = array()) {
-  $context += array('parents' => array());
-  $context['parents'][$root_element_key] = &$root_element;
+function atomium_find_templates() {
+  $templates = array();
 
-  $callback($root_element, $root_element_key, $context);
-
-  foreach (element_children($root_element) as $sub_element_key) {
-    if (!is_array($root_element[$sub_element_key])) {
-      continue;
+  foreach (_atomium_get_base_themes(NULL, TRUE) as $theme) {
+    $path = drupal_get_path('theme', $theme) . '/templates';
+    if (\is_dir($path)) {
+      $directories = \array_diff(\scandir($path), array('..', '.'));
+      foreach ($directories as $directory) {
+        $templates[$theme][$directory] = array(
+          'theme' => $theme,
+          'directory' => $path . '/' . $directory,
+        );
+      }
     }
-    _atomium_recursive_element_children(
-      $root_element[$sub_element_key],
-      $callback,
-      $sub_element_key,
-      $context
-    );
   }
 
-  array_pop($context['parents']);
+  return $templates;
 }

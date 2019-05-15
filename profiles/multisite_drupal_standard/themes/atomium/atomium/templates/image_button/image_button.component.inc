@@ -8,27 +8,11 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_image_button(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_image_button() {
   return array(
     'image_button' => array(
       'render element' => 'element',
       'template' => 'image-button',
-    ),
-  );
-}
-
-/**
- * Implements hook_atomium_definition_hook().
- */
-function atomium_atomium_definition_image_button() {
-  return array(
-    'label' => 'Image button',
-    'description' => 'Image button description.',
-    'preview' => array(
-      array(
-        'title' => 'Image button',
-        'src' => drupal_get_path('theme', 'atomium') . '/assets/images/logo.png',
-      ),
     ),
   );
 }
