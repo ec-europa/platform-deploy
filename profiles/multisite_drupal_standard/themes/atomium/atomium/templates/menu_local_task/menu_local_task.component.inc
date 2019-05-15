@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_menu_local_task() {
+function atomium_atomium_theme_menu_local_task(array $existing, $type, $theme, $path) {
   return array(
     'menu_local_task' => array(
       'template' => 'menu-local-task',
@@ -29,7 +29,7 @@ function atomium_preprocess_menu_local_task(array &$variables, $hook) {
   $link_text = $link['title'];
   $active = NULL;
 
-  if (!empty($variables['active']) && TRUE == $variables['active']) {
+  if (!empty($variables['active']) && $variables['active'] === TRUE) {
     // Add text to indicate active tab for non-visual users.
     $active = array(
       '#markup' => t('(active tab)'),
@@ -68,5 +68,7 @@ function atomium_preprocess_menu_local_task(array &$variables, $hook) {
     );
   }
 
-  $variables['atomium']['attributes']['wrapper']->append('class', !empty($variables['active']) ? 'active' : '');
+  if (!empty($variables['active'])) {
+    $variables['atomium']['attributes']['wrapper']->append('class', 'active');
+  }
 }

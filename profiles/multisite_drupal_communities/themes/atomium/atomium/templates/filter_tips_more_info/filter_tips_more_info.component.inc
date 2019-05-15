@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_filter_tips_more_info() {
+function atomium_atomium_theme_filter_tips_more_info(array $existing, $type, $theme, $path) {
   return array(
     'filter_tips_more_info' => array(
       'template' => 'filter-tips-more-info',
@@ -16,6 +16,16 @@ function atomium_atomium_theme_filter_tips_more_info() {
         'link' => array(),
       ),
     ),
+  );
+}
+
+/**
+ * Implements hook_atomium_definition_hook().
+ */
+function atomium_atomium_definition_filter_tips_more_info() {
+  return array(
+    'label' => 'Filter tips more info',
+    'description' => 'Filter tips more info description.',
   );
 }
 

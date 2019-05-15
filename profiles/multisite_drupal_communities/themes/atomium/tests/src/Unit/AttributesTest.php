@@ -7,10 +7,18 @@ use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class AttributesTest.
- *
- * @package Drupal\Tests\atomium
  */
 class AttributesTest extends AbstractUnitTest {
+
+  /**
+   * Methods provider.
+   *
+   * @return array
+   *   Test data.
+   */
+  public function methodsProvider() {
+    return Yaml::parse(\file_get_contents(__DIR__ . '/../../fixtures/attributes/attributes.yml'));
+  }
 
   /**
    * Test class methods.
@@ -68,16 +76,6 @@ class AttributesTest extends AbstractUnitTest {
     self::assertEquals(TRUE, $attributes->contains('class', 'fo'));
     self::assertEquals(FALSE, $attributes->contains('role'));
     self::assertEquals(TRUE, $attributes->contains('id', 'tomi'));
-  }
-
-  /**
-   * Methods provider.
-   *
-   * @return array
-   *   Test data.
-   */
-  public function methodsProvider() {
-    return Yaml::parse(\file_get_contents(__DIR__ . '/../../fixtures/attributes/attributes.yml'));
   }
 
 }

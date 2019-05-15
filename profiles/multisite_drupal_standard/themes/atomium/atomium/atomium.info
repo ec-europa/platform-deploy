@@ -73,7 +73,7 @@ settings[alter][css_alter][exclude][] = 'modules/tracker/tracker.css'
 settings[alter][css_alter][exclude][] = 'modules/update/update.css'
 settings[alter][css_alter][exclude][] = 'modules/user/user.css'
 
-settings[alter][field_attach_view_alter][keys] = field_type,formatter,field_name,entity_type,view_mode,bundle
+settings[alter][field_attach_view_alter][keys] = field_type,image_style,formatter,field_name,entity_type,view_mode,bundle
 
 ; Preprocess configuration
 ; ------------------------
@@ -83,8 +83,8 @@ settings[preprocess][node][classes_to_remove] = node,node-sticky,node-unpublishe
 settings[preprocess][region][classes_to_remove] = region
 
 
-; Information added by Drupal.org packaging script on 2019-02-28
-version = "7.x-2.12"
+; Information added by Drupal.org packaging script on 2019-05-10
+version = "7.x-2.25"
 core = "7.x"
 project = "atomium"
-datestamp = "1551357787"
+datestamp = "1557473293"

@@ -8,11 +8,28 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_container() {
+function atomium_atomium_theme_container(array $existing, $type, $theme, $path) {
   return array(
     'container' => array(
       'render element' => 'element',
       'template' => 'container',
+    ),
+  );
+}
+
+/**
+ * Implements hook_atomium_definition_hook().
+ */
+function atomium_atomium_definition_container() {
+  return array(
+    'label' => 'Container',
+    'description' => 'Container description.',
+    'preview' => array(
+      'element' => array(
+        'children' => array(
+          '#markup' => 'Container children',
+        ),
+      ),
     ),
   );
 }
