@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit2c43ae8164149ca7d08e5dbff635d3f7
+class ComposerStaticInitafffe8c588f49201e6225c45d189b763
 {
     public static $files = array (
         '32dcc8afd4335739640db7d200c1971d' => __DIR__ . '/..' . '/symfony/polyfill-apcu/bootstrap.php',
@@ -169,9 +169,9 @@ class ComposerStaticInit2c43ae8164149ca7d08e5dbff635d3f7
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit2c43ae8164149ca7d08e5dbff635d3f7::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit2c43ae8164149ca7d08e5dbff635d3f7::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit2c43ae8164149ca7d08e5dbff635d3f7::$prefixesPsr0;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitafffe8c588f49201e6225c45d189b763::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitafffe8c588f49201e6225c45d189b763::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitafffe8c588f49201e6225c45d189b763::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }
