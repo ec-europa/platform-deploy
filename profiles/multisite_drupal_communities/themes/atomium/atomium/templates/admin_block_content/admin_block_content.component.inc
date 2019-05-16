@@ -8,38 +8,12 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_admin_block_content(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_admin_block_content() {
   return array(
     'admin_block_content' => array(
       'template' => 'admin-block-content',
       'variables' => array(
         'content' => NULL,
-      ),
-    ),
-  );
-}
-
-/**
- * Implements hook_atomium_definition_hook().
- */
-function atomium_atomium_definition_admin_block_content() {
-  return array(
-    'label' => 'Admin block content',
-    'description' => 'Admin block content description.',
-    'preview' => array(
-      'content' => array(
-        array(
-          'title' => 'Item title 1',
-          'href' => '#',
-          'description' => 'Item description 1',
-          'localized_options' => array(),
-        ),
-        array(
-          'title' => 'Item title 2',
-          'href' => '#',
-          'description' => 'Item description 2',
-          'localized_options' => array(),
-        ),
       ),
     ),
   );

@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_user_picture(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_user_picture() {
   return array(
     'user_picture' => array(
       'template' => 'user-picture',
@@ -16,19 +16,6 @@ function atomium_atomium_theme_user_picture(array $existing, $type, $theme, $pat
         'account' => NULL,
         'user_picture' => NULL,
       ),
-    ),
-  );
-}
-
-/**
- * Implements hook_atomium_definition_hook().
- */
-function atomium_atomium_definition_user_picture() {
-  return array(
-    'label' => 'User picture',
-    'description' => 'User picture description.',
-    'preview' => array(
-      'account' => user_load(1),
     ),
   );
 }
@@ -62,7 +49,7 @@ function atomium_preprocess_user_picture(array &$variables, $hook) {
       $filepath = variable_get('user_picture_default', '');
     }
 
-    if ($filepath === NULL) {
+    if (NULL === $filepath) {
       $alt = t("@user's picture", array('@user' => format_username($account)));
 
       $variables[$variables['base_hook']] = array(

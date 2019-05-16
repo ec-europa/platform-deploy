@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_menu_local_action(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_menu_local_action() {
   return array(
     'menu_local_action' => array(
       'render element' => 'element',

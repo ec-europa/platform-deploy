@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_feed_icon(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_feed_icon() {
   return array(
     'feed_icon' => array(
       'template' => 'feed-icon',
@@ -17,20 +17,6 @@ function atomium_atomium_theme_feed_icon(array $existing, $type, $theme, $path) 
         'title' => NULL,
         'link' => NULL,
       ),
-    ),
-  );
-}
-
-/**
- * Implements hook_atomium_definition_hook().
- */
-function atomium_atomium_definition_feed_icon() {
-  return array(
-    'label' => 'Feed icon',
-    'description' => 'Feed icon description.',
-    'preview' => array(
-      'url' => '#',
-      'title' => 'Feed icon title',
     ),
   );
 }

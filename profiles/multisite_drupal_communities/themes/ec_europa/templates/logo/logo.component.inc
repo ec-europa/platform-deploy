@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function ec_europa_atomium_theme_logo(array $existing, $type, $theme, $path) {
+function ec_europa_atomium_theme_logo() {
   return array(
     'logo' => array(
       'template' => 'logo',

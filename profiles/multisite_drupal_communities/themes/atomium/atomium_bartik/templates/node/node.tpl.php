@@ -78,7 +78,8 @@
  * @see template_process()
  */
 ?>
-<div<?php print $atomium['attributes']['wrapper']; ?>>
+<div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix"<?php print $atomium['attributes']['wrapper']; ?>>
+
   <?php print render($title_prefix); ?>
   <?php if (!$page): ?>
     <h2<?php print $title_attributes; ?>>
@@ -119,4 +120,5 @@
     <?php endif; ?>
 
   <?php print render($content['comments']); ?>
+
 </div>

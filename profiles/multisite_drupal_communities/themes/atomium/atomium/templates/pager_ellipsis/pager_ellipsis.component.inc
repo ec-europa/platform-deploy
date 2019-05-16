@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_pager_ellipsis(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_pager_ellipsis() {
   return array(
     'pager_ellipsis' => array(
       'template' => 'pager-ellipsis',
@@ -16,15 +16,5 @@ function atomium_atomium_theme_pager_ellipsis(array $existing, $type, $theme, $p
         'text' => '…',
       ),
     ),
-  );
-}
-
-/**
- * Implements hook_atomium_definition_hook().
- */
-function atomium_atomium_definition_pager_ellipsis() {
-  return array(
-    'label' => 'Pager ellipsis',
-    'description' => 'Pager ellipsis description.',
   );
 }

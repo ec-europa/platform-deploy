@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_menu_local_tasks(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_menu_local_tasks() {
   return array(
     'menu_local_tasks' => array(
       'template' => 'menu-local-tasks',

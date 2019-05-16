@@ -1,7 +1,6 @@
 -
   variables:
-    breadcrumb:
-      breadcrumb: []
+    breadcrumb: ""
     theme_hook_original: "breadcrumb"
     theme_hook_suggestions: []
     base_hook: "breadcrumb"
@@ -12,3 +11,4 @@
     content_attributes_array: []
     title_prefix: []
     title_suffix: []
+

@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_filter_guidelines(array $existing, $type, $theme, $path) {
+function atomium_atomium_theme_filter_guidelines() {
   return array(
     'filter_guidelines' => array(
       'template' => 'filter-guidelines',
@@ -24,17 +24,8 @@ function atomium_atomium_theme_filter_guidelines(array $existing, $type, $theme,
  */
 function atomium_preprocess_filter_guidelines(array &$variables, $hook) {
   $variables['name'] = check_plain($variables['format']->name);
-
-  $variables[$variables['base_hook']] = array(
-    $variables['base_hook'] = array(
-      '#theme' => _atomium_extend_theme_hook(
-        'filter_tips',
-        $variables['theme_hook_original']
-      ),
-      '#tips' => _filter_tips(
-        $variables['format']->format,
-        FALSE
-      ),
-    ),
+  $variables['tips'] = array(
+    '#theme' => _atomium_extend_theme_hook('filter_tips', $variables['theme_hook_original']),
+    '#tips' => _filter_tips($variables['format']->format, FALSE),
   );
 }

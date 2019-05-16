@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_HOOK().
  */
-function ec_europa_atomium_theme_link(array $existing, $type, $theme, $path) {
+function ec_europa_atomium_theme_link() {
   return array(
     'link' => array(
       'template' => 'link',

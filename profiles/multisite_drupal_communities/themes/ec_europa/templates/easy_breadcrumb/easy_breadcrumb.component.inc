@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function ec_europa_atomium_theme_easy_breadcrumb(array $existing, $type, $theme, $path) {
+function ec_europa_atomium_theme_easy_breadcrumb() {
   return array(
     'easy_breadcrumb' => array(
       'variables' => array(
@@ -55,30 +55,22 @@ function ec_europa_atomium_definition_easy_breadcrumb() {
  * Implements hook_preprocess_hook().
  */
 function ec_europa_preprocess_easy_breadcrumb(array &$variables, $hook) {
-  $variables['atomium']['attributes']['wrapper']
-    ->append(
-      'class',
-      array(
-        'ecl-breadcrumbs',
-        'ecl-container',
-      )
-    )
-    ->append(
-      'aria',
-      'breadcrumbs'
-    );
+  $variables['atomium']['attributes']['wrapper']->append('class', array(
+    'ecl-breadcrumbs',
+    'ecl-container',
+  ));
 
   $variables['here'] = t('You are here');
 
   _ec_europa_breadcrumb_menu($variables);
   $breadcrumb = $variables['breadcrumb'];
   $segments_quantity = $variables['segments_quantity'];
-  $html = array();
-
-  $s = count($breadcrumb);
+  $html = '';
 
   if ($segments_quantity > 0) {
-    foreach ($breadcrumb as $i => $item) {
+    for ($i = 0, $s = $segments_quantity; $i < $segments_quantity; ++$i) {
+      $item = $breadcrumb[$i];
+
       // Removing classes from $item['class'] array and adding BEM classes.
       $classes = array();
       if (isset($item['class'])) {
@@ -86,72 +78,45 @@ function ec_europa_preprocess_easy_breadcrumb(array &$variables, $hook) {
       }
       $classes[] = 'ecl-breadcrumbs__segment';
 
-      $attributes = array(
-        'class' => array(
-          'ecl-breadcrumbs__link',
-          'ecl-link--inverted',
-          'ecl-link--standalone',
-        ),
-      );
+      $attributes = [
+        'class' => ['ecl-breadcrumbs__link'],
+      ];
 
-      if ($i === 0) {
+      if ($i == 0) {
         $classes[] = 'ecl-breadcrumbs__segment--first';
         $attributes['class'][] = 'is-internal';
-        $attributes += array('rel' => 'home');
+        $attributes += ['rel' => 'home'];
       }
-      elseif ($i === ($s - 1)) {
+      elseif ($i == ($s - 1)) {
         $classes[] = 'ecl-breadcrumbs__segment--last';
       }
 
-      $full_item = array(
-        'link' => array(
-          '#markup' => check_plain($item['content']),
-        ),
-      );
-
+      $class = implode(' ', $classes);
+      $full_item = $item['content'];
       if (isset($item['url'])) {
-        $full_item = array(
-          'link' => array(
-            '#theme' => _atomium_extend_theme_hook(
-              'link',
-              $variables['theme_hook_original']
-            ),
-            '#text' => $item['content'],
-            '#path' => $item['url'],
-            '#options' => array(
-              'attributes' => $attributes,
-            ),
-          ),
-        );
+        $full_item = l($item['content'], $item['url'], [
+          'attributes' => $attributes,
+          'html' => TRUE,
+        ]);
       }
 
       // TODO: Check if the active class actually appears.
-      if (\in_array('active', $classes, TRUE)) {
-        $classes[] = 'element-invisible';
-      }
-
-      $full_item += array(
-        '#theme_wrappers' => array(
-          'html_tag',
-        ),
-        '#tag' => 'li',
-        '#attributes' => array(
-          'class' => $classes,
-        ),
-      );
-
-      $html[] = $full_item;
+      $element_visibility = in_array('active',
+        $classes) ? ' element-invisible' : '';
+      $html .= '<li class="' . $class . $element_visibility . '">' . $full_item . '</li>';
     }
   }
 
   $variables['easy_breadcrumb'] = $html;
+  $variables['atomium']['attributes']['wrapper']->setAttribute('aria-label', 'breadcrumbs');
 }
 
 /**
  * Generate the first breadcrumb items basing on a custom menu.
  */
 function _ec_europa_breadcrumb_menu(&$variables) {
-  $variables['breadcrumb'] = _easy_breadcrumb_build_items();
+  module_load_include('inc', 'easy_breadcrumb', 'includes/easy_breadcrumb.blocks');
+
   $menu_links = menu_tree('menu-breadcrumb-menu');
   $new_items = array();
   global $language;
@@ -160,10 +125,10 @@ function _ec_europa_breadcrumb_menu(&$variables) {
   if (!empty($menu_links)) {
     $i = 0;
     foreach ($menu_links as $key => $menu_item) {
-      if (\is_numeric($key)) {
+      if (is_numeric($key)) {
         // We don't want to show the home link in the home page.
-        if (!($front && $menu_item['#href'] === '<front>')) {
-          $options = array('language' => $language);
+        if (!($front && $menu_item['#href'] == '<front>')) {
+          $options = ['language' => $language];
           $title = token_replace($menu_item['#title'], $menu_item,
             $options);
           $new_items[] = _easy_breadcrumb_build_item($title, array(),
@@ -175,7 +140,7 @@ function _ec_europa_breadcrumb_menu(&$variables) {
 
     if (!empty($new_items)) {
       // The menu is used as the starting point of the breadcrumb.
-      $variables['breadcrumb'] = \array_merge($new_items,
+      $variables['breadcrumb'] = array_merge($new_items,
         (array) $variables['breadcrumb']);
       // Alter the number of segments in the breadcrumb.
       $variables['segments_quantity'] += $i;
