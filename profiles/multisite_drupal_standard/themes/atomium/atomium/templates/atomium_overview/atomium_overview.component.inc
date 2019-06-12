@@ -12,7 +12,7 @@
  * install, we have to generate the list of existing definitions in the
  * preprocess hook.
  */
-function atomium_atomium_theme_atomium_overview() {
+function atomium_atomium_theme_atomium_overview(array $existing, $type, $theme, $path) {
   return array(
     'atomium_overview' => array(
       'template' => 'atomium-overview',
@@ -36,15 +36,24 @@ function atomium_preprocess_atomium_overview(array &$variables, $hook) {
     $component = $component_data['component'];
     $theme = $component_data['theme'];
 
-    $file = \sprintf('%s/%s.component.inc', $component_data['directory'], $component_data['component']);
-    if (\file_exists($file)) {
+    if (empty($component_data['includes'])) {
+      continue;
+    }
+
+    foreach ($component_data['includes'] as $file) {
       include_once $file;
     }
 
-    $function_name = $theme . '_atomium_definition_' . $component;
+    $function_name = sprintf(
+      '%s_atomium_definition_%s',
+      $theme,
+      $component
+    );
+
     if (!\function_exists($function_name)) {
       continue;
     }
+
     $definition = (array) $function_name() + array(
       'disable' => FALSE,
       'preview' => array(),
@@ -56,6 +65,7 @@ function atomium_preprocess_atomium_overview(array &$variables, $hook) {
     }
 
     $errors = array();
+    $skip = FALSE;
     foreach ($definition['dependencies'] as $dependency) {
       if (!module_exists($dependency)) {
         $message = t(
@@ -66,7 +76,18 @@ function atomium_preprocess_atomium_overview(array &$variables, $hook) {
           '#markup' => $message,
         );
         drupal_set_message($message, 'warning', FALSE);
+        $skip = TRUE;
+        $definition['preview'] = array(
+          '#theme' => 'item_list',
+          '#items' => $errors[$component],
+          '#type' => FALSE,
+        );
+        $definitions[$component] = $definition;
       }
+    }
+
+    if ($skip === TRUE) {
+      continue;
     }
 
     // Prepend hash to all preview properties.
@@ -95,11 +116,15 @@ function atomium_preprocess_atomium_overview(array &$variables, $hook) {
         $definition['preview'] = array(
           '#theme' => _atomium_extend_theme_hook('item_list', array('preview', $component)),
           '#items' => $elements,
+          '#type' => FALSE,
         );
       }
     }
     else {
-      $definition['preview']['#theme'] = array($component);
+      $definition['preview']['#theme'] = _atomium_extend_theme_hook(
+        $component,
+        array('preview')
+      );
     }
 
     // Allow the use of a form.
@@ -108,8 +133,8 @@ function atomium_preprocess_atomium_overview(array &$variables, $hook) {
       $definition['form'] = drupal_get_form($function_name);
     }
 
-    // Disable the preview if we explicitely set the key disable to TRUE.
-    if (TRUE == $definition['disable']) {
+    // Disable the preview if we explicitly set the key disable to TRUE.
+    if ($definition['disable'] === TRUE) {
       unset($definition['preview']);
     }
 
@@ -119,6 +144,7 @@ function atomium_preprocess_atomium_overview(array &$variables, $hook) {
       $definitions[$component]['preview'] = array(
         '#theme' => _atomium_extend_theme_hook('item_list', array('preview', $component)),
         '#items' => $errors[$component],
+        '#type' => FALSE,
       );
     }
   }
