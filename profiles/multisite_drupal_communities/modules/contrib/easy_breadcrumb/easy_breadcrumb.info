@@ -6,8 +6,8 @@ dependencies[] = pathauto
 files[] = includes/EasyBreadcrumbConstants.inc
 configure = admin/config/user-interface/easy-breadcrumb
 
-; Information added by Drupal.org packaging script on 2019-03-26
-version = "7.x-2.16"
+; Information added by Drupal.org packaging script on 2019-06-19
+version = "7.x-2.17"
 core = "7.x"
 project = "easy_breadcrumb"
-datestamp = "1553605987"
+datestamp = "1560945791"
