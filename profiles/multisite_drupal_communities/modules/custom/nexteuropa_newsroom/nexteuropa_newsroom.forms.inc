@@ -408,6 +408,17 @@ function nexteuropa_newsroom_subscription_newsletter_form(array $form, array $fo
     '#required' => TRUE,
   ];
 
+  $gdpr_line = t('By checking this box, I confirm that I want to register for this service. <br> and I agree with the') .
+    ' <a href="https://ec.europa.eu/digital-single-market/en/legal-notice#newsroom">' . t('privacy statement') . '</a>';
+  $form['checkboxes'] = [
+    '#type' => 'checkboxes',
+    '#options' => [
+      'gdpr' => $gdpr_line,
+    ],
+    '#prefix' => '<div class="gdpr_checkbox checkbox europa-checkbox">',
+    '#suffix' => '</div>',
+  ];
+
   $form['submit'] = [
     '#type' => 'submit',
     '#ajax' => [
@@ -490,8 +501,10 @@ function _nexteuropa_newsroom_newsletter_subscription_page_form_ajax(array $form
 
   drupal_set_message($message, $type);
   $replacement = theme('status_messages', ['display' => NULL]);
+  $commands = [];
   $commands[] = ajax_command_replace('#' . $form['#id'] . ' .submit-response', '<div class="submit-response">' . $replacement . '</div>');
   $commands[] = ajax_command_replace('#' . $form['#id'] . ' button', '');
+  $commands[] = ajax_command_replace('#' . $form['#id'] . ' .gdpr_checkbox', '');
 
   return ['#type' => 'ajax', '#commands' => $commands];
 }
@@ -523,6 +536,7 @@ function _nexteuropa_newsroom_newsletter_unsubscription_form_ajax(array $form, a
   $replacement = theme('status_messages', ['display' => NULL]);
   $commands[] = ajax_command_replace('#' . $form['#id'] . ' .submit-response', '<div class="submit-response">' . $replacement . '</div>');
   $commands[] = ajax_command_replace('#' . $form['#id'] . ' button', '');
+  $commands[] = ajax_command_replace('#' . $form['#id'] . ' .gdpr_checkbox', '');
 
   return ['#type' => 'ajax', '#commands' => $commands];
 }

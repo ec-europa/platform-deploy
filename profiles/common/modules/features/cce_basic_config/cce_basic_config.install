@@ -348,68 +348,6 @@ function cce_basic_config_install() {
     }
   }
 
-  // Add a fivestar rate widget.
-  $path = drupal_get_path('module', 'rate');
-  $rate_widgets = array(
-    (object) array(
-      'name' => 'rate_fivestar',
-      'tag' => 'vote',
-      'title' => 'rate_fivestar',
-      'node_types' => array(),
-      'comment_types' => array(),
-      'options' => array(
-        0 => array(
-          0 => '0',
-          1 => '1',
-        ),
-        1 => array(
-          0 => '25',
-          1 => '2',
-        ),
-        2 => array(
-          0 => '50',
-          1 => '3',
-        ),
-        3 => array(
-          0 => '75',
-          1 => '4',
-        ),
-        4 => array(
-          0 => '100',
-          1 => '5',
-        ),
-      ),
-      'template' => 'fivestar',
-      'node_display' => '2',
-      'teaser_display' => FALSE,
-      'comment_display' => '2',
-      'node_display_mode' => '1',
-      'teaser_display_mode' => '1',
-      'comment_display_mode' => '1',
-      'roles' => array(
-        2 => '2',
-        3 => 0,
-        1 => 0,
-        4 => 0,
-        5 => 0,
-      ),
-      'allow_voting_by_author' => 1,
-      'noperm_behaviour' => '1',
-      'displayed' => '1',
-      'displayed_just_voted' => '2',
-      'description' => '',
-      'description_in_compact' => TRUE,
-      'delete_vote_on_second_click' => '0',
-      'use_source_translation' => TRUE,
-      'value_type' => 'percent',
-      'theme' => 'rate_template_fivestar',
-      'css' => $path . '/templates/fivestar/fivestar.css',
-      'js' => $path . '/templates/fivestar/fivestar.js',
-      'translate' => TRUE,
-    ),
-  );
-  variable_set('rate_widgets', $rate_widgets);
-
   // Configure text formats.
   _cce_basic_config_text_formats();
   // Create WYSIWYG profile for Full HTML text format.
@@ -466,7 +404,7 @@ function cce_basic_config_install() {
     multisite_config_service('wysiwyg')->addButtonsToProfile('full_html', $group, $buttons);
   }
 
-  multisite_config_service('wysiwyg')->addPreferenceToProfile('full_html', 'version', '4.4.8.ccd0038');
+  multisite_config_service('wysiwyg')->addPreferenceToProfile('full_html', 'version', '4.9.2.95e5d83');
 
   // Create WYSIWYG profile for Filtered  HTML text format.
   multisite_config_service('wysiwyg')->createProfile('filtered_html', 'ckeditor');
@@ -494,6 +432,11 @@ function cce_basic_config_install() {
     multisite_config_service('wysiwyg')->addButtonsToProfile('filtered_html', $group, $buttons);
   }
 
+  // Add simple source formatting setting on wysiwyg.
+  multisite_config_service('wysiwyg')->addSettingToProfile('full_html', 'simple_source_formatting', '1');
+  multisite_config_service('wysiwyg')->addSettingToProfile('filtered_html', 'simple_source_formatting', '1');
+  multisite_config_service('wysiwyg')->addPreferenceToProfile('filtered_html', 'version', '4.9.2.95e5d83');
+
   // Dynamically set the 'print_pdf_pdf_tool' variable. It cannot be exported
   // in a regular feature since it includes the path to where the Print PDF
   // module is installed, which is different depending on the installation
@@ -517,7 +460,25 @@ function cce_basic_config_install() {
   }
 
   // Use soft config for article comment form location.
+  multisite_config_service('comment')->setReplyFormCommentForContentType('article', 1);
+  // Use soft config to allow comments from authenticated users.
+  multisite_config_service('comment')->setDefaultCommentForContentType('article', 'open');
+  // Use soft config to allow article comment threading.
   multisite_config_service('comment')->setThreadingCommentForContentType('article', 1);
+  // Use soft config for article comment title.
+  multisite_config_service('comment')->setTitleCommentForContentType('article', 1);
+  // Use soft config for preview article comment.
+  multisite_config_service('comment')->setPreviewCommentForContentType('article', 1);
+  // Use soft config to set number of comments per page.
+  multisite_config_service('comment')->setNumberCommentForContentType('article', '50');
+  // Use soft config for anonymous comments in article.
+  multisite_config_service('comment')->setAnonymousCommentForContentType('article', 0);
+
+  // Use soft config for comment_body field base.
+  multisite_config_service('comment')->createCommentBodyField();
+  // Use soft config for comment_body field instance.
+  _cce_basic_config_comment_body_field_instance_add();
+
 }
 
 /**
@@ -545,6 +506,9 @@ function cce_basic_config_enable() {
 
   // My Account.
   variable_set('user_logout_data_image', 'log-out');
+
+  // Configuration for the settings of honeypot module.
+  variable_set('honeypot_protect_all_forms', 1);
 }
 
 /**
@@ -896,98 +860,11 @@ function cce_basic_config_update_7170() {
 }
 
 /**
- * Add rate widget fivestar.
+ * No action.
  */
 function cce_basic_config_update_7180() {
   // Check if rate widget fivestar already exists.
-  $rate_widgets = variable_get("rate_widgets");
-  if (!$rate_widgets || count($rate_widgets) == 0) {
-    $rate_widgets = array();
-  }
-  else {
-    foreach ($rate_widgets as $rate_widget) {
-      if ($rate_widget->name == 'rate_fivestar') {
-        // The widget fivestar already exists.
-        return;
-      }
-    }
-  }
-  $module_path = drupal_get_path('module', 'rate');
-
-  $rate_widgets[1] = (object) array(
-    'name' => 'rate_fivestar',
-    'tag' => 'vote',
-    'title' => 'rate_fivestar',
-    'node_types' => array(),
-    'comment_types' => array(),
-    'options' => array(
-      0 => array(
-        0 => '0',
-        1 => '1',
-      ),
-      1 => array(
-        0 => '25',
-        1 => '2',
-      ),
-      2 => array(
-        0 => '50',
-        1 => '3',
-      ),
-      3 => array(
-        0 => '75',
-        1 => '4',
-      ),
-      4 => array(
-        0 => '100',
-        1 => '5',
-      ),
-    ),
-    'template' => 'fivestar',
-    'node_display' => '2',
-    'teaser_display' => FALSE,
-    'comment_display' => '2',
-    'node_display_mode' => '1',
-    'teaser_display_mode' => '1',
-    'comment_display_mode' => '1',
-    'roles' => array(
-      2 => '2',
-      3 => 0,
-      1 => 0,
-      4 => 0,
-      5 => 0,
-    ),
-    'allow_voting_by_author' => 1,
-    'noperm_behaviour' => '1',
-    'displayed' => '1',
-    'displayed_just_voted' => '2',
-    'description' => '',
-    'description_in_compact' => TRUE,
-    'delete_vote_on_second_click' => '0',
-    'use_source_translation' => TRUE,
-    'value_type' => 'percent',
-    'theme' => 'rate_template_fivestar',
-    'css' => $module_path . '/templates/fivestar/fivestar.css',
-    'js' => $module_path . '/templates/fivestar/fivestar.js',
-    'translate' => TRUE,
-  );
-  variable_set("rate_widgets", $rate_widgets);
-}
-
-/**
- * Force home and myworkbench menu items at left in main menu.
- */
-function cce_basic_config_update_7190() {
-  db_update('menu_links')
-    ->fields(array('weight' => '-30'))
-    ->condition('link_title', 'My workbench', '=')
-    ->condition('menu_name', 'main-menu', '=')
-    ->execute();
-
-  db_update('menu_links')
-    ->fields(array('weight' => '-50'))
-    ->condition('link_title', 'Home', '=')
-    ->condition('menu_name', 'main-menu', '=')
-    ->execute();
+  // This hook_update force fivestar rate, we remove it.
 }
 
 /**
@@ -1512,20 +1389,21 @@ function cce_basic_config_update_7204() {
   // The Rate module has moved to the modules subdirectory in the profile. The
   // module hardcodes the locations of its CSS and JS attachments inside a
   // variable. Update these so they point to the correct location.
-  $path = drupal_get_path('module', 'rate');
-  $rate_widgets = variable_get('rate_widgets', array());
+  if (module_exists('rate')) {
+    $path = drupal_get_path('module', 'rate');
+    $rate_widgets = variable_get('rate_widgets', array());
 
-  foreach ($rate_widgets as &$rate_widget) {
-    foreach (array('css', 'js') as $attachment) {
-      // @codingStandardsIgnoreStart: NEPT-1308: The following code tries to remove static urls from the database.
-      if (!empty($rate_widget->$attachment) && strpos($rate_widget->$attachment, 'sites/all/modules/contributed/rate') === 0) {
-        $rate_widget->$attachment = str_replace('sites/all/modules/contributed/rate', $path, $rate_widget->attachment);
+    foreach ($rate_widgets as &$rate_widget) {
+      foreach (array('css', 'js') as $attachment) {
+        // @codingStandardsIgnoreStart: NEPT-1308: The following code tries to remove static urls from the database.
+        if (!empty($rate_widget->$attachment) && strpos($rate_widget->$attachment, 'sites/all/modules/contributed/rate') === 0) {
+          $rate_widget->$attachment = str_replace('sites/all/modules/contributed/rate', $path, $rate_widget->attachment);
+        }
+        // @codingStandardsIgnoreEnd
       }
-      // @codingStandardsIgnoreEnd
     }
+    variable_set('rate_widgets', $rate_widgets);
   }
-
-  variable_set('rate_widgets', $rate_widgets);
 }
 
 /**
@@ -1914,4 +1792,62 @@ function cce_basic_config_update_7226() {
   if (!module_exists('nexteuropa_cookie_consent_kit')) {
     module_enable(array('nexteuropa_cookie_consent_kit'));
   }
+}
+
+/**
+ * Remove the multisite_version variable NEPT-2065.
+ */
+function cce_basic_config_update_7227() {
+  variable_del('multisite_version');
+}
+
+/**
+ * Force the activation of honeypot and force it in all forms.
+ */
+function cce_basic_config_update_7228() {
+  if (!module_exists('honeypot')) {
+    module_enable(array('honeypot'));
+  }
+  // Configuration for the settings of honeypot module.
+  variable_set('honeypot_protect_all_forms', 1);
+}
+
+/**
+ * Set new value for cce_basic_config feature in database.
+ *
+ * Variable date_api_version must be removed from cce_basic_config feature and
+ * this feature must not be reverted.
+ * Recreate the value of the feature in database without the variable.
+ */
+function cce_basic_config_update_7229() {
+  module_load_include('inc', 'features', "features.export");
+  features_set_signature('cce_basic_config', 'variable');
+}
+
+/**
+ * Remove permissions from cem role.
+ */
+function cce_basic_config_update_7230() {
+  $role = user_role_load_by_name('cem');
+  $permissions = array_keys(array_pop(user_role_permissions(array($role->rid => $role->name))));
+
+  if (!empty($role) && !empty($permissions)) {
+    user_role_revoke_permissions($role->rid, $permissions);
+  }
+}
+
+/**
+ * Add simple source formatting setting on wysiwyg.
+ */
+function cce_basic_config_update_7231() {
+  multisite_config_service('wysiwyg')->addSettingToProfile('full_html', 'simple_source_formatting', '1');
+  multisite_config_service('wysiwyg')->addSettingToProfile('filtered_html', 'simple_source_formatting', '1');
+}
+
+/**
+ * Set CKEditor library to the right version.
+ */
+function cce_basic_config_update_7232() {
+  multisite_config_service('wysiwyg')->addPreferenceToProfile('full_html', 'version', '4.9.2.95e5d83');
+  multisite_config_service('wysiwyg')->addPreferenceToProfile('filtered_html', 'version', '4.9.2.95e5d83');
 }
