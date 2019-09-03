@@ -464,7 +464,11 @@ function entity_translation_menu_alter(&$items) {
           // Replace the main edit callback with our proxy implementation to set
           // form language to the current language and check access.
           $entity_position = array_search($scheme['path wildcard'], $edit_path_parts);
-          $original_item = $edit_item;
+          // Make sure incoming page and access arguments are arrays.
+          $original_item = $edit_item + array(
+            'page arguments' => array(),
+            'access arguments' => array(),
+          );
           $args = array($entity_type, $entity_position, FALSE, $original_item);
           $edit_item['page callback'] = 'entity_translation_edit_page';
           $edit_item['page arguments'] = array_merge($args, $original_item['page arguments']);
@@ -1272,7 +1276,7 @@ function entity_translation_field_attach_form($entity_type, $entity, &$form, &$f
       }
     }
 
-    // If a translation is being created an alias can be generated if needed.
+    // If a translation is being created, an alias may be generated if needed.
     // The standard behavior is defaulting to FALSE when an entity already
     // exists, hence we need to override it here.
     // If needed, a variable is provided for reverting to the default behavior.
@@ -2050,7 +2054,7 @@ function entity_translation_entity_uuid_presave(&$entity, $entity_type) {
 /**
  * Implements hook_pathauto_alias_alter().
  *
- * When updating or bulk-updating aliases for nodes automatically create a path
+ * When updating or bulk-updating aliases for nodes, automatically create a path
  * for every translation, dependent on related configuration.
  * @see entity_translation_admin_form()
  */
@@ -2063,13 +2067,13 @@ function entity_translation_pathauto_alias_alter(&$alias, array &$context) {
   );
   $operation = $context['op'];
 
-  // Nothing to do when we don't have a replace pattern or incoming data.
+  // Nothing to do when we don't have a replacement pattern or incoming data.
   if (!in_array($operation, array_keys($operations_modes)) || empty($info[$entity_type]['token type']) || empty($context['data'][$info[$entity_type]['token type']])) {
     return;
   }
 
   // Do not run additional 'update' or 'bulkupdate' operations if the update
-  // mode is set to only generate an alias for the active language.
+  // mode is set to generate an alias only for the active language.
   if (in_array($operation, array_keys($operations_modes)) &&
     $operations_modes[$operation] === 'generate_alias_active_language') {
     return;

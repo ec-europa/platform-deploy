@@ -257,10 +257,12 @@ function entity_translation_settings_init($entity_type, $settings = array()) {
  * Translations overview page callback.
  */
 function entity_translation_overview($entity_type, $entity, $callback = NULL) {
+  $args = func_get_args();
+
   // Entity translation and node translation share the same system path.
   if ($callback && !entity_translation_enabled($entity_type, $entity)) {
-    $args = array_slice(func_get_args(), 3);
-    return entity_translation_overview_callback($callback, $args);
+    $callback_args = array_slice($args, 3);
+    return entity_translation_overview_callback($callback, $callback_args);
   }
 
   $handler = EntityTranslationHandlerFactory::getInstance()->getCurrentRevisionHandler($entity_type, $entity);

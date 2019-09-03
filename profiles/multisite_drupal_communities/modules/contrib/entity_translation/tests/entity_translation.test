@@ -1164,6 +1164,7 @@ class EntityTranslationTaxonomyAutocompleteTestCase extends EntityTranslationTes
       'name' => 'Entity translation taxonomy autocomplete',
       'description' => 'Tests for the taxonomy autocomplete translation modes.',
       'group' => 'Entity translation',
+      'dependencies' => array('title'),
     );
   }
 
