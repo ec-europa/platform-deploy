@@ -8,7 +8,7 @@ Table of Contents
     - [Developer's notes](#developers-notes)
     - [Blocking of the rules](#blocking-temporary-the-purge-mechanism)
  - [Varnish Mock](#testing-varnish-calls)
-
+ - [Change Log](#change-log)
 
 # Nexteuropa Varnish
 
@@ -117,6 +117,13 @@ will be triggered in the following cases:
 - when a node of the given content type is created and saved with the 'Publish' state
 - when a published node of the given content type is updated
 
+### Rules integration
+To set up workflows, more intricate scenarios, for flushing varnish paths
+a rules action 'Varnish flush' was added under the 'Nexteuropa Varnish' group.
+
+This way you can add one or more path aliases in regexp format, even use available
+tokens and create your own flushing rules in admin/config/workflow/rules.
+
 ## Tests and custom Behat Feature Context
 The Nexteuropa Varnish provides complete a Behat test suite and additional
 Feature Context located in the FrontendCacheContext class.
@@ -142,6 +149,8 @@ certain paths.
 
 All of HTTP requests are send by the `_nexteuropa_varnish_purge_paths()`
 function.
+
+To support rules integration for file entities we added another [path](https://www.drupal.org/files/issues/file_events-826986-31_0.patch).
 
 ### Blocking temporary the purge mechanism
 
@@ -190,3 +199,12 @@ Please check your varnish rules , the regex ^an-already-inserted/rule you are tr
 We suggest you review and save your regex rules again using the documentation available.
 In case of doubt, please contact your site administrator or the devops team.
 ```
+
+### Change log
+v1.0.8 : NEPT-1961: Provide 'rules' action to allow purging any entity.
+v1.0.7 : Block unwanted purges and prevent watchdog flooding.
+v1.0.6 : Clear file path and solve diverged declaration.
+v1.0.5 : Remove "check scope" button.
+v1.0.4 : Update documentation link reference to new repository.
+v1.0.3 : Implement file flushing.
+v1.0.2 : Migrate module from platform to standalone repository.
