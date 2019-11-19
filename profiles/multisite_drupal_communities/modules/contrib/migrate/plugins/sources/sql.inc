@@ -2,15 +2,16 @@
 
 /**
  * @file
- * Define a MigrateSource for importing from Drupal connections
+ * Define a MigrateSource for importing from Drupal connections.
  */
 
 /**
  * Implementation of MigrateSource, to handle imports from Drupal connections.
  */
 class MigrateSourceSQL extends MigrateSource {
+
   /**
-   * The SQL query objects from which to obtain data, and counts of data
+   * The SQL query objects from which to obtain data, and counts of data.
    *
    * @var SelectQueryInterface
    */
@@ -36,7 +37,7 @@ class MigrateSourceSQL extends MigrateSource {
   protected $result;
 
   /**
-   * Number of eligible rows processed so far (used for itemlimit checking)
+   * Number of eligible rows processed so far (used for itemlimit checking).
    *
    * @var int
    */
@@ -72,8 +73,9 @@ class MigrateSourceSQL extends MigrateSource {
    * @var boolean
    */
   protected $mapJoinable = FALSE;
-  // Dynamically set whether the map is joinable - not really for production use,
-  // this is primarily to support simpletests
+
+  // Dynamically set whether the map is joinable - not really for production
+  // use, this is primarily to support simpletests.
   public function setMapJoinable($map_joinable) {
     $this->mapJoinable = $map_joinable;
   }
@@ -97,7 +99,8 @@ class MigrateSourceSQL extends MigrateSource {
    * Return an options array for PDO sources.
    *
    * @param boolean $map_joinable
-   *  Indicates whether the map table can be joined directly to the source query.
+   *  Indicates whether the map table can be joined directly to the source
+   *   query.
    * @param boolean $cache_counts
    *  Indicates whether to cache counts of source records.
    */
@@ -121,7 +124,7 @@ class MigrateSourceSQL extends MigrateSource {
    *  Options applied to this source.
    */
   public function __construct(SelectQueryInterface $query, array $fields = array(),
-      SelectQueryInterface $count_query = NULL, array $options = array()) {
+                              SelectQueryInterface $count_query = NULL, array $options = array()) {
     parent::__construct($options);
     $this->originalQuery = $query;
     $this->query = clone $query;
@@ -153,30 +156,30 @@ class MigrateSourceSQL extends MigrateSource {
       // directly to the query, but this won't work unless/until
       // http://drupal.org/node/802514 is committed, assume joinable for now
       $this->mapJoinable = TRUE;
-/*      // To be able to join the map directly, it must be a PDO map on the same
-      // connection, or a compatible connection
-      $map = $migration->getMap();
-      if (is_a($map, 'MigrateSQLMap')) {
-        $map_options = $map->getConnection()->getConnectionOptions();
-        $query_options = $this->query->connection()->getConnectionOptions();
+      /*      // To be able to join the map directly, it must be a PDO map on the same
+            // connection, or a compatible connection
+            $map = $migration->getMap();
+            if (is_a($map, 'MigrateSQLMap')) {
+              $map_options = $map->getConnection()->getConnectionOptions();
+              $query_options = $this->query->connection()->getConnectionOptions();
 
-        // Identical options means it will work
-        if ($map_options == $query_options) {
-          $this->mapJoinable = TRUE;
-        }
-        else {
-          // Otherwise, the one scenario we know will work is if it's MySQL and
-          // the credentials match (SQLite too?)
-          if ($map_options['driver'] == 'mysql' && $query_options['driver'] == 'mysql') {
-            if ($map_options['host'] == $query_options['host'] &&
-                $map_options['port'] == $query_options['port'] &&
-                $map_options['username'] == $query_options['username'] &&
-                $map_options['password'] == $query_options['password']) {
-              $this->mapJoinable = TRUE;
-            }
-          }
-        }
-      }*/
+              // Identical options means it will work
+              if ($map_options == $query_options) {
+                $this->mapJoinable = TRUE;
+              }
+              else {
+                // Otherwise, the one scenario we know will work is if it's MySQL and
+                // the credentials match (SQLite too?)
+                if ($map_options['driver'] == 'mysql' && $query_options['driver'] == 'mysql') {
+                  if ($map_options['host'] == $query_options['host'] &&
+                      $map_options['port'] == $query_options['port'] &&
+                      $map_options['username'] == $query_options['username'] &&
+                      $map_options['password'] == $query_options['password']) {
+                    $this->mapJoinable = TRUE;
+                  }
+                }
+              }
+            }*/
     }
   }
 
@@ -203,13 +206,14 @@ class MigrateSourceSQL extends MigrateSource {
     $queryFields = $this->query->getFields();
 
     if ($queryFields) {
-      // Not much we can do in terms of describing the fields without manual intervention
+      // Not much we can do in terms of describing the fields
+      // without manual intervention.
       foreach ($queryFields as $field_name => $field_info) {
         $fields[$field_name] = $field_info['table'] . '.' . $field_info['field'];
       }
     }
     else {
-      // Detect available fields
+      // Detect available fields.
       $detection_query = clone $this->query;
       $result = $detection_query->range(0, 1)->execute();
       $row = $result->fetchAssoc();
@@ -220,26 +224,26 @@ class MigrateSourceSQL extends MigrateSource {
       }
     }
 
-/*
- * Handle queries without explicit field lists
- * TODO: Waiting on http://drupal.org/node/814312
-    $info = Database::getConnectionInfo($query->getConnection());
-    $database = $info['default']['database'];
-    foreach ($this->query->getTables() as $table) {
-      if (isset($table['all_fields']) && $table['all_fields']) {
+    /*
+     * Handle queries without explicit field lists
+     * TODO: Waiting on http://drupal.org/node/814312
+        $info = Database::getConnectionInfo($query->getConnection());
+        $database = $info['default']['database'];
+        foreach ($this->query->getTables() as $table) {
+          if (isset($table['all_fields']) && $table['all_fields']) {
 
-        $database = 'plants';
-        $table = $table['table'];
-        $sql = 'SELECT column_name
-                FROM information_schema.columns
-                WHERE table_schema=:database AND table_name = :table
-                ORDER BY ordinal_position';
-        $result = dbtng_query($sql, array(':database' => $database, ':table' => $table));
-        foreach ($result as $row) {
-          $fields[$row->column_name] = $table . '.' . $row->column_name;
-        }
-      }
-    }*/
+            $database = 'plants';
+            $table = $table['table'];
+            $sql = 'SELECT column_name
+                    FROM information_schema.columns
+                    WHERE table_schema=:database AND table_name = :table
+                    ORDER BY ordinal_position';
+            $result = dbtng_query($sql, array(':database' => $database, ':table' => $table));
+            foreach ($result as $row) {
+              $fields[$row->column_name] = $table . '.' . $row->column_name;
+            }
+          }
+        }*/
     $expressionFields = $this->query->getExpressions();
     foreach ($expressionFields as $field_name => $field_info) {
       $fields[$field_name] = $field_info['alias'];
@@ -284,9 +288,9 @@ class MigrateSourceSQL extends MigrateSource {
     }
 
     // The rules for determining what conditions to add to the query are as
-    // follows (applying first applicable rule)
+    // follows (applying first applicable rule).
     // 1. If idlist is provided, then only process items in that list (AND key
-    //    IN (idlist)). Only applicable with single-value keys.
+    // IN (idlist)). Only applicable with single-value keys.
     if ($this->idList) {
       $simple_ids = array();
       $compound_ids = array();
@@ -302,7 +306,8 @@ class MigrateSourceSQL extends MigrateSource {
         $compound_ids[] = explode($this->multikeySeparator, $id);
       }
 
-      // Check for compunded ids. If present add them with subsequent OR statements.
+      // Check for compunded ids. If present add them with subsequent
+      // OR statements.
       if (!empty($compound_ids)) {
         $condition = db_or();
         if (!empty($simple_ids)) {
@@ -326,13 +331,13 @@ class MigrateSourceSQL extends MigrateSource {
     }
     else {
       // 2. If the map is joinable, join it. We will want to accept all rows
-      //    which are either not in the map, or marked in the map as NEEDS_UPDATE.
-      //    Note that if highwater fields are in play, we want to accept all rows
-      //    above the highwater mark in addition to those selected by the map
-      //    conditions, so we need to OR them together (but AND with any existing
-      //    conditions in the query). So, ultimately the SQL condition will look
-      //    like (original conditions) AND (map IS NULL OR map needs update
-      //      OR above highwater).
+      // which are either not in the map, or marked in the map as NEEDS_UPDATE.
+      // Note that if highwater fields are in play, we want to accept all rows
+      // above the highwater mark in addition to those selected by the map
+      // conditions, so we need to OR them together (but AND with any existing
+      // conditions in the query). So, ultimately the SQL condition will look
+      // like (original conditions) AND (map IS NULL OR map needs update
+      // OR above highwater).
       $conditions = db_or();
       $condition_added = FALSE;
       if ($this->mapJoinable) {
@@ -355,7 +360,7 @@ class MigrateSourceSQL extends MigrateSource {
         }
 
         $alias = $this->query->leftJoin($this->activeMap->getQualifiedMapTable(),
-                                        'map', $map_join);
+          'map', $map_join);
         $conditions->isNull($alias . '.sourceid1');
         $conditions->condition($alias . '.needs_update', MigrateMap::STATUS_NEEDS_UPDATE);
         $condition_added = TRUE;
@@ -374,7 +379,7 @@ class MigrateSourceSQL extends MigrateSource {
         $this->query->addField($alias, 'needs_update', 'migrate_map_needs_update');
       }
       // 3. If we are using highwater marks, also include rows above the mark.
-      //    But, include all rows if the highwater mark is not set.
+      // But, include all rows if the highwater mark is not set.
       if (isset($this->highwaterField['name']) && $this->activeMigration->getHighwater() !== '') {
         // But, if there are any existing items marked as needing update which
         // fall below the highwater mark, and map_joinable is FALSE, those
@@ -396,8 +401,15 @@ class MigrateSourceSQL extends MigrateSource {
           else {
             $highwater = $this->highwaterField['name'];
           }
-          $conditions->condition($highwater, $this->activeMigration->getHighwater(), '>');
-          $condition_added = TRUE;
+          // If highwaterField is an aggregate function add
+          // as a having condition.
+          if (isset($this->highwaterField['aggregate'])) {
+            $this->query->havingCondition($highwater, $this->activeMigration->getHighwater(), '>');
+          }
+          else {
+            $conditions->condition($highwater, $this->activeMigration->getHighwater(), '>');
+            $condition_added = TRUE;
+          }
         }
       }
       if ($condition_added) {
@@ -426,8 +438,8 @@ class MigrateSourceSQL extends MigrateSource {
   public function getNextRow() {
     $row = $this->result->fetchObject();
 
-    // We might be out of data entirely, or just out of data in the current batch.
-    // Attempt to fetch the next batch and see.
+    // We might be out of data entirely, or just out of data in the current
+    // batch. Attempt to fetch the next batch and see.
     if (!is_object($row) && $this->batchSize > 0) {
       $this->getNextBatch();
       $row = $this->result->fetchObject();
