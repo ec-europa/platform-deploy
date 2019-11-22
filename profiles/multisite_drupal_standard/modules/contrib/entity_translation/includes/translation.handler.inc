@@ -1578,6 +1578,15 @@ class EntityTranslationDefaultHandler implements EntityTranslationHandlerInterfa
    * @see EntityTranslationHandlerInterface::entityFormValidate()
    */
   public function entityFormValidate($form, &$form_state) {
+    // The locale module is creating the node object anew based on the form's
+    // submitted values, thus losing the relation with the currently assigned
+    // translation handler. By adding the 'entity_translation_handler_id' property to
+    // the $form_state['values'] array, we can persist that relation and utilize
+    // a correctly instantiated translation handler for the new node entity.
+    if (empty($form_state['values']['entity_translation_handler_id']) && field_has_translation_handler($this->getEntityType(), 'locale')) {
+      $form_state['values']['entity_translation_handler_id'] = $form_state[$this->getEntityType()]->entity_translation_handler_id;
+    }
+
     if (!empty($form_state['values']['translation'])) {
       $values = $form_state['values']['translation'];
       // Validate the "authored by" field.

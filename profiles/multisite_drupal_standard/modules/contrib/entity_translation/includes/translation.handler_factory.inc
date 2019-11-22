@@ -115,7 +115,11 @@ class EntityTranslationHandlerFactory {
       list($id, $revision_id, $bundle) = entity_extract_ids($entity_type, $entity);
       $revision_id = isset($revision_id) ? $revision_id : 0;
       $bundle = isset($bundle) ? $bundle : $entity_type;
-      $entity->entity_translation_handler_id = $entity_type . '-' . $bundle . '-' . (!empty($id) ? 'eid-' . $id . '-' . $revision_id : 'new-' . self::$newId++);
+      $entity_is_new = empty($id);
+      // Make sure a incoming entity with no handler assigned to it always gets a new handler.
+      do {
+        $entity->entity_translation_handler_id = $entity_type . '-' . $bundle . '-' . (!$entity_is_new ? 'eid-' . $id . '-' . $revision_id : 'new-' . self::$newId++);
+      } while ($entity_is_new && isset($this->handlers[$entity_type][$entity->entity_translation_handler_id]));
     }
     return $entity->entity_translation_handler_id;
   }
