@@ -74,7 +74,7 @@ class MediaInternetYouTubeTestCase extends MediaYouTubeTestHelper {
         'enablejsapi' => FALSE,
         'loop' => FALSE,
         'modestbranding' => FALSE,
-        'nocookie' => FALSE,
+        'nocookie' => TRUE,
         'origin' => '',
         'protocol' => 'https:',
         'protocol_specify' => FALSE,
