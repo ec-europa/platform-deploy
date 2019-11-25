@@ -83,8 +83,10 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
         foreach ($files as $file) {
             $this->parseTokens(token_get_all(file_get_contents($file)), $catalog);
 
-            // PHP 7 memory manager will not release after token_get_all(), see https://bugs.php.net/70098
-            gc_mem_caches();
+            if (\PHP_VERSION_ID >= 70000) {
+                // PHP 7 memory manager will not release after token_get_all(), see https://bugs.php.net/70098
+                gc_mem_caches();
+            }
         }
     }
 
@@ -101,7 +103,7 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
      *
      * @param mixed $token
      *
-     * @return string
+     * @return string|null
      */
     protected function normalizeToken($token)
     {
@@ -196,8 +198,7 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
     /**
      * Extracts trans message from PHP tokens.
      *
-     * @param array            $tokens
-     * @param MessageCatalogue $catalog
+     * @param array $tokens
      */
     protected function parseTokens($tokens, MessageCatalogue $catalog)
     {
@@ -256,9 +257,7 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
     }
 
     /**
-     * @param string|array $directory
-     *
-     * @return array
+     * {@inheritdoc}
      */
     protected function extractFromDirectory($directory)
     {

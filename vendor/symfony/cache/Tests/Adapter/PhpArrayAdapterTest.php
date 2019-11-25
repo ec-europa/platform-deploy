@@ -23,6 +23,7 @@ class PhpArrayAdapterTest extends AdapterTestCase
 {
     protected $skippedTests = [
         'testGet' => 'PhpArrayAdapter is read-only.',
+        'testRecursiveGet' => 'PhpArrayAdapter is read-only.',
         'testBasicUsage' => 'PhpArrayAdapter is read-only.',
         'testBasicUsageWithLongKey' => 'PhpArrayAdapter is read-only.',
         'testClear' => 'PhpArrayAdapter is read-only.',
@@ -57,12 +58,12 @@ class PhpArrayAdapterTest extends AdapterTestCase
 
     protected static $file;
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$file = sys_get_temp_dir().'/symfony-cache/php-array-adapter-test.php';
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         if (file_exists(sys_get_temp_dir().'/symfony-cache')) {
             FilesystemAdapterTest::rmdir(sys_get_temp_dir().'/symfony-cache');
