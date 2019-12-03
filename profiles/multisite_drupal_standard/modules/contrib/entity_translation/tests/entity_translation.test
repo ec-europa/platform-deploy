@@ -207,6 +207,16 @@ class EntityTranslationTestCase extends DrupalWebTestCase {
     // Check if the setting works.
     $this->drupalGet('node/add/page');
     $this->assertFieldById('edit-body-en-add-more', t('Add another item'), t('Add another item button found.'));
+
+    // Settings defaults for new page nodes.
+    variable_set('entity_translation_settings_node__page', array(
+      'default_language' => ENTITY_TRANSLATION_LANGUAGE_CURRENT,
+      'hide_language_selector' => 0,
+      'exclude_language_none' => 1,
+      'lock_language' => 1,
+      'shared_fields_original_only' => 0,
+      'locale_field_language_fallback' => 0,
+    ));
   }
 
   /**
@@ -282,12 +292,16 @@ class EntityTranslationTranslationTestCase extends EntityTranslationTestCase {
 
   function setUp() {
     parent::setUp('locale', 'entity_translation');
-    $this->login($this->getAdminUser());
+    $perms = array(
+      'administer entity translation',
+    );
+    $this->login($this->getAdminUser($perms));
     $this->addLanguage('en');
     $this->addLanguage('es');
     $this->addLanguage('fr');
     $this->disableLanguage('fr');
     $this->configureContentType();
+    $this->enableUrlLanguageDetection();
     $this->login($this->getTranslatorUser());
   }
 
@@ -324,6 +338,31 @@ class EntityTranslationTranslationTestCase extends EntityTranslationTestCase {
     $node_translation_body = $this->randomName();
     $node_translation = $this->createTranslation($node, $node_translation_title, $node_translation_body, 'es');
   }
+
+  /**
+   * Test if locale field on new page works.
+   *
+   * Add a new page node in a given language (using URL language detection).
+   * On the node page form, use the Locale language field to set the new node's
+   * language to a language different from the URL language.
+   * Make sure that the newly created node has translatable fields created in the
+   * Locale's set language (and not the one coming from the URL).
+   */
+  function testLocaleLanguageWidgetTranslation() {
+    // Create Basic page in Spanish.
+    $this->drupalGet('es/node/add/page');
+    $node_title = $this->randomName();
+    $node_body = $this->randomName();
+    $edit["title"] = $node_title;
+    $edit["body[es][0][value]"] = $node_body;
+    // But switch the locale field to English.
+    $edit['language'] = 'en';
+    $this->drupalPost(NULL, $edit, t('Save'));
+    $node = $this->drupalGetNodeByTitle($node_title);
+    $languages_for_body_field = array_keys($node->body);
+    $this->assertTrue(in_array('en', array_keys($node->body)), 'Locale field language settings takes precedence.');
+  }
+
 }
 
 /**
