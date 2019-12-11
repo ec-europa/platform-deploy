@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit8c825845f7f33389d73115ee05c5e767
+class ComposerStaticInit2a041fb1ac362310e8060bb4095646fe
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -28,7 +28,8 @@ class ComposerStaticInit8c825845f7f33389d73115ee05c5e767
         array (
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Ctype\\' => 23,
-            'Symfony\\Contracts\\' => 18,
+            'Symfony\\Contracts\\Service\\' => 26,
+            'Symfony\\Contracts\\Cache\\' => 24,
             'Symfony\\Component\\VarExporter\\' => 30,
             'Symfony\\Component\\Validator\\' => 28,
             'Symfony\\Component\\Translation\\' => 30,
@@ -39,7 +40,6 @@ class ComposerStaticInit8c825845f7f33389d73115ee05c5e767
         ),
         'P' => 
         array (
-            'Psr\\SimpleCache\\' => 16,
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Container\\' => 14,
@@ -82,9 +82,13 @@ class ComposerStaticInit8c825845f7f33389d73115ee05c5e767
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
         ),
-        'Symfony\\Contracts\\' => 
+        'Symfony\\Contracts\\Service\\' => 
         array (
-            0 => __DIR__ . '/..' . '/symfony/contracts',
+            0 => __DIR__ . '/..' . '/symfony/service-contracts',
+        ),
+        'Symfony\\Contracts\\Cache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/cache-contracts',
         ),
         'Symfony\\Component\\VarExporter\\' => 
         array (
@@ -113,10 +117,6 @@ class ComposerStaticInit8c825845f7f33389d73115ee05c5e767
         'Symfony\\Component\\Cache\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/cache',
-        ),
-        'Psr\\SimpleCache\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/simple-cache/src',
         ),
         'Psr\\Log\\' => 
         array (
@@ -221,10 +221,10 @@ class ComposerStaticInit8c825845f7f33389d73115ee05c5e767
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit8c825845f7f33389d73115ee05c5e767::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit8c825845f7f33389d73115ee05c5e767::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit8c825845f7f33389d73115ee05c5e767::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit8c825845f7f33389d73115ee05c5e767::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit2a041fb1ac362310e8060bb4095646fe::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit2a041fb1ac362310e8060bb4095646fe::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit2a041fb1ac362310e8060bb4095646fe::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit2a041fb1ac362310e8060bb4095646fe::$classMap;
 
         }, null, ClassLoader::class);
     }
