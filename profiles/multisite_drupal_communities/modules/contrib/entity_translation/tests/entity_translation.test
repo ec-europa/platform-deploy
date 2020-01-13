@@ -291,7 +291,7 @@ class EntityTranslationTranslationTestCase extends EntityTranslationTestCase {
   }
 
   function setUp() {
-    parent::setUp('locale', 'entity_translation');
+    parent::setUp('locale', 'entity_translation', 'entity_translation_test');
     $perms = array(
       'administer entity translation',
     );
@@ -340,15 +340,16 @@ class EntityTranslationTranslationTestCase extends EntityTranslationTestCase {
   }
 
   /**
-   * Test if locale field on new page works.
+   * Tests the interplay of the locale language selector on a new Page node.
    *
-   * Add a new page node in a given language (using URL language detection).
+   * Add a new Page node in a given language (using URL language detection).
    * On the node page form, use the Locale language field to set the new node's
    * language to a language different from the URL language.
    * Make sure that the newly created node has translatable fields created in the
    * Locale's set language (and not the one coming from the URL).
    */
   function testLocaleLanguageWidgetTranslation() {
+    variable_set('entity_translation_test_disable_form_cache', TRUE);
     // Create Basic page in Spanish.
     $this->drupalGet('es/node/add/page');
     $node_title = $this->randomName();
@@ -359,7 +360,6 @@ class EntityTranslationTranslationTestCase extends EntityTranslationTestCase {
     $edit['language'] = 'en';
     $this->drupalPost(NULL, $edit, t('Save'));
     $node = $this->drupalGetNodeByTitle($node_title);
-    $languages_for_body_field = array_keys($node->body);
     $this->assertTrue(in_array('en', array_keys($node->body)), 'Locale field language settings takes precedence.');
   }
 
