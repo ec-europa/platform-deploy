@@ -1,17 +1,6 @@
 
 Entity Translation 7.x-1.x, xxxx-xx-xx
 --------------------------------------
-
-
-Entity Translation 7.x-1.1, 2019-11-24
---------------------------------------
-#2877103 by stefanos.petrakis, Simon Georges, Delphine Lepers, Andras_Szilagyi,
-  drasgardian, Alexander Fedorenko, plach: Content can not be created in
-  another language as the one chosen by configuration
-#2580231 by danyg, stefanos.petrakis, MariskaTh: Undefined index in
-  entity_translation.views.inc
-#3085046 by stefanos.petrakis: Fix test breakage due to Title module
-  7.x-1.0-beta1 version
 #3010146 by stefanos.petrakis: Expose extended ET-specific configuration for
   pathauto
 #3050434 by shital.mahajan, jweowu, stefanos.petrakis: Since PHP 7.0, functions

@@ -111,12 +111,14 @@ interface EntityTranslationHandlerInterface {
    *
    * @param string $langcode
    *   The active language code.
+   * @param bool $overwrite
+   *   A flag that forces overwriting the current active language code.
    *
    * @see entity_language()
    * @see entity_translation_language()
    * @see ::getActiveLanguage()
    */
-  public function setActiveLanguage($langcode);
+  public function setActiveLanguage($langcode, $overwrite);
 
   /**
    * Returns the active language.
@@ -892,11 +894,13 @@ class EntityTranslationDefaultHandler implements EntityTranslationHandlerInterfa
   /**
    * {@inheritdoc}
    */
-  public function setActiveLanguage($langcode) {
+  public function setActiveLanguage($langcode, $overwrite = TRUE) {
     // @todo To fully preserve BC, we proxy the call to the deprecated
     //   ::setFormLanguage method. This will keep things working even when it
     //   has been overridden. Inline its implementation here upon removal.
-    $this->setFormLanguage($langcode);
+    if (empty($this->activeLanguage) || $overwrite) {
+      $this->setFormLanguage($langcode);
+    }
   }
 
   /**
