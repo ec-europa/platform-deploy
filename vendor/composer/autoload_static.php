@@ -4,10 +4,11 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit95df1dec35f7e41374938c998a5ad21a
+class ComposerStaticInit1bf5596dd4aec01ab0144ff7bf6bbe9a
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        '023d27dca8066ef29e6739335ea73bad' => __DIR__ . '/..' . '/symfony/polyfill-php70/bootstrap.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
@@ -26,6 +27,7 @@ class ComposerStaticInit95df1dec35f7e41374938c998a5ad21a
         ),
         'S' => 
         array (
+            'Symfony\\Polyfill\\Php70\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Ctype\\' => 23,
             'Symfony\\Contracts\\Service\\' => 26,
@@ -73,6 +75,10 @@ class ComposerStaticInit95df1dec35f7e41374938c998a5ad21a
         'cweagans\\Composer\\' => 
         array (
             0 => __DIR__ . '/..' . '/cweagans/composer-patches/src',
+        ),
+        'Symfony\\Polyfill\\Php70\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php70',
         ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
@@ -171,6 +177,8 @@ class ComposerStaticInit95df1dec35f7e41374938c998a5ad21a
     );
 
     public static $classMap = array (
+        'ArithmeticError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/ArithmeticError.php',
+        'AssertionError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/AssertionError.php',
         'CAS_AuthenticationException' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/AuthenticationException.php',
         'CAS_Client' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Client.php',
         'CAS_CookieJar' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/CookieJar.php',
@@ -215,16 +223,21 @@ class ComposerStaticInit95df1dec35f7e41374938c998a5ad21a
         'CAS_Request_MultiRequestInterface' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Request/MultiRequestInterface.php',
         'CAS_Request_RequestInterface' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Request/RequestInterface.php',
         'CAS_TypeMismatchException' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/TypeMismatchException.php',
+        'DivisionByZeroError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/DivisionByZeroError.php',
+        'Error' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/Error.php',
+        'ParseError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/ParseError.php',
+        'SessionUpdateTimestampHandlerInterface' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/SessionUpdateTimestampHandlerInterface.php',
+        'TypeError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/TypeError.php',
         'phpCAS' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit95df1dec35f7e41374938c998a5ad21a::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit95df1dec35f7e41374938c998a5ad21a::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit95df1dec35f7e41374938c998a5ad21a::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit95df1dec35f7e41374938c998a5ad21a::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit1bf5596dd4aec01ab0144ff7bf6bbe9a::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit1bf5596dd4aec01ab0144ff7bf6bbe9a::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit1bf5596dd4aec01ab0144ff7bf6bbe9a::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit1bf5596dd4aec01ab0144ff7bf6bbe9a::$classMap;
 
         }, null, ClassLoader::class);
     }
