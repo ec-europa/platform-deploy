@@ -230,7 +230,7 @@ function apachesolr_search_menu_alter(&$items) {
     $search_type_id = !empty($search_page['settings']['apachesolr_search_search_type']) ? $search_page['settings']['apachesolr_search_search_type'] : FALSE;
     $search_type = !empty($search_types[$search_type_id]) ? $search_types[$search_type_id] : FALSE;
 
-    if ($search_type && !empty($position)) {
+    if ($search_type) {
       $title_callback = $search_type['title callback'];
       $items[$search_page['search_path']]['title callback'] = $title_callback;
       $items[$search_page['search_path']]['title arguments'] = array($search_page['page_id'], $position, $keys_pos);
@@ -360,10 +360,17 @@ function apachesolr_search_get_user_title($search_page_id = NULL, $value = NULL,
  */
 function apachesolr_search_get_value_title($search_page_id = NULL, $value = NULL, $terms = NULL) {
   $page_title = 'Search results';
-  if ((!empty($value) || !empty($terms)) && isset($search_page_id)) {
+  if (isset($search_page_id)) {
     $search_page = apachesolr_search_page_load($search_page_id);
+  }
+  if ((!empty($value) || !empty($terms)) && $search_page) {
     $page_title = str_replace('%value', '@value', $search_page['page_title']);
     $page_title = str_replace('%terms', '@terms', $page_title);
+  }
+  else if (isset($search_page_id) && $search_page && !empty($search_page['page_title'])) {
+    // Set the page title normally. This would normally get used for menu items linking to search pages.
+    $page_title = str_replace('%value', '', $search_page['page_title']);
+    $page_title = str_replace('%terms', '', $page_title);
   }
   return t($page_title, array(
     '@value' => $value,
