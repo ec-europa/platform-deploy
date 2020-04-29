@@ -553,9 +553,6 @@ class DrupalApacheSolrService implements DrupalApacheSolrServiceInterface {
       $options['data'] = NULL;
     }
 
-    // @todo: Remove after investigation of 500 errors - NEXTEUROPA-11356.
-    // Warning 'timeout' is hardcoded for all of HTTP SOLR requests.
-    $options['timeout'] = 5;
     $result = drupal_http_request($url, $options);
     if (empty($result->status_message)) {
       $result->status_message = '[unknown error]';

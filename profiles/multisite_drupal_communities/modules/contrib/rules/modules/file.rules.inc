@@ -1,9 +1,11 @@
 <?php
 
 /**
- * @file rules integration for the file module
+ * @file
+ * Rules integration for the file module.
  *
  * @addtogroup rules
+ *
  * @{
  */
 
@@ -30,30 +32,13 @@ function rules_file_event_info() {
       'variables' => rules_events_file_variables(t('saved file'), TRUE),
       'access callback' => 'rules_file_integration_access',
     ),
-
-    /**
-     * @todo, add support for more file module hooks.
-     * Eligible hooks include:
-     * hook_file_copy
-     * hook_file_delete
-     * hook_file_download
-     * hook_file_download_access
-     * hook_file_download_access_alter
-     * hook_file_load
-     * hook_file_mimetype_mapping_alter
-     * hook_file_move
-     * hook_file_url_alter
-     * hook_file_validate
-     *
-     * Some of these might not work as Rules events.
-     */
   );
 
   return $items;
 }
 
 /**
- * Returns some parameter suitable for using it with a file
+ * Returns some parameter suitable for using it with a file.
  */
 function rules_events_file_variables($file_label, $update = FALSE) {
   $args = array(
@@ -74,9 +59,6 @@ function rules_events_file_variables($file_label, $update = FALSE) {
 
 /**
  * File integration access callback.
- *
- * @todo, this is modeled on rules_node_integration_access(). Not sure what it does.
- * It does not seem to get called.
  */
 function rules_file_integration_access($type, $name) {
   if ($type == 'event' || $type == 'condition') {
