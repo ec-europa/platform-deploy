@@ -96,7 +96,7 @@ class ExpressionLanguageTest extends TestCase
     public function testWrongCacheImplementation()
     {
         $this->expectException('InvalidArgumentException');
-        $this->expectExceptionMessage('Cache argument has to implement Psr\Cache\CacheItemPoolInterface.');
+        $this->expectExceptionMessage('Cache argument has to implement "Psr\Cache\CacheItemPoolInterface".');
         $cacheMock = $this->getMockBuilder('Psr\Cache\CacheItemSpoolInterface')->getMock();
         new ExpressionLanguage($cacheMock);
     }
@@ -231,6 +231,17 @@ class ExpressionLanguageTest extends TestCase
         $expression = 'a + b';
         $expressionLanguage->compile($expression, ['a', 'B' => 'b']);
         $expressionLanguage->compile($expression, ['B' => 'b', 'a']);
+    }
+
+    public function testOperatorCollisions()
+    {
+        $expressionLanguage = new ExpressionLanguage();
+        $expression = 'foo.not in [bar]';
+        $compiled = $expressionLanguage->compile($expression, ['foo', 'bar']);
+        $this->assertSame('in_array($foo->not, [0 => $bar])', $compiled);
+
+        $result = $expressionLanguage->evaluate($expression, ['foo' => (object) ['not' => 'test'], 'bar' => 'test']);
+        $this->assertTrue($result);
     }
 
     /**
