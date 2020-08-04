@@ -12,11 +12,18 @@ function honeypot_schema() {
   $schema['honeypot_user'] = array(
     'description' => 'Table that stores failed attempts to submit a form.',
     'fields' => array(
+      'id'  => array(
+        'description' => 'Primary Key: row ID.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
       'uid' => array(
         'description' => 'Foreign key to {users}.uid; uniquely identifies a Drupal user to whom this ACL data applies.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
+        'default' => 0,
       ),
       'hostname' => array(
         'type' => 'varchar',
@@ -31,6 +38,7 @@ function honeypot_schema() {
         'not null' => TRUE,
       ),
     ),
+    'primary key' => array('id'),
     'indexes' => array(
       'uid' => array('uid'),
       'timestamp' => array('timestamp'),
@@ -183,4 +191,28 @@ function honeypot_update_7101() {
   // Clean up the flood table by removing our events, since we are no longer
   // relying on the flood mechanism to track anonymous honeypot captures.
   flood_clear_event('honeypot');
+}
+
+/**
+ * Adds the 'id' column to the {honeypot_user} table and set primary key.
+ */
+function honeypot_update_7102() {
+  $table = 'honeypot_user';
+  $schema = honeypot_schema();
+  // Add Id Primary column.
+  if (!db_field_exists($table, 'id')) {
+    // This actually seems to be an issue in Drupal Core where creating a serial field on an existing table
+    // is not possible in MySQL 5.7+ without first creating an int field and converting that to autoincrement
+    // (this issue does not show up in MySQL 5.6 and below). Please see https://www.drupal.org/node/2615496.
+    db_add_field($table, 'id', array('description' => 'Primary Key: row ID.', 'type' => 'int', 'not null' => TRUE, 'unsigned' => TRUE,));
+  }
+  // Allow uid to set default 0.
+  db_change_field($table, 'uid', 'uid', $schema['honeypot_user']['fields']['uid']);
+  // Drop existing primary key (Skip DatabaseSchemaObjectExistsException:primary key already exists).
+  db_drop_primary_key($table);
+  // Add new primary key.
+  db_add_primary_key($table, $schema['honeypot_user']['primary key']);
+  // Once Column exist we will changed field defination to primary serial.
+  db_change_field($table, 'id', 'id', $schema['honeypot_user']['fields']['id']);
+
 }
