@@ -149,7 +149,7 @@ Drupal.ajax = function (base, element, element_settings) {
   // The 'this' variable will not persist inside of the options object.
   var ajax = this;
   ajax.options = {
-    url: Drupal.sanitizeAjaxUrl(ajax.url),
+    url: ajax.url,
     data: ajax.submit,
     beforeSerialize: function (element_settings, options) {
       return ajax.beforeSerialize(element_settings, options);
@@ -195,7 +195,6 @@ Drupal.ajax = function (base, element, element_settings) {
       }
     },
     dataType: 'json',
-    jsonp: false,
     type: 'POST'
   };
 
