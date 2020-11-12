@@ -17,6 +17,7 @@ use Symfony\Component\Cache\Simple\FilesystemCache;
 
 /**
  * @group time-sensitive
+ * @group legacy
  */
 class SimpleCacheAdapterTest extends AdapterTestCase
 {
