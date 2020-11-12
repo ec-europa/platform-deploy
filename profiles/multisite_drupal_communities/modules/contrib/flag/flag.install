@@ -153,7 +153,7 @@ function flag_schema() {
     'indexes' => array(
       'fid' => array('fid'),
     ),
-    'primary key' => array('fid'),
+    'primary key' => array('fid', 'type'),
   );
 
   $schema['flag_counts'] = array(
@@ -712,5 +712,5 @@ function flag_update_7307() {
   if (db_index_exists($db_table, 'PRIMARY')) {
     db_drop_primary_key($db_table);
   }
-  db_add_primary_key($db_table, array('fid'));
+  db_add_primary_key($db_table, array('fid', 'type'));
 }
