@@ -9,10 +9,6 @@
  * Tests for when an importer is attached to a content type.
  */
 class FeedsContentTypeTest extends FeedsWebTestCase {
-
-  /**
-   * {@inheritdoc}
-   */
   public static function getInfo() {
     return array(
       'name' => 'Feed content type',
@@ -21,9 +17,6 @@ class FeedsContentTypeTest extends FeedsWebTestCase {
     );
   }
 
-  /**
-   * {@inheritdoc}
-   */
   public function setUp() {
     parent::setUp();
 

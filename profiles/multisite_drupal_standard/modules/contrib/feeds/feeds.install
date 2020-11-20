@@ -106,12 +106,10 @@ function feeds_schema() {
     'export' => array(
       'key' => 'id',
       'identifier' => 'feeds_importer',
-      // Function hook name.
-      'default hook' => 'feeds_importer_default',
+      'default hook' => 'feeds_importer_default',  // Function hook name.
       'api' => array(
         'owner' => 'feeds',
-        // Base name for api include files.
-        'api' => 'feeds_importer_default',
+        'api' => 'feeds_importer_default',  // Base name for api include files.
         'minimum_version' => 1,
         'current_version' => 1,
       ),
@@ -235,12 +233,11 @@ function feeds_schema() {
       'guid' => array(
         'type' => 'text',
         'not null' => TRUE,
-        'description' => 'Unique identifier for the feed item.',
+        'description' => 'Unique identifier for the feed item.'
       ),
       'hash' => array(
         'type' => 'varchar',
-        // 32 is the length of an MD5 hash.
-        'length' => 32,
+        'length' => 32, // The length of an MD5 hash.
         'not null' => TRUE,
         'default' => '',
         'description' => 'The hash of the source item.',
@@ -479,12 +476,11 @@ function feeds_update_7202() {
       'guid' => array(
         'type' => 'text',
         'not null' => TRUE,
-        'description' => 'Unique identifier for the feed item.',
+        'description' => 'Unique identifier for the feed item.'
       ),
       'hash' => array(
         'type' => 'varchar',
-        // 32 is the length of an MD5 hash.
-        'length' => 32,
+        'length' => 32, // The length of an MD5 hash.
         'not null' => TRUE,
         'default' => '',
         'description' => 'The hash of the source item.',
@@ -589,14 +585,8 @@ function feeds_update_7203() {
  * Add index for looking up by entity_type + url/ guid to feeds_item table.
  */
 function feeds_update_7204() {
-  db_add_index('feeds_item', 'global_lookup_url', array(
-    'entity_type',
-    array('url', 128),
-  ));
-  db_add_index('feeds_item', 'global_lookup_guid', array(
-    'entity_type',
-    array('guid', 128),
-  ));
+  db_add_index('feeds_item', 'global_lookup_url', array('entity_type', array('url', 128)));
+  db_add_index('feeds_item', 'global_lookup_guid', array('entity_type', array('guid', 128)));
 }
 
 /**
@@ -618,26 +608,10 @@ function feeds_update_7205() {
   ));
 
   db_add_primary_key('feeds_item', array('entity_type', 'entity_id'));
-  db_add_index('feeds_item', 'lookup_url', array(
-    'entity_type',
-    'id',
-    'feed_nid',
-    array('url', 128),
-  ));
-  db_add_index('feeds_item', 'lookup_guid', array(
-    'entity_type',
-    'id',
-    'feed_nid',
-    array('guid', 128),
-  ));
-  db_add_index('feeds_item', 'global_lookup_url', array(
-    'entity_type',
-    array('url', 128),
-  ));
-  db_add_index('feeds_item', 'global_lookup_guid', array(
-    'entity_type',
-    array('guid', 128),
-  ));
+  db_add_index('feeds_item', 'lookup_url', array('entity_type', 'id', 'feed_nid', array('url', 128)));
+  db_add_index('feeds_item', 'lookup_guid', array('entity_type', 'id', 'feed_nid', array('guid', 128)));
+  db_add_index('feeds_item', 'global_lookup_url', array('entity_type', array('url', 128)));
+  db_add_index('feeds_item', 'global_lookup_guid', array('entity_type', array('guid', 128)));
 }
 
 /**
@@ -748,9 +722,9 @@ function feeds_update_7209() {
   DrupalQueue::get('feeds_importer_expire')->deleteQueue();
 }
 
-/**
- * Does nothing. Update removed.
- */
+ /**
+  * Does nothing. Update removed.
+  */
 function feeds_update_7211(&$sandbox) {
 }
 
@@ -769,14 +743,9 @@ function feeds_update_7212() {
  * Set cache class for Feeds HTTP cache.
  */
 function feeds_update_7213() {
-  // Check if Feeds is enabled first.
-  if (!class_exists('FeedsHTTPCache') && !module_exists('feeds')) {
-    throw new DrupalUpdateException('Please enable the Feeds module to perform this update.');
-  }
-
   // Perform a registry rebuild so the system hopefully discovers the
   // FeedsHTTPCache class.
-  if (!class_exists('FeedsHTTPCache') && function_exists('registry_rebuild')) {
+  if (function_exists('registry_rebuild')) {
     registry_rebuild();
   }
 

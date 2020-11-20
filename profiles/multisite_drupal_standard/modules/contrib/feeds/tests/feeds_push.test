@@ -10,9 +10,6 @@
  */
 class FeedsPushTest extends FeedsWebTestCase {
 
-  /**
-   * {@inheritdoc}
-   */
   public static function getInfo() {
     return array(
       'name' => 'PubSubHubbub',

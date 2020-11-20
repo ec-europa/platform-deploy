@@ -1,8 +1,7 @@
 <?php
-
 /**
  * @file
- * Result of encoding_{code}.csv file parsed by ParserCSV.inc.
+ * Result of encoding_{code}.csv file parsed by ParserCSV.inc
  */
 
 // JSON is used here because it supports unicode literals. PHP does not.

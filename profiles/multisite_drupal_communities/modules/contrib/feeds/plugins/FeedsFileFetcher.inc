@@ -10,7 +10,6 @@
  * FeedsFileFetcher.
  */
 class FeedsFileFetcherResult extends FeedsFetcherResult {
-
   /**
    * Constructor.
    */
@@ -33,7 +32,6 @@ class FeedsFileFetcherResult extends FeedsFetcherResult {
     $this->checkFile();
     return $this->sanitizeFile($this->file_path);
   }
-
 }
 
 /**
@@ -72,7 +70,7 @@ class FeedsFileFetcher extends FeedsFetcher {
    * Returns an array of files in a directory.
    *
    * @param string $dir
-   *   A stream wrapper URI that is a directory.
+   *   A stream wreapper URI that is a directory.
    *
    * @return array
    *   An array of stream wrapper URIs pointing to files. The array is empty if

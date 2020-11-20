@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * feeds_import.features.inc

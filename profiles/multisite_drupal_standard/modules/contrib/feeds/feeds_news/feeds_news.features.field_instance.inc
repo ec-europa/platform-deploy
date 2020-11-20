@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * feeds_news.features.field_instance.inc
@@ -11,7 +10,7 @@
 function feeds_news_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'node-feed_item-field_feed_item_description'.
+  // Exported field_instance: 'node-feed_item-field_feed_item_description'
   $field_instances['node-feed_item-field_feed_item_description'] = array(
     'bundle' => 'feed_item',
     'default_value' => NULL,

@@ -202,9 +202,8 @@ class FeedsFetcherResult extends FeedsResult {
   }
 
   /**
-   * Sanitize the raw content string.
+   * Sanitize the raw content string. Currently supported sanitizations:
    *
-   * Currently supported sanitizations:
    * - Remove BOM header from UTF-8 files.
    *
    * Consider using ::sanitizeRawOptimized() instead that receives the variable
@@ -224,9 +223,8 @@ class FeedsFetcherResult extends FeedsResult {
   }
 
   /**
-   * Sanitize the raw content string.
+   * Sanitize the raw content string. Currently supported sanitizations:
    *
-   * Currently supported sanitizations:
    * - Remove BOM header from UTF-8 files.
    *
    * This accepts the raw contents by reference to prevent having the whole raw
@@ -246,9 +244,8 @@ class FeedsFetcherResult extends FeedsResult {
   }
 
   /**
-   * Sanitize the file in place.
+   * Sanitize the file in place. Currently supported sanitizations:
    *
-   * Currently supported sanitizations:
    * - Remove BOM header from UTF-8 files.
    *
    * @param string $filepath
@@ -283,7 +280,6 @@ class FeedsFetcherResult extends FeedsResult {
 
     return $filepath;
   }
-
 }
 
 /**
@@ -311,7 +307,7 @@ abstract class FeedsFetcher extends FeedsPlugin {
    * @return
    *   A FeedsFetcherResult object.
    */
-  abstract public function fetch(FeedsSource $source);
+  public abstract function fetch(FeedsSource $source);
 
   /**
    * Clear all caches for results for given source.
@@ -354,7 +350,7 @@ abstract class FeedsFetcher extends FeedsPlugin {
   /**
    * Menu item definition for fetchers of this class. Note how the path
    * component in the item definition matches the return value of
-   * FeedsFetcher::path().
+   * FeedsFetcher::path();
    *
    * Requests to this menu item will be routed to FeedsFetcher::request().
    *
@@ -370,8 +366,8 @@ abstract class FeedsFetcher extends FeedsPlugin {
         'access callback' => TRUE,
         'file' => 'feeds.pages.inc',
         'type' => MENU_CALLBACK,
-      ),
-    );
+        ),
+      );
   }
 
   /**
@@ -410,5 +406,4 @@ abstract class FeedsFetcher extends FeedsPlugin {
    *   A FeedsSource object.
    */
   public function afterImport(FeedsSource $source) {}
-
 }

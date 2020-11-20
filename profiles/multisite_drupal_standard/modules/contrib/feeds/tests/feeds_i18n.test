@@ -24,9 +24,6 @@ class Feedsi18nTestCase extends FeedsMapperTestCase {
    */
   protected $processorName;
 
-  /**
-   * {@inheritdoc}
-   */
   public function setUp($modules = array(), $permissions = array()) {
     $modules = array_merge($modules, array(
       'locale',
@@ -133,5 +130,4 @@ class Feedsi18nTestCase extends FeedsMapperTestCase {
       $this->assertEqual(LANGUAGE_NONE, $language, format_string('The entity is language neutral (actual: !language).', array('!language' => $language)));
     }
   }
-
 }

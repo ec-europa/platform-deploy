@@ -10,9 +10,6 @@
  */
 class FeedsMapperNodeSummaryTestCase extends FeedsMapperTestCase {
 
-  /**
-   * {@inheritdoc}
-   */
   public static function getInfo() {
     return array(
       'name' => 'Mapper: Text with summary',

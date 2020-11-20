@@ -6,22 +6,20 @@
  */
 
 /**
- * @defgroup pluginapi Plugin API
- * @{
- * Feeds offers a CTools based plugin API.
- *
- * Fetchers, parsers and processors are declared to Feeds as plugins.
+ * Feeds offers a CTools based plugin API. Fetchers, parsers and processors are
+ * declared to Feeds as plugins.
  *
  * @see feeds_feeds_plugins()
  * @see FeedsFetcher
  * @see FeedsParser
  * @see FeedsProcessor
+ *
+ * @defgroup pluginapi Plugin API
+ * @{
  */
 
 /**
- * CTools plugin hook example.
- *
- * This example of a CTools plugin hook needs to be implemented to make
+ * Example of a CTools plugin hook that needs to be implemented to make
  * hook_feeds_plugins() discoverable by CTools and Feeds. The hook specifies
  * that the hook_feeds_plugins() returns Feeds Plugin API version 1 style
  * plugins.
@@ -33,12 +31,9 @@ function hook_ctools_plugin_api($owner, $api) {
 }
 
 /**
- * Declare Feeds plugins.
- *
- * Implement this hook to declare Fetcher, Parser or Processor plugins for
- * Feeds. For a working example implementation, see feeds_feeds_plugin().
- * In order for this hook to be invoked, you MUST implement
- * hook_ctools_plugin_api() as well.
+ * A hook_feeds_plugins() declares available Fetcher, Parser or Processor
+ * plugins to Feeds. For an example look at feeds_feeds_plugin(). For exposing
+ * this hook hook_ctools_plugin_api() MUST be implemented, too.
  *
  * @see feeds_feeds_plugin()
  */
@@ -52,8 +47,7 @@ function hook_feeds_plugins() {
       'parent' => 'FeedsFetcher',
       'class' => 'MyFetcher',
       'file' => 'MyFetcher.inc',
-      // Feeds will look for MyFetcher.inc in the my_module directory.
-      'path' => drupal_get_path('module', 'my_module'),
+      'path' => drupal_get_path('module', 'my_module'), // Feeds will look for MyFetcher.inc in the my_module directory.
     ),
   );
   $info['MyParser'] = array(
@@ -61,9 +55,7 @@ function hook_feeds_plugins() {
     'description' => 'Parse my stuff.',
     'help' => 'More verbose description here. Will be displayed on parser selection menu.',
     'handler' => array(
-      // Being directly or indirectly an extension of FeedsParser makes a plugin
-      // a parser plugin.
-      'parent' => 'FeedsParser',
+      'parent' => 'FeedsParser', // Being directly or indirectly an extension of FeedsParser makes a plugin a parser plugin.
       'class' => 'MyParser',
       'file' => 'MyParser.inc',
       'path' => drupal_get_path('module', 'my_module'),
@@ -84,7 +76,7 @@ function hook_feeds_plugins() {
 }
 
 /**
- * @} End of "defgroup pluginapi".
+ * @}
  */
 
 /**
@@ -96,7 +88,7 @@ function hook_feeds_plugins() {
  * Invoked after a feed source has been parsed, before it will be processed.
  *
  * @param FeedsSource $source
- *   FeedsSource object that describes the source that has been imported.
+ *  FeedsSource object that describes the source that has been imported.
  * @param FeedsParserResult $result
  *   FeedsParserResult object that has been parsed from the source.
  */
@@ -109,7 +101,7 @@ function hook_feeds_after_parse(FeedsSource $source, FeedsParserResult $result) 
  * Invoked before a feed source import starts.
  *
  * @param FeedsSource $source
- *   FeedsSource object that describes the source that is going to be imported.
+ *  FeedsSource object that describes the source that is going to be imported.
  */
 function hook_feeds_before_import(FeedsSource $source) {
   // See feeds_rules module's implementation for an example.
@@ -122,50 +114,21 @@ function hook_feeds_before_import(FeedsSource $source) {
  * updated or not.
  *
  * @param FeedsSource $source
- *   The source for the current feed.
+ *  The source for the current feed.
  * @param array $item
- *   All the current item from the feed.
+ *  All the current item from the feed.
  * @param int|null $entity_id
- *   The id of the current item which is going to be updated. If this is a new
- *   item, then NULL is passed.
+ *  The id of the current item which is going to be updated. If this is a new
+ *  item, then NULL is passed.
  */
 function hook_feeds_before_update(FeedsSource $source, $item, $entity_id) {
   if ($entity_id) {
     $processor = $source->importer->processor;
     db_update('foo_bar')
-      ->fields(array(
-        'entity_type' => $processor->entityType(),
-        'entity_id' => $entity_id,
-        'last_seen' => REQUEST_TIME,
-      ))
+      ->fields(array('entity_type' => $processor->entityType(), 'entity_id' => $entity_id, 'last_seen' => REQUEST_TIME))
       ->condition('entity_type', $processor->entityType())
       ->condition('entity_id', $entity_id)
       ->execute();
-  }
-}
-
-/**
- * Invoked before a feed item is validated.
- *
- * @param FeedsSource $source
- *   FeedsSource object that describes the source that is being imported.
- * @param object $entity
- *   The entity object.
- * @param array $item
- *   The parser result for this entity.
- * @param int|null $entity_id
- *   The id of the current item which is going to be updated. If this is a new
- *   item, then NULL is passed.
- */
-function hook_feeds_prevalidate(FeedsSource $source, $entity, $item, $entity_id) {
-  // Correct a field value to make it pass validation.
-  if (isset($entity->myfield)) {
-    foreach ($entity->myfield as $language => &$values) {
-      // There are only three values allowed. Throw away the rest.
-      if (count($values) > 3) {
-        $values = array_slice($values, 0, 3);
-      }
-    }
   }
 }
 
@@ -174,7 +137,7 @@ function hook_feeds_prevalidate(FeedsSource $source, $entity, $item, $entity_id)
  *
  * @param FeedsSource $source
  *   FeedsSource object that describes the source that is being imported.
- * @param object $entity
+ * @param $entity
  *   The entity object.
  * @param array $item
  *   The parser result for this entity.
@@ -193,16 +156,18 @@ function hook_feeds_presave(FeedsSource $source, $entity, $item, $entity_id) {
  * Invoked after a feed item has been saved.
  *
  * @param FeedsSource $source
- *   FeedsSource object that describes the source that is being imported.
- * @param object $entity
+ *  FeedsSource object that describes the source that is being imported.
+ * @param $entity
  *   The entity object that has just been saved.
  * @param array $item
  *   The parser result for this entity.
  * @param int|null $entity_id
- *   The id of the current item which is going to be updated. If this is a new
- *   item, then NULL is passed.
+ *  The id of the current item which is going to be updated. If this is a new
+ *  item, then NULL is passed.
  */
 function hook_feeds_after_save(FeedsSource $source, $entity, $item, $entity_id) {
+  // Use $entity->nid of the saved node.
+
   // Although the $entity object is passed by reference, any changes made in
   // this function will be ignored by the FeedsProcessor.
   $config = $source->importer->getConfig();
@@ -219,9 +184,11 @@ function hook_feeds_after_save(FeedsSource $source, $entity, $item, $entity_id) 
  * Invoked after a feed source has been imported.
  *
  * @param FeedsSource $source
- *   FeedsSource object that describes the source that has been imported.
+ *  FeedsSource object that describes the source that has been imported.
  */
 function hook_feeds_after_import(FeedsSource $source) {
+  // See geotaxonomy module's implementation for an example.
+
   // We can also check for an exception in this hook. The exception should not
   // be thrown here, Feeds will handle it.
   if (isset($source->exception)) {
@@ -234,13 +201,13 @@ function hook_feeds_after_import(FeedsSource $source) {
  * Invoked after a feed source has been cleared of its items.
  *
  * @param FeedsSource $source
- *   FeedsSource object that describes the source that has been cleared.
+ *  FeedsSource object that describes the source that has been cleared.
  */
 function hook_feeds_after_clear(FeedsSource $source) {
 }
 
 /**
- * @} End of "defgroup import".
+ * @}
  */
 
 /**
@@ -254,41 +221,37 @@ function hook_feeds_after_clear(FeedsSource $source) {
  * Use this hook to add additional mapping sources for any parser. Allows for
  * registering a callback to be invoked at mapping time.
  *
- * @see my_source_get_source()
- * @see locale_feeds_parser_sources_alter()
+ * @see my_source_get_source().
+ * @see locale_feeds_parser_sources_alter().
  */
 function hook_feeds_parser_sources_alter(&$sources, $content_type) {
   $sources['my_source'] = array(
     'name' => t('Images in description element'),
     'description' => t('Images occurring in the description element of a feed item.'),
-    'callback' => 'callback_my_source_get_source',
+    'callback' => 'my_source_get_source',
   );
 }
 
 /**
- * Returns a value to use as a mapping source.
+ * Example callback specified in hook_feeds_parser_sources_alter().
  *
- * Callback for hook_feeds_parser_sources_alter().
+ * To be invoked on mapping time.
  *
- * This function is called on mapping time.
- *
- * @param FeedsSource $source
+ * @param $source
  *   The FeedsSource object being imported.
- * @param FeedsParserResult $result
+ * @param $result
  *   The FeedsParserResult object being mapped from.
- * @param string $key
+ * @param $key
  *   The key specified in the $sources array in
  *   hook_feeds_parser_sources_alter().
  *
- * @return mixed
+ * @return
  *   The value to be extracted from the source.
  *
  * @see hook_feeds_parser_sources_alter()
  * @see locale_feeds_get_source()
- *
- * @ingroup callbacks
  */
-function callback_my_source_get_source(FeedsSource $source, FeedsParserResult $result, $key) {
+function my_source_get_source(FeedsSource $source, FeedsParserResult $result, $key) {
   $item = $result->currentItem();
   return my_source_parse_images($item['description']);
 }
@@ -347,7 +310,7 @@ function hook_feeds_processor_targets($entity_type, $bundle) {
     $targets['my_node_field'] = array(
       'name' => t('My custom node field'),
       'description' => t('Description of what my custom node field does.'),
-      'callback' => 'callback_my_module_set_target',
+      'callback' => 'my_module_set_target',
     );
 
     // Example 2: specify "real_target" if the target name is different from
@@ -372,7 +335,7 @@ function hook_feeds_processor_targets($entity_type, $bundle) {
       'description' => t('A field that can be set as an unique target.'),
       'callback' => 'my_module_set_target3',
       'optional_unique' => TRUE,
-      'unique_callbacks' => array('callback_my_module_mapper_unique'),
+      'unique_callbacks' => array('my_module_mapper_unique'),
     );
 
     // Example 4: use the form and summary callbacks to add additional
@@ -385,8 +348,8 @@ function hook_feeds_processor_targets($entity_type, $bundle) {
       'name' => t('My fourth custom node field'),
       'description' => t('A field with additional configuration.'),
       'callback' => 'my_module_set_target4',
-      'form_callbacks' => array('callback_my_module_form_callback'),
-      'summary_callbacks' => array('callback_my_module_summary_callback'),
+      'form_callbacks' => array('my_module_form_callback'),
+      'summary_callbacks' => array('my_module_summary_callback'),
     );
 
     // Example 5: use preprocess callbacks to set or change mapping options.
@@ -395,7 +358,7 @@ function hook_feeds_processor_targets($entity_type, $bundle) {
       'name' => t('My fifth custom node field'),
       'description' => t('A field with additional configuration.'),
       'callback' => 'my_module_set_target5',
-      'preprocess_callbacks' => array('callback_my_module_preprocess_callback'),
+      'preprocess_callbacks' => array('my_module_preprocess_callback'),
     );
 
     // Example 6: when you want to remove or rename previously provided targets,
@@ -439,12 +402,7 @@ function hook_feeds_processor_targets_alter(array &$targets, $entity_type, $bund
 }
 
 /**
- * Sets a value on a target.
- *
- * Callback for hook_feeds_processor_targets().
- *
- * This callback is specified on the 'callback' key of the target definition.
- * A target can for example be a field or property on an entity.
+ * Example callback specified in hook_feeds_processor_targets().
  *
  * @param FeedsSource $source
  *   Field mapper source settings.
@@ -455,14 +413,10 @@ function hook_feeds_processor_targets_alter(array &$targets, $entity_type, $bund
  * @param array $values
  *   The value to populate the target with.
  * @param array $mapping
- *   Associative array of the mapping settings from the per mapping
- *   configuration form.
- *
- * @see hook_feeds_processor_targets()
- *
- * @ingroup callbacks
+ *  Associative array of the mapping settings from the per mapping
+ *  configuration form.
  */
-function callback_my_module_set_target(FeedsSource $source, $entity, $target, array $values, array $mapping) {
+function my_module_set_target(FeedsSource $source, $entity, $target, array $values, array $mapping) {
   $entity->{$target}[$entity->language][0]['value'] = reset($values);
   if (isset($source->importer->processor->config['input_format'])) {
     $entity->{$target}[$entity->language][0]['format'] = $source->importer->processor->config['input_format'];
@@ -470,24 +424,17 @@ function callback_my_module_set_target(FeedsSource $source, $entity, $target, ar
 }
 
 /**
- * Returns a form for configuring a target.
+ * Example of the form_callback specified in hook_feeds_processor_targets().
  *
- * Callback for hook_feeds_processor_targets().
- *
- * This callback is specified on the 'form_callbacks' key of the target
- * definition.
- * The arguments are the same that callback_my_module_summary_callback() gets.
+ * The arguments are the same that my_module_summary_callback() gets.
  *
  * @return array
  *   The per mapping configuration form. Once the form is saved, $mapping will
  *   be populated with the form values.
  *
- * @see hook_feeds_processor_targets()
- * @see callback_my_module_summary_callback()
- *
- * @ingroup callbacks
+ * @see my_module_summary_callback()
  */
-function callback_my_module_form_callback(array $mapping, $target, array $form, array $form_state) {
+function my_module_form_callback(array $mapping, $target, array $form, array $form_state) {
   return array(
     'my_setting' => array(
       '#type' => 'checkbox',
@@ -498,13 +445,7 @@ function callback_my_module_form_callback(array $mapping, $target, array $form, 
 }
 
 /**
- * Returns a string for displaying the target configuration.
- *
- * Callback for hook_feeds_processor_targets().
- *
- * This callback is specified on the 'summary_callbacks' key of the target
- * definition.
- * The arguments are the same that callback_my_module_form_callback() gets.
+ * Example of the summary_callback specified in hook_feeds_processor_targets().
  *
  * @param array $mapping
  *   Associative array of the mapping settings.
@@ -521,13 +462,8 @@ function callback_my_module_form_callback(array $mapping, $target, array $form, 
  *   the full form isn't visible.
  *   If the return value is empty, no summary and no option to view the form
  *   will be displayed.
- *
- * @see hook_feeds_processor_targets()
- * @see callback_my_module_form_callback()
- *
- * @ingroup callbacks
  */
-function callback_my_module_summary_callback(array $mapping, $target, array $form, array $form_state) {
+function my_module_summary_callback(array $mapping, $target, array $form, array $form_state) {
   if (empty($mapping['my_setting'])) {
     return t('My setting <strong>not</strong> active');
   }
@@ -537,12 +473,7 @@ function callback_my_module_summary_callback(array $mapping, $target, array $for
 }
 
 /**
- * Looks for an existing entity and returns an entity ID if found.
- *
- * Callback for hook_feeds_processor_targets().
- *
- * This callback is specified on the 'unique_callbacks' key of the target
- * definition.
+ * Example of the unique_callbacks specified in hook_feeds_processor_targets().
  *
  * @param FeedsSource $source
  *   The Feed source.
@@ -560,10 +491,8 @@ function callback_my_module_summary_callback(array $mapping, $target, array $for
  *
  * @see hook_feeds_processor_targets()
  * @see FeedsProcessor::existingEntityId()
- *
- * @ingroup callbacks
  */
-function callback_my_module_mapper_unique(FeedsSource $source, $entity_type, $bundle, $target, array $values) {
+function my_module_mapper_unique(FeedsSource $source, $entity_type, $bundle, $target, array $values) {
   list($field_name, $column) = explode(':', $target . ':value');
   // Example for if the target is a field.
   $query = new EntityFieldQuery();
@@ -579,12 +508,7 @@ function callback_my_module_mapper_unique(FeedsSource $source, $entity_type, $bu
 }
 
 /**
- * Changes or sets a mapping option.
- *
- * Callback for hook_feeds_processor_targets().
- *
- * This callback is specified on the 'preprocess_callbacks' key of the target
- * definition.
+ * Example of the preprocess_callbacks specified in hook_feeds_processor_targets().
  *
  * @param array $target
  *   The full target definition.
@@ -592,21 +516,15 @@ function callback_my_module_mapper_unique(FeedsSource $source, $entity_type, $bu
  *   The mapping configuration.
  *
  * @see hook_feeds_processor_targets()
- *
- * @ingroup callbacks
  */
-function callback_my_module_preprocess_callback(array $target, array &$mapping) {
+function my_module_preprocess_callback(array $target, array &$mapping) {
   // Add in default values.
   $mapping += array('setting_value' => TRUE);
 }
 
 /**
- * Add additional configuration keys to FeedsConfigurable.
- *
- * This hooks allows you to add additional configuration keys to a
- * FeedsConfigurable. This is useful if you also implement a form alter hook to
- * provide extra options for existing Feeds plugins. By implementing one of the
- * Feeds hooks that are invoked during importing, you can act upon such setting.
+ * This hooks allows you add additional configuration keys to a
+ * FeedsConfigurable.
  *
  * @param FeedsConfigurable $configurable
  *   The configurable item to add default configuration to.
@@ -624,23 +542,19 @@ function hook_feeds_config_defaults(FeedsConfigurable $configurable) {
 }
 
 /**
- * A plugin-specific hook to add additional configuration keys.
- *
- * This hook can be used instead of the global hook_feeds_config_defaults() and
- * allows you to add additional configuration keys to a FeedsPlugin.
+ * A plugin-specific hook to add additional configuration keys instead of the
+ * global hook_feeds_config_defaults().
  *
  * The plugin type can be:
- * - fetcher;
- * - parser;
- * - processor.
+ * - fetcher
+ * - parser
+ * - processor
  *
  * @param FeedsPlugin $plugin
  *   The plugin to add default configuration to.
  *
  * @return array
  *   Return an array of default configuration.
- *
- * @see hook_feeds_config_defaults()
  */
 function hook_feeds_PLUGIN_TYPE_config_defaults(FeedsPlugin $plugin) {
   if ($plugin instanceof FeedsCSVParser) {
@@ -651,5 +565,5 @@ function hook_feeds_PLUGIN_TYPE_config_defaults(FeedsPlugin $plugin) {
 }
 
 /**
- * @} End of "defgroup mappingapi".
+ * @}
  */

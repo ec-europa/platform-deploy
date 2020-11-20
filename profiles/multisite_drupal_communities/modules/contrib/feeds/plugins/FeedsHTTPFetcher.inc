@@ -73,22 +73,10 @@ class FeedsHTTPFetcherResult extends FeedsFetcherResult {
     return $this->sanitizeRawOptimized($this->raw);
   }
 
-  /**
-   * Returns the configured value for the request timeout option.
-   *
-   * @return int
-   *   Timeout in seconds to wait for an HTTP get request to finish.
-   */
   public function getTimeout() {
     return $this->timeout;
   }
 
-  /**
-   * Sets the request timeout option.
-   *
-   * @param int $timeout
-   *   Timeout in seconds to wait for an HTTP get request to finish.
-   */
   public function setTimeout($timeout) {
     $this->timeout = $timeout;
   }
@@ -163,8 +151,7 @@ class FeedsHTTPFetcher extends FeedsFetcher {
         $source->existing()->import();
       }
       catch (Exception $e) {
-        // In case of an error, respond with a 503 Service (temporary)
-        // unavailable.
+        // In case of an error, respond with a 503 Service (temporary) unavailable.
         $source->log('import', 'An exception occurred: %exception', array('%exception' => $e->getMessage()), WATCHDOG_ERROR);
         header('HTTP/1.1 503 "Not Found"', NULL, 503);
         drupal_exit();
@@ -232,14 +219,13 @@ class FeedsHTTPFetcher extends FeedsFetcher {
     $form['advanced']['request_timeout'] = array(
       '#type' => 'textfield',
       '#title' => t('Request timeout'),
-      '#description' => t('Timeout in seconds to wait for an HTTP get request to finish.') . '<br />' . t('<strong>Note:</strong> if left empty, the global timeout setting will be used, which is @timeout seconds. You can set the global timeout setting by setting the variable "@variable".', array(
-        '@timeout' => variable_get('http_request_timeout', 30),
-        '@variable' => 'http_request_timeout',
-      )),
+      '#description' => t('Timeout in seconds to wait for an HTTP get request to finish.</br>' .
+                         '<b>Note:</b> this setting will override the global setting.</br>' .
+                         'When left empty, the global value is used.'),
       '#default_value' => $this->config['request_timeout'],
       '#element_validate' => array('element_validate_integer_positive'),
       '#maxlength' => 3,
-      '#size' => 30,
+      '#size'=> 30,
     );
     $form['advanced']['accept_invalid_cert'] = array(
       '#type' => 'checkbox',
@@ -362,8 +348,7 @@ class FeedsHTTPFetcher extends FeedsFetcher {
    */
   public function importPeriod(FeedsSource $source) {
     if ($this->subscriber($source->feed_nid)->subscribed()) {
-      // Delay for three days if there is a successful subscription.
-      return 259200;
+      return 259200; // Delay for three days if there is a successful subscription.
     }
   }
 
@@ -373,7 +358,6 @@ class FeedsHTTPFetcher extends FeedsFetcher {
   protected function subscriber($subscriber_id) {
     return PushSubscriber::instance($this->id, $subscriber_id, 'PuSHSubscription', PuSHEnvironment::instance());
   }
-
 }
 
 /**
@@ -430,14 +414,12 @@ class PuSHSubscription implements PuSHSubscriptionInterface {
       ->condition('subscriber_id', $this->subscriber_id)
       ->execute();
   }
-
 }
 
 /**
  * Provide environmental functions to the PuSHSubscriber library.
  */
 class PuSHEnvironment implements PuSHSubscriberEnvironmentInterface {
-
   /**
    * Singleton.
    */
@@ -464,11 +446,9 @@ class PuSHEnvironment implements PuSHSubscriberEnvironmentInterface {
       case 'error':
         $severity = WATCHDOG_ERROR;
         break;
-
       case 'warning':
         $severity = WATCHDOG_WARNING;
         break;
-
       default:
         $severity = WATCHDOG_NOTICE;
         break;
@@ -476,5 +456,4 @@ class PuSHEnvironment implements PuSHSubscriberEnvironmentInterface {
     feeds_dbg($msg);
     watchdog('FeedsHTTPFetcher', $msg, array(), $severity);
   }
-
 }

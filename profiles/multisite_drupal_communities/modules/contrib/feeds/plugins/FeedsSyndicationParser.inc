@@ -19,12 +19,6 @@ class FeedsSyndicationParser extends FeedsParser {
     feeds_include_library('common_syndication_parser.inc', 'common_syndication_parser');
     $feed = common_syndication_parser_parse($fetcher_result->getRaw());
     $result = new FeedsParserResult();
-
-    // Return an empty result object when feed is false.
-    if (!$feed) {
-      return $result;
-    }
-
     $result->title = $feed['title'];
     $result->description = $feed['description'];
     $result->link = $feed['link'];
@@ -101,5 +95,4 @@ class FeedsSyndicationParser extends FeedsParser {
   public function providesSourceTitle() {
     return TRUE;
   }
-
 }

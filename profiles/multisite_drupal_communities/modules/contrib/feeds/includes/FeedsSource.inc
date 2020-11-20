@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Definition of FeedsSourceInterface, FeedsState and FeedsSource class.
+ * Definition of FeedsSourceInterface and FeedsSource class.
  */
 
 /**
@@ -21,20 +21,19 @@ define('FEEDS_PROCESS_CLEAR', 'process_clear');
 define('FEEDS_PROCESS_EXPIRE', 'process_expire');
 
 /**
- * Defines an interface for a feed source.
+ * Declares an interface for a class that defines default values and form
+ * descriptions for a FeedSource.
  */
 interface FeedsSourceInterface {
 
   /**
-   * Returns if a plugin handles source specific configuration.
-   *
    * Crutch: for ease of use, we implement FeedsSourceInterface for every
    * plugin, but then we need to have a handle which plugin actually implements
-   * source configuration.
+   * a source.
    *
-   * @see FeedsPlugin
+   * @see FeedsPlugin class.
    *
-   * @return bool
+   * @return
    *   TRUE if a plugin handles source specific configuration, FALSE otherwise.
    */
   public function hasSourceConfig();
@@ -45,9 +44,8 @@ interface FeedsSourceInterface {
   public function sourceDefaults();
 
   /**
-   * Returns a Form API form array that defines a form configuring values.
-   *
-   * Keys correspond to the keys of the return value of sourceDefaults().
+   * Return a Form API form array that defines a form configuring values. Keys
+   * correspond to the keys of the return value of sourceDefaults().
    */
   public function sourceForm($source_config);
 
@@ -65,35 +63,25 @@ interface FeedsSourceInterface {
    * A source is being deleted.
    */
   public function sourceDelete(FeedsSource $source);
-
 }
 
 /**
  * Status of an import or clearing operation on a source.
  */
 class FeedsState {
-
   /**
-   * Floating point number denoting the progress made.
-   *
-   * 0.0 meaning no progress.
-   * 1.0 = FEEDS_BATCH_COMPLETE, meaning finished.
-   *
-   * @var float
+   * Floating point number denoting the progress made. 0.0 meaning no progress
+   * 1.0 = FEEDS_BATCH_COMPLETE meaning finished.
    */
   public $progress;
 
   /**
    * Used as a pointer to store where left off. Must be serializable.
-   *
-   * @var mixed
    */
   public $pointer;
 
   /**
    * Natural numbers denoting more details about the progress being made.
-   *
-   * @var int
    */
   public $total;
   public $created;
@@ -106,8 +94,6 @@ class FeedsState {
 
   /**
    * IDs of entities to be removed.
-   *
-   * @var array
    */
   public $removeList;
 
@@ -116,15 +102,14 @@ class FeedsState {
    */
   public function __construct() {
     $this->progress = FEEDS_BATCH_COMPLETE;
-    $this->total
-      = $this->created
-      = $this->updated
-      = $this->deleted
-      = $this->unpublished
-      = $this->blocked
-      = $this->skipped
-      = $this->failed
-      = 0;
+    $this->total =
+    $this->created =
+    $this->updated =
+    $this->deleted =
+    $this->unpublished =
+    $this->blocked =
+    $this->skipped =
+    $this->failed = 0;
   }
 
   /**
@@ -139,9 +124,9 @@ class FeedsState {
    * - $progress is larger than $total
    * - $progress approximates $total so that $finished rounds to 1.0
    *
-   * @param int $total
+   * @param $total
    *   A natural number that is the total to be worked off.
-   * @param int $progress
+   * @param $progress
    *   A natural number that is the progress made on $total.
    */
   public function progress($total, $progress) {
@@ -158,12 +143,9 @@ class FeedsState {
       $this->progress = FEEDS_BATCH_COMPLETE;
     }
   }
-
 }
 
 /**
- * Holds the source of a feed to import.
- *
  * This class encapsulates a source of a feed. It stores where the feed can be
  * found and how to import it.
  *
@@ -188,129 +170,54 @@ class FeedsState {
  */
 class FeedsSource extends FeedsConfigurable {
 
-  /**
-   * Contains the node id of the feed this source info object is attached to.
-   *
-   * Equals 0 if not attached to any node - for example when used on a
-   * standalone import form within Feeds or by other API users.
-   *
-   * @var int
-   */
+  // Contains the node id of the feed this source info object is attached to.
+  // Equals 0 if not attached to any node - i. e. if used on a
+  // standalone import form within Feeds or by other API users.
   protected $feed_nid;
 
-  /**
-   * The FeedsImporter object that this source is expected to be used with.
-   *
-   * @var FeedsImporter
-   */
+  // The FeedsImporter object that this source is expected to be used with.
   protected $importer;
 
-  /**
-   * Holds the current state of an import, clear or expire task.
-   *
-   * Array keys can be:
-   * - FEEDS_START
-   *   Timestamp of when a task has started.
-   * - FEEDS_FETCH
-   *   A FeedsState object holding the state of the fetch stage, used during
-   *   imports.
-   * - FEEDS_PARSE
-   *   A FeedsState object holding the state of the parse stage, used during
-   *   imports.
-   * - FEEDS_PROCESS
-   *   A FeedsState object holding the state of the process stage, used during
-   *   imports.
-   * - FEEDS_PROCESS_CLEAR
-   *   A FeedsState object holding the state of the clear task.
-   * - FEEDS_PROCESS_EXPIRE
-   *   A FeedsState object holding the state of the expire task.
-   *
-   * @var FeedsState[]|array|null
-   */
+  // A FeedsSourceState object holding the current import/clearing state of this
+  // source.
   protected $state;
 
-  /**
-   * Fetcher result, used to cache fetcher result when batching.
-   *
-   * @var FeedsFetcherResult
-   */
+  // Fetcher result, used to cache fetcher result when batching.
   protected $fetcher_result;
 
-  /**
-   * Timestamp of when this source was imported the last time.
-   *
-   * @var int
-   */
+  // Timestamp when this source was imported the last time.
   protected $imported;
 
-  /**
-   * Holds an exception object in case an exception occurs during importing.
-   *
-   * @var Exception|null
-   */
+  // Holds an exception object in case an exception occurs during importing.
   protected $exception;
 
   /**
-   * The account switcher.
-   *
-   * @var FeedsAccountSwitcherInterface
+   * Instantiate a unique object per class/id/feed_nid. Don't use
+   * directly, use feeds_source() instead.
    */
-  protected $accountSwitcher;
-
-  /**
-   * Instantiates an unique FeedsSource per class, importer ID and Feed node ID.
-   *
-   * Don't use this method directly, use feeds_source() instead.
-   *
-   * @param string $importer_id
-   *   The machine name of the importer.
-   * @param int $feed_nid
-   *   The node id of a feed node if the source is attached to a feed node.
-   * @param FeedsAccountSwitcherInterface $account_switcher
-   *   The account switcher to use to be able to perform actions as a different
-   *   user.
-   */
-  public static function instance($importer_id, $feed_nid, FeedsAccountSwitcherInterface $account_switcher = NULL) {
+  public static function instance($importer_id, $feed_nid) {
     $class = variable_get('feeds_source_class', 'FeedsSource');
 
     $instances = &drupal_static(__METHOD__, array());
 
     if (!isset($instances[$class][$importer_id][$feed_nid])) {
-      $instances[$class][$importer_id][$feed_nid] = new $class($importer_id, $feed_nid, $account_switcher);
+      $instances[$class][$importer_id][$feed_nid] = new $class($importer_id, $feed_nid);
     }
     return $instances[$class][$importer_id][$feed_nid];
   }
 
   /**
    * Constructor.
-   *
-   * @param string $importer_id
-   *   The machine name of the importer.
-   * @param int $feed_nid
-   *   The feed node ID for this Feeds source. This should be '0' if the
-   *   importer is not attached to a content type.
-   * @param FeedsAccountSwitcherInterface $account_switcher
-   *   The account switcher to use to be able to perform actions as a different
-   *   user.
    */
-  protected function __construct($importer_id, $feed_nid, FeedsAccountSwitcherInterface $account_switcher = NULL) {
+  protected function __construct($importer_id, $feed_nid) {
     $this->feed_nid = $feed_nid;
     $this->importer = feeds_importer($importer_id);
-    if (is_null($account_switcher)) {
-      $this->accountSwitcher = new FeedsAccountSwitcher();
-    }
-    else {
-      $this->accountSwitcher = $account_switcher;
-    }
     parent::__construct($importer_id);
     $this->load();
   }
 
   /**
-   * Returns the FeedsImporter object for this source.
-   *
-   * @return FeedsImporter
-   *   The importer associated with this Feeds source.
+   * Returns the FeedsImporter object that this source is expected to be used with.
    */
   public function importer() {
     return $this->importer;
@@ -319,11 +226,11 @@ class FeedsSource extends FeedsConfigurable {
   /**
    * Preview = fetch and parse a feed.
    *
-   * @return FeedsParserResult
-   *   A FeedsParserResult instance.
+   * @return
+   *   FeedsParserResult object.
    *
-   * @throws Exception
-   *   If an error occurs when fetching or parsing.
+   * @throws
+   *   Throws Exception if an error occurs when fetching or parsing.
    */
   public function preview() {
     $result = $this->importer->fetcher->fetch($this);
@@ -396,7 +303,7 @@ class FeedsSource extends FeedsConfigurable {
    * Schedule periodic or background import tasks.
    *
    * @param bool $force
-   *   (optional) If true, forces the scheduling to happen.
+   *   (optional) force scheduling to happen.
    *   Defaults to true.
    */
   public function scheduleImport($force = TRUE) {
@@ -439,7 +346,7 @@ class FeedsSource extends FeedsConfigurable {
    * Schedule background expire tasks.
    *
    * @param bool $force
-   *   (optional) If true, forces the scheduling to happen.
+   *   (optional) force scheduling to happen.
    *   Defaults to true.
    */
   public function scheduleExpire($force = TRUE) {
@@ -492,12 +399,12 @@ class FeedsSource extends FeedsConfigurable {
    * This method only executes the current batch chunk, then returns. If you are
    * looking to import an entire source, use FeedsSource::startImport() instead.
    *
-   * @return float
+   * @return
    *   FEEDS_BATCH_COMPLETE if the import process finished. A decimal between
    *   0.0 and 0.9 periodic if import is still in progress.
    *
-   * @throws Exception
-   *   In case an error occurs when importing.
+   * @throws
+   *   Throws Exception if an error occurs when importing.
    */
   public function import() {
     $this->acquireLock();
@@ -626,12 +533,12 @@ class FeedsSource extends FeedsConfigurable {
    * looking to delete all items of a source, use FeedsSource::startClear()
    * instead.
    *
-   * @return float
+   * @return
    *   FEEDS_BATCH_COMPLETE if the clearing process finished. A decimal between
    *   0.0 and 0.9 periodic if clearing is still in progress.
    *
-   * @throws Exception
-   *   In case an error occurs when clearing.
+   * @throws
+   *   Throws Exception if an error occurs when clearing.
    */
   public function clear() {
     $this->acquireLock();
@@ -722,15 +629,13 @@ class FeedsSource extends FeedsConfigurable {
   /**
    * Return a state object for a given stage. Lazy instantiates new states.
    *
-   * @param string $stage
+   * @todo Rename getConfigFor() accordingly to config().
+   *
+   * @param $stage
    *   One of FEEDS_FETCH, FEEDS_PARSE, FEEDS_PROCESS or FEEDS_PROCESS_CLEAR.
    *
-   * @return FeedsState|mixed
+   * @return
    *   The FeedsState object for the given stage.
-   *   In theory, this could return something else, if $this->state has been
-   *   polluted with e.g. integer timestamps.
-   *
-   * @see FeedsSource::$state
    */
   public function state($stage) {
     if (!is_array($this->state)) {
@@ -827,11 +732,11 @@ class FeedsSource extends FeedsConfigurable {
       }
 
       // Special case for PostgreSQL: if using that database type, we cannot
-      // search in the data column of the queue table, because the Drupal
-      // database layer adds '::text' to bytea columns, which results into the
-      // data column becoming unreadable in conditions. So instead, we check for
-      // the first 10 records in the queue to see if the given importer ID +
-      // feed NID is amongst them.
+      // search in the data column of the queue table, because the Drupal database
+      // layer adds '::text' to bytea columns, which results into the data column
+      // becoming unreadable in conditions. So instead, we check for the first 10
+      // records in the queue to see if the given importer ID + feed NID is
+      // amongst them.
       if (Database::getConnection()->databaseType() == 'pgsql') {
         $items = db_query("SELECT data, created FROM {queue} WHERE name = :name AND expire = 0 LIMIT 10", array(
           ':name' => 'feeds_source_import',
@@ -933,12 +838,7 @@ class FeedsSource extends FeedsConfigurable {
   public function unlock() {
     $this->clearStates();
     $this->save();
-    try {
-      $this->releaseLock();
-    }
-    catch (FeedsAccountSwitcherException $exception) {
-      // Ignore switch back exceptions.
-    }
+    $this->releaseLock();
   }
 
   /**
@@ -980,11 +880,7 @@ class FeedsSource extends FeedsConfigurable {
    * @todo Patch CTools to move constants from export.inc to ctools.module.
    */
   public function load() {
-    $record = db_query("SELECT imported, config, state, fetcher_result FROM {feeds_source} WHERE id = :id AND feed_nid = :nid", array(
-      ':id' => $this->id,
-      ':nid' => $this->feed_nid,
-    ))->fetchObject();
-    if ($record) {
+    if ($record = db_query("SELECT imported, config, state, fetcher_result FROM {feeds_source} WHERE id = :id AND feed_nid = :nid", array(':id' => $this->id, ':nid' => $this->feed_nid))->fetchObject()) {
       // While FeedsSource cannot be exported, we still use CTool's export.inc
       // export definitions.
       ctools_include('export');
@@ -1004,7 +900,8 @@ class FeedsSource extends FeedsConfigurable {
   }
 
   /**
-   * Removes the feed source from the database.
+   * Delete configuration. Removes configuration information
+   * from database, does not delete configuration itself.
    */
   public function delete() {
     // Alert implementers of FeedsSourceInterface to the fact that we're
@@ -1059,7 +956,7 @@ class FeedsSource extends FeedsConfigurable {
   /**
    * Only return source if configuration is persistent and valid.
    *
-   * @see FeedsConfigurable::existing()
+   * @see FeedsConfigurable::existing().
    */
   public function existing() {
     // Ensure that the source configuration is valid.
@@ -1080,7 +977,7 @@ class FeedsSource extends FeedsConfigurable {
    * @param FeedsSourceInterface $client
    *   An object that is an implementer of FeedsSourceInterface.
    *
-   * @return array
+   * @return
    *   An array stored for $client.
    */
   public function getConfigFor(FeedsSourceInterface $client) {
@@ -1093,18 +990,18 @@ class FeedsSource extends FeedsConfigurable {
    *
    * @param FeedsSourceInterface $client
    *   An object that is an implementer of FeedsSourceInterface.
-   * @param array $config
+   * @param $config
    *   The configuration for $client.
+   *
+   * @return
+   *   An array stored for $client.
    */
-  public function setConfigFor(FeedsSourceInterface $client, array $config) {
+  public function setConfigFor(FeedsSourceInterface $client, $config) {
     $this->config[get_class($client)] = $config;
   }
 
   /**
    * Return defaults for feed configuration.
-   *
-   * @return array
-   *   The default feed configuration, keyed per Feeds plugin.
    */
   public function configDefaults() {
     // Collect information from plugins.
@@ -1156,11 +1053,11 @@ class FeedsSource extends FeedsConfigurable {
   /**
    * Background job helper. Starts a background job using the Drupal queue.
    *
+   * @see FeedsSource::startImport().
+   * @see FeedsSource::startClear().
+   *
    * @param string $method
    *   Method to execute on importer; one of 'import' or 'clear'.
-   *
-   * @see FeedsSource::startImport()
-   * @see FeedsSource::startClear()
    */
   protected function startBackgroundJob($method) {
     $job = array(
@@ -1193,14 +1090,14 @@ class FeedsSource extends FeedsConfigurable {
   /**
    * Batch API helper. Starts a Batch API job.
    *
-   * @param string $title
-   *   Title to show to user when executing batch.
-   * @param string $method
-   *   Method to execute on importer; one of 'import' or 'clear'.
-   *
-   * @see FeedsSource::startImport()
-   * @see FeedsSource::startClear()
+   * @see FeedsSource::startImport().
+   * @see FeedsSource::startClear().
    * @see feeds_batch()
+   *
+   * @param $title
+   *   Title to show to user when executing batch.
+   * @param $method
+   *   Method to execute on importer; one of 'import' or 'clear'.
    */
   protected function startBatchAPIJob($title, $method) {
     $batch = array(
@@ -1223,9 +1120,6 @@ class FeedsSource extends FeedsConfigurable {
     if (!lock_acquire("feeds_source_{$this->id}_{$this->feed_nid}", 60.0)) {
       throw new FeedsLockException(t('Cannot acquire lock for source @id / @feed_nid.', array('@id' => $this->id, '@feed_nid' => $this->feed_nid)));
     }
-
-    // Switch account.
-    $this->switchAccount();
   }
 
   /**
@@ -1233,41 +1127,6 @@ class FeedsSource extends FeedsConfigurable {
    */
   protected function releaseLock() {
     lock_release("feeds_source_{$this->id}_{$this->feed_nid}");
-
-    // Switch back to original account.
-    $this->switchBack();
-  }
-
-  /**
-   * Switches account to the feed owner or user 1.
-   *
-   * To the feed owner is switched if the importer is attached to a content
-   * type. When using the standalone form, there is no feed owner, so then a
-   * switch to user 1 happens instead.
-   */
-  protected function switchAccount() {
-    // Use author of feed node.
-    if ($this->feed_nid) {
-      $node = node_load($this->feed_nid);
-      if (!empty($node->uid)) {
-        $account = user_load($node->uid);
-      }
-    }
-
-    // If the owner of the feed node is anonymous or if the importer is not
-    // attached to a content type, pick user 1 instead.
-    if (empty($account)) {
-      $account = user_load(1);
-    }
-
-    $this->accountSwitcher->switchTo($account);
-  }
-
-  /**
-   * Switches back to the original user.
-   */
-  protected function switchBack() {
-    $this->accountSwitcher->switchBack();
   }
 
   /**
