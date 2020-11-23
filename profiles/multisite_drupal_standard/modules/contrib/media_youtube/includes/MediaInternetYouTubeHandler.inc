@@ -14,8 +14,8 @@ class MediaInternetYouTubeHandler extends MediaInternetBaseHandler {
 
   public function parse($embedCode) {
     $list_patterns = array(
-      '@youtube\.com/playlist[#\?].*?list=([^"\& ]+)@i',
-      '@youtube\.com/view_play_list[#\?].*?p=([^"\& ]+)@i',
+      '@youtube\.com/playlist[#\?].*?list=([^"#\& ]+)@i',
+      '@youtube\.com/view_play_list[#\?].*?p=([^"#\& ]+)@i',
     );
 
     foreach ($list_patterns as $pattern) {
@@ -25,22 +25,22 @@ class MediaInternetYouTubeHandler extends MediaInternetBaseHandler {
         return file_stream_wrapper_uri_normalize('youtube://l/' . $matches[1]);
       }
     }
-    // http://youtube.com/watch/*
-    // http://youtube.com/embed/*
-    // http://youtube.com/v/*
-    // http://youtube.com/?v=*
-    // http://youtu.be/*
-    // http://gdata.youtube.com/feeds/api/videos/*
+    // https://youtube.com/watch/*
+    // https://youtube.com/embed/*
+    // https://youtube.com/v/*
+    // https://youtube.com/?v=*
+    // https://youtu.be/*
+    // https://gdata.youtube.com/feeds/api/videos/*
     $patterns = array(
-      '@youtube\.com/watch[#\?].*?v=([^"\& ]+).*&list=([^"\& ]+)@i',
-      '@youtu\.be/([^"\&\? ]+)\?list=([^"\& ]+)@i',
-      '@youtube\.com/embed/([^"\&\? ]+)\?list=([^"\& ]+)@i',
-      '@youtube\.com/watch[#\?].*?v=([^"\& ]+)@i',
-      '@youtube\.com/embed/([^"\&\? ]+)@i',
-      '@youtube\.com/v/([^"\&\? ]+)@i',
-      '@youtube\.com/\?v=([^"\& ]+)@i',
-      '@youtu\.be/([^"\&\? ]+)@i',
-      '@gdata\.youtube\.com/feeds/api/videos/([^"\&\? ]+)@i',
+      '@youtube\.com/watch[#\?].*?v=([^"#\& ]+).*&list=([^"#\& ]+)@i',
+      '@youtu\.be/([^"#\&\? ]+)\?list=([^"#\& ]+)@i',
+      '@youtube\.com/embed/([^"#\&\? ]+)\?list=([^"#\& ]+)@i',
+      '@youtube\.com/watch[#\?].*?v=([^"#\& ]+)@i',
+      '@youtube\.com/embed/([^"#\&\? ]+)@i',
+      '@youtube\.com/v/([^"#\&\? ]+)@i',
+      '@youtube\.com/\?v=([^"#\& ]+)@i',
+      '@youtu\.be/([^"#\&\? ]+)@i',
+      '@gdata\.youtube\.com/feeds/api/videos/([^"#\&\? ]+)@i',
     );
 
     foreach ($patterns as $pattern) {
@@ -51,7 +51,7 @@ class MediaInternetYouTubeHandler extends MediaInternetBaseHandler {
         $uri = 'youtube://v/' . $matches[1][0];
         if (isset($matches[2][0]) && $this->validId($matches[2][0], 'l')) {
           $uri .= '/l/' . $matches[2][0];
-         }
+        }
         return file_stream_wrapper_uri_normalize($uri);
       }
     }
@@ -88,7 +88,7 @@ class MediaInternetYouTubeHandler extends MediaInternetBaseHandler {
   public function getOEmbed() {
     $uri = $this->parse($this->embedCode);
     $external_url = file_create_url($uri);
-    $oembed_url = url('http://www.youtube.com/oembed', array('query' => array('url' => $external_url, 'format' => 'json')));
+    $oembed_url = url('https://www.youtube.com/oembed', array('query' => array('url' => $external_url, 'format' => 'json')));
     $response = drupal_http_request($oembed_url);
 
     if (!isset($response->error)) {
@@ -110,7 +110,7 @@ class MediaInternetYouTubeHandler extends MediaInternetBaseHandler {
   public function validId($id, $type = 'v') {
     $uri = file_stream_wrapper_uri_normalize('youtube://' . $type . '/' . check_plain($id));
     $external_url = file_create_url($uri);
-    $oembed_url = url('http://www.youtube.com/oembed', array('query' => array('url' => $external_url, 'format' => 'json')));
+    $oembed_url = url('https://www.youtube.com/oembed', array('query' => array('url' => $external_url, 'format' => 'json')));
     $response = drupal_http_request($oembed_url, array('method' => 'HEAD'));
 
     if ($response->code == 401) {

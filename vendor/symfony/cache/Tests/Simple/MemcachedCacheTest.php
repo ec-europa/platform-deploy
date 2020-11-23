@@ -14,6 +14,9 @@ namespace Symfony\Component\Cache\Tests\Simple;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Component\Cache\Simple\MemcachedCache;
 
+/**
+ * @group legacy
+ */
 class MemcachedCacheTest extends CacheTestCase
 {
     protected $skippedTests = [
@@ -24,7 +27,7 @@ class MemcachedCacheTest extends CacheTestCase
 
     protected static $client;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         if (!MemcachedCache::isSupported()) {
             self::markTestSkipped('Extension memcached >=2.2.0 required.');
