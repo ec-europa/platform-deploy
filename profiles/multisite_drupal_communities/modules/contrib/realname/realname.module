@@ -296,6 +296,7 @@ function realname_load_multiple(array $accounts) {
     // real name.
     foreach ($new_accounts as $uid => $account) {
       if (!isset($realnames[$uid])) {
+        $realnames[$uid] = FALSE;
         $realnames[$uid] = realname_update($account);
       }
     }
