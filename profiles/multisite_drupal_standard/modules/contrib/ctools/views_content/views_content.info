@@ -11,6 +11,6 @@ files[] = plugins/views/views_content_plugin_display_panel_pane.inc
 files[] = plugins/views/views_content_plugin_style_ctools_context.inc
 
 ; Information added by drush on 2017-02-14
-version = "7.x-1.12+21-dev"
+version = "7.x-1.x-dev"
 project = "ctools"
 datestamp = "1487053453"
