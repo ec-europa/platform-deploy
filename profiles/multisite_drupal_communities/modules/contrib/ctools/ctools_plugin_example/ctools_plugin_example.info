@@ -9,6 +9,6 @@ dependencies[] = advanced_help
 core = 7.x
 
 ; Information added by drush on 2017-02-14
-version = "7.x-1.12+21-dev"
+version = "7.x-1.x-dev"
 project = "ctools"
 datestamp = "1487053453"
