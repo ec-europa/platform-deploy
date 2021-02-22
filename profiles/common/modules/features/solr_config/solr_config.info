@@ -8,6 +8,7 @@ dependencies[] = current_search
 dependencies[] = facetapi
 dependencies[] = features
 dependencies[] = menu
+dependencies[] = multisite_settings_core
 dependencies[] = strongarm
 features[ctools][] = facetapi:facetapi_defaults:1
 features[ctools][] = strongarm:strongarm:1
