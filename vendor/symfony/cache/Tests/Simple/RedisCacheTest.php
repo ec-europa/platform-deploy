@@ -13,9 +13,12 @@ namespace Symfony\Component\Cache\Tests\Simple;
 
 use Symfony\Component\Cache\Simple\RedisCache;
 
+/**
+ * @group legacy
+ */
 class RedisCacheTest extends AbstractRedisCacheTest
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setupBeforeClass();
         self::$redis = RedisCache::createConnection('redis://'.getenv('REDIS_HOST'));
