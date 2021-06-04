@@ -87,7 +87,7 @@ function nexteuropa_user_management_unblock_selected_user_action(&$entity, $cont
  * @return array
  *   Renderable array.
  */
-function nexteuropa_user_management_change_user_roles_action_form($context) {
+function nexteuropa_user_management_change_user_roles_action_form($context, &$form_state) {
   if (!user_access('nexteuropa manage users non restricted operations') && !user_access('administer permissions')) {
     drupal_set_message(t('Your user does not have access to modify user roles.'), 'error');
     return array();
@@ -111,6 +111,9 @@ function nexteuropa_user_management_change_user_roles_action_form($context) {
       ),
     );
   }
+
+  // Save the roles $key => $value array for later use.
+  $form_state['um_roles'] = $roles;
 
   $form = array();
   $form['add_roles'] = array(
@@ -138,8 +141,18 @@ function nexteuropa_user_management_change_user_roles_action_form($context) {
  *   Action form state.
  */
 function nexteuropa_user_management_change_user_roles_action_validate($form, $form_state) {
-  if (!$form_state['values']['add_roles'] && !$form_state['values']['remove_roles']) {
+  $add_roles = array_filter($form_state['values']['add_roles']);
+  $remove_roles = array_filter($form_state['values']['remove_roles']);
+  if (!$add_roles && !$remove_roles) {
     form_set_error('add_roles', t('You have not chosen any role to add or remove. Please select something to do.'));
+  }
+
+  $double_selected = array_intersect($add_roles, $remove_roles);
+  if ($double_selected) {
+    $double_selected_stringified = array_intersect_key($form_state['um_roles'], $double_selected);
+    form_set_error('remove_roles', format_plural(count($double_selected), 'You chose the same role for both actions, please remove from one of the action the following role: %roles.', 'You chose the same roles for both actions, please remove from one of the action the following roles: %roles.', array(
+      '%roles' => implode(', ', $double_selected_stringified),
+    )));
   }
 }
 
@@ -160,6 +173,169 @@ function nexteuropa_user_management_change_user_roles_action_submit($form, $form
     'add_roles' => array_filter($form_state['values']['add_roles']),
     'remove_roles' => array_filter($form_state['values']['remove_roles']),
   );
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function nexteuropa_user_management_form_views_form_nexteuropa_user_management_neum_alter(&$form, &$form_state, $form_id) {
+  // This will replace the confirmation form's content. To prevent to have two
+  // confirmation form we overwrite the provided one.
+  if ($form['#theme'] === 'confirm_form') {
+    $confirm = array();
+
+    $confirm['intro'] = array(
+      '#markup' => t('The following changes will be applied:'),
+    );
+
+    // This will return back to as the rid => role name pairs, respecting which
+    // was selected for add and remove by the user.
+    $selected_to_add = array_intersect_key($form_state['um_roles'], $form_state['operation']->formOptions['add_roles']);
+    $selected_to_remove = array_intersect_key($form_state['um_roles'], $form_state['operation']->formOptions['remove_roles']);
+
+    // Table header.
+    $header = array(t('Displayed name (ecas name)'), t('Current roles'));
+    if ($selected_to_add) {
+      $header[] = t('Added roles');
+    }
+    if ($selected_to_remove) {
+      $header[] = t('Removed roles');
+    }
+    $header[] = t('Result');
+    $rows = array();
+
+    if (count($form_state['selection']) > 50) {
+      // If we have large amount of data, then don't make comparision.
+      $rows[] = array(
+        array(
+          'data' => t('The comparison page only works, if the selected amount of user is not greater then 50.'),
+          'colspan' => count($header),
+        ),
+      );
+    }
+    else {
+      // If we have small amount of data, then let's make a 'fast' comparision
+      // to show the differences.
+      $users = user_load_multiple($form_state['selection']);
+      foreach ($users as $user) {
+        $row = array();
+
+        // Display current user name and ecas username.
+        $row[] = format_username($user) . ' (' . $user->name . ')';
+
+        // Get current user's roles and remove authenticated from the list.
+        $roles = $user->roles;
+        unset($roles[DRUPAL_AUTHENTICATED_RID]);
+
+        // Display current role.
+        $current_roles = array(
+          'list_type' => 'ol',
+          'items' => array_values($roles),
+        );
+        $row[] = $roles ? theme('item_list', $current_roles) : '-';
+
+        // Calculate changes.
+        $role_changes = _nexteuropa_user_management_calculate_roles($roles, $selected_to_add, $selected_to_remove);
+
+        // Display new (added) roles.
+        if ($selected_to_add) {
+          $added_roles = array(
+            'list_type' => 'ol',
+            'items' => array_values($role_changes['added']),
+            'attributes' => array('class' => array('um_role_add')),
+          );
+          $row[] = $role_changes['added'] ? theme('item_list', $added_roles) : '-';
+        }
+
+        // Display removed roles.
+        if ($selected_to_remove) {
+          $removed_roles = array(
+            'list_type' => 'ol',
+            'items' => array_values($role_changes['removed']),
+            'attributes' => array('class' => array('um_role_remove')),
+          );
+          $row[] = $role_changes['removed'] ? theme('item_list', $removed_roles) : '-';
+        }
+
+        // Display final result.
+        if ($role_changes['result']) {
+          // If we have roles after the operations.
+          $result_roles = array(
+            'list_type' => 'ol',
+            'items' => array_values($role_changes['result']),
+          );
+          if ($role_changes['added'] || $role_changes['removed']) {
+            // If the role was changed, then we color it.
+            $result_roles['attributes'] = array('class' => array('um_role_result'));
+          }
+          $row[] = theme('item_list', $result_roles);
+        }
+        else {
+          // If we don't have roles after the operations.
+          $result_roles = array(
+            '#tag' => 'span',
+            '#value' => '-',
+          );
+          if (!$role_changes['result'] && $roles) {
+            // If the role was changed, then we color it.
+            $result_roles['#attributes'] = array('class' => array('um_role_result'));
+          }
+          $row[] = theme('html_tag', array('element' => $result_roles));
+        }
+
+        // Add this row to the others.
+        $rows[] = $row;
+      }
+    }
+
+    // Add comparision table.
+    $confirm['changes'] = array(
+      '#theme' => 'table',
+      '#header' => $header,
+      '#rows' => $rows,
+    );
+
+    $form['description']['#markup'] = drupal_render($confirm);
+    $form['#attached']['css'][] = drupal_get_path('module', 'nexteuropa_user_management') . '/css/um_style.css';
+  }
+}
+
+/**
+ * This function does the add and remove on the user's roles.
+ *
+ * NOTE: first it adds the roles and then removes to make sure the roles which
+ * needs to be removed it will be removed.
+ * This function also returns the added and removed roles separately.
+ *
+ * @param array $original
+ *   This is the current user roles.
+ * @param array $add
+ *   Roles to be added to the user roles array.
+ * @param array $remove
+ *   Roles to be removed from the user roles array.
+ *
+ * @return array
+ *   It returns in the array an added roles array keyed by 'added' a removed
+ *   roles array keyed by 'removed' and a result roles array keyed by 'result'.
+ */
+function _nexteuropa_user_management_calculate_roles($original, $add, $remove) {
+  $removed = array();
+  $added = array();
+  $roles = $original;
+  if (is_array($add)) {
+    $added = array_diff($add, $roles);
+    $roles = array_merge($roles, $add);
+  }
+  if (is_array($remove)) {
+    $removed = array_intersect($roles, $remove);
+    $roles = array_diff($roles, $remove);
+  }
+
+  return [
+    'added' => $added,
+    'removed' => $removed,
+    'result' => array_unique($roles),
+  ];
 }
 
 /**
@@ -190,12 +366,7 @@ function nexteuropa_user_management_change_user_roles_action($entity, $context =
   $wrapper = entity_metadata_wrapper('user', $entity);
 
   $original_roles = $roles = $wrapper->roles->value();
-  if (is_array($context['add_roles'])) {
-    $roles = array_merge($roles, $context['add_roles']);
-  }
-  if (is_array($context['remove_roles'])) {
-    $roles = array_diff($roles, $context['remove_roles']);
-  }
+  $roles = _nexteuropa_user_management_calculate_roles($roles, $context['add_roles'], $context['remove_roles'])['result'];
   $wrapper->roles->set($roles);
   $wrapper->save();
 
