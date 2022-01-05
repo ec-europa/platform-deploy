@@ -68,7 +68,7 @@ function og_ui_admin_settings($form_state) {
   $form['og_features_ignore_og_fields'] = array(
     '#type' => 'checkbox',
     '#title' => t('Prevent "Features" export piping'),
-    '#description' => t('When exporting using Features module a content-type, this will prevent from OG related fields to be exported.'),
+    '#description' => t('When exporting a content-type using the Features module, this prevents OG related fields from being exported.'),
     '#default_value' => variable_get('og_features_ignore_og_fields', FALSE),
     '#access' => module_exists('features'),
   );
@@ -720,6 +720,7 @@ function og_ui_admin_permissions($form, $form_state, $group_type = '', $gid = 0,
 
   if ($gid) {
     og_set_breadcrumb($group_type, $gid, array(l(t('Group'), "$group_type/$gid/group")));
+    list(, , $bundle) = entity_extract_ids($group_type, entity_load_single($group_type, $gid));
   }
 
   $form['group_type'] = array('#type' => 'value', '#value' => $group_type);
