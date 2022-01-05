@@ -7,8 +7,7 @@ version = VERSION
 
 ; Tests
 files[] = og_access.test
-; Information added by Drupal.org packaging script on 2018-06-28
-version = "7.x-2.10"
-core = "7.x"
+; Information added by drush on 2020-12-17
+version = "unknown"
 project = "og"
-datestamp = "1530174231"
+datestamp = "1608186626"
