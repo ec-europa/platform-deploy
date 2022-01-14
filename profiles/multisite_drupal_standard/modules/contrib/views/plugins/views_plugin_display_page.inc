@@ -87,7 +87,7 @@ class views_plugin_display_page extends views_plugin_display {
     $path = implode('/', $bits);
 
     $access_plugin = $this->get_plugin('access');
-    if (!$access_plugin) {
+    if (!isset($access_plugin)) {
       $access_plugin = views_get_plugin('access', 'none');
     }
 

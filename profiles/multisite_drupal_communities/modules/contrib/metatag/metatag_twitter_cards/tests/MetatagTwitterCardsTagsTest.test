@@ -67,7 +67,7 @@ class MetatagTwitterCardsTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp(array $modules = array()) {
+  function setUp(array $modules = array()) {
     $modules[] = 'metatag_twitter_cards';
     parent::setUp($modules);
   }

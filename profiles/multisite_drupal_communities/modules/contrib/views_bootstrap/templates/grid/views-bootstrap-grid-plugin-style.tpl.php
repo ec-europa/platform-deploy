@@ -1,10 +1,8 @@
 <?php
-
 /**
- * @file
- * views-bootstrap-grid-plugin-style.tpl.php
- *
+ * @file views-bootstrap-grid-plugin-style.tpl.php
  * Default simple view template to display Bootstrap Grids.
+ *
  *
  * - $columns contains rows grouped by columns.
  * - $rows contains a nested array of rows. Each row contains an array of

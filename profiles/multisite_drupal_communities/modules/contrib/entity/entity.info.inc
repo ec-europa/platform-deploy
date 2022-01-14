@@ -135,7 +135,6 @@ class EntityDefaultMetadataController {
   protected function convertSchema() {
     return entity_metadata_convert_schema($this->info['base table']);
   }
-
 }
 
 /**
@@ -143,8 +142,7 @@ class EntityDefaultMetadataController {
  *
  * @param $table
  *   The name of the table as used in hook_schema().
- *
- * @return array
+ * @return
  *   An array of property info as suiting for hook_entity_property_info().
  */
 function entity_metadata_convert_schema($table) {
@@ -174,11 +172,9 @@ function _entity_metadata_convert_schema_type($type) {
     case 'serial':
     case 'date':
       return 'integer';
-
     case 'float':
     case 'numeric':
       return 'decimal';
-
     case 'char':
     case 'varchar':
     case 'text':
@@ -197,10 +193,9 @@ interface EntityExtraFieldsControllerInterface {
   /**
    * Returns extra fields for this entity type.
    *
-   * @see hook_field_extra_fields()
+   * @see hook_field_extra_fields().
    */
   public function fieldExtraFields();
-
 }
 
 /**
@@ -268,5 +263,4 @@ class EntityDefaultExtraFieldsController implements EntityExtraFieldsControllerI
     }
     return $info;
   }
-
 }

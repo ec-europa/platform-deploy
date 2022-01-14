@@ -2242,9 +2242,7 @@ class OgNonMembersPublishingContentTestCase extends DrupalWebTestCase {
 
     $this->assertTrue(!empty($result['node']), 'The node was added to the group.');
 
-    $result_node = $result['node'];
-    $node_array_keys = array_keys($result_node);
-    $nid = reset($node_array_keys);
+    $nid = reset(array_keys($result['node']));
 
     $this->drupalLogin($this->adminUser);
 

@@ -43,8 +43,6 @@ class MetatagSearchTestSearchApiService extends SearchApiAbstractService {
   /**
    * @inheritdoc
    */
-  public function search(SearchApiQueryInterface $query) {
-    return array('result count' => 0, 'results' => array());
-  }
+  public function search(SearchApiQueryInterface $query) {}
 
 }

@@ -290,7 +290,7 @@ function hook_metatag_info_alter(&$info) {
  * @param array $options
  *   All of the options used to generate the meta tags.
  */
-function hook_metatag_metatags_alter(array &$metatags, $instance, array $options) {
+function hook_metatag_metatags_alter(array &$metatags, array $instance, array $options) {
   if (isset($metatags['description']['value'])) {
     $metatags['description']['value'] = '0 rly?';
   }
@@ -310,7 +310,7 @@ function hook_metatag_metatags_alter(array &$metatags, $instance, array $options
  * @param array $options
  *   All of the options used to generate the meta tags.
  */
-function hook_metatag_metatags_view_alter(array &$output, $instance, array $options) {
+function hook_metatag_metatags_view_alter(&$output, $instance, $options) {
   if (isset($output['description']['#attached']['drupal_add_html_head'][0][0]['#value'])) {
     $output['description']['#attached']['drupal_add_html_head'][0][0]['#value'] = 'O rly?';
   }
@@ -318,36 +318,23 @@ function hook_metatag_metatags_view_alter(array &$output, $instance, array $opti
 
 /**
  * Allow other modules to customize the data to generate the cache ID.
- *
- * @param array $cid_parts
- *   The identifiers used to identify this cache object.
  */
-function hook_metatag_page_cache_cid_parts_alter(array &$cid_parts) {
+function hook_metatag_page_cache_cid_parts_alter(&$cid_parts) {
 }
 
 /**
  * Allow other modules to alter the meta tags prior to saving.
- *
- * @param array $metatags
- *   The meta tags being saved for this entity.
- * @param string $entity_type
- *   The type of entity being saved.
- * @param int $entity_id
- *   The ID of the entity being saved.
- * @param int $revision_id
- *   The revision ID of the entity being saved.
- * @param string $langcode
- *   The language code for the entity being saved.
  */
-function hook_metatag_presave(array &$metatags, $entity_type, $entity_id, $revision_id, $langcode) {
+function hook_metatag_presave(&$metatags, $entity_type, $entity_id, $revision_id, $langcode) {
 }
 
 /**
- * Allows modules to alter the list of tokens available for replacement.
+ * Allows modules to alter the defined list of tokens available
+ * for metatag patterns replacements.
  *
- * By default only context (for example: global, node, etc...) related tokens
- * are made available to metatag patterns replacements. This hook allows other
- * modules to extend the default declared tokens.
+ * By default only context (for example: global, node, etc...)
+ * related tokens are made available to metatag patterns replacements.
+ * This hook allows other modules to extend the default declared tokens.
  *
  * @param array $options
  *   (optional) An array of options including the following keys and values:
@@ -358,7 +345,7 @@ function hook_metatag_presave(array &$metatags, $entity_type, $entity_id, $revis
  * @see metatag_config_edit_form()
  * @see metatag_field_attach_form()
  */
-function hook_metatag_token_types_alter(array &$options) {
+function hook_metatag_token_types_alter(&$options) {
   // Watchout: $options['token types'] might be empty.
   if (!isset($options['token types'])) {
     $options['token types'] = array();
@@ -398,7 +385,7 @@ function hook_metatag_token_types_alter(array &$options) {
  *
  * @see DrupalTextMetaTag::getValue()
  */
-function hook_metatag_pattern_alter(&$pattern, array &$types, $tag_name) {
+function hook_metatag_pattern_alter(&$pattern, &$types, $tag_name) {
   if (strpos($pattern, 'token_type1') !== FALSE) {
     $types['token_type1'] = "data to be used in hook_tokens for replacement";
   }
@@ -427,7 +414,7 @@ function hook_metatag_pattern_alter(&$pattern, array &$types, $tag_name) {
  *   The full specifications for this entity type, as returned by
  *   entity_get_info().
  */
-function hook_metatag_entity_type_is_supported_alter(&$suitable, $entity_type, array $entity_info) {
+function hook_metatag_entity_type_is_supported_alter(&$suitable, $entity_type, $entity_info) {
   // Enable Metatag support for a custom entity that might otherwise be
   // ignored, e.g. it doesn't allow fields.
   if ($entity_type == 'my_entity') {
@@ -445,7 +432,7 @@ function hook_metatag_entity_type_is_supported_alter(&$suitable, $entity_type, a
  * @param object $view
  *   The view object being displayed.
  *
- * @return string|null
+ * @return string|NULL
  *   Should return a string indicating an entity type that will be paired with
  *   the views' first argument ($view->args[0]) to load that entity.
  */
@@ -457,7 +444,8 @@ function hook_metatag_views_post_render_get_entity($view) {
 }
 
 /**
- * Allow the context string passed to i18n_string to be changed before use.
+ * Allow the context string being passed to i18n_string to be changed before it
+ * is used.
  *
  * If the string is set to an empty value it will cause this meta tag to not
  * be translated.
@@ -482,13 +470,13 @@ function hook_metatag_i18n_context_alter(&$context, $tag_name) {
  * By default Metatag caches everything as CACHE_PERMANENT, this alter allows to
  * change that.
  *
- * @param int $expire
+ * @param $expire
  *   The expire value to change.
- * @param string $cid
+ * @param $cid
  *   The cid about to be cached.
- * @param array $data
+ * @param $data
  *   The data to be cached.
  */
-function hook_metatag_cache_set_expire_alter(&$expire, $cid, array $data) {
+function hook_metatag_cache_set_expire_alter(&$expire, $cid, $data) {
   $expire = CACHE_TEMPORARY;
 }

@@ -27,20 +27,19 @@ class MetatagVerificationTagsTest extends MetatagTagsTestBase {
    */
   public $tags = array(
     'baidu-site-verification',
-    'facebook-domain-verification',
     'google-site-verification',
     'msvalidate.01',
     'norton-safeweb-site-verification',
     'p:domain_verify',
     'pocket-site-verification',
     'yandex-verification',
-    'zoom-domain-verification',
+    'zoom-domain-verification'
   );
 
   /**
    * {@inheritdoc}
    */
-  public function setUp(array $modules = array()) {
+  function setUp(array $modules = array()) {
     $modules[] = 'metatag_verification';
     parent::setUp($modules);
   }

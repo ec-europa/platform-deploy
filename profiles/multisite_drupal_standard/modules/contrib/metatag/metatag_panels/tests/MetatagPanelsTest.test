@@ -18,16 +18,14 @@ class MetatagPanelsTest extends MetatagTestBase {
       'name' => 'Metatag:Panels tests',
       'description' => 'Test Metatag integration via the Metatag:Panels module.',
       'group' => 'Metatag',
-      'dependencies' => array(
-        'ctools', 'devel', 'token', 'panels', 'page_manager',
-      ),
+      'dependencies' => array('ctools', 'devel', 'token', 'panels', 'page_manager'),
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setUp(array $modules = array()) {
+  function setUp(array $modules = array()) {
     $modules[] = 'panels';
 
     // Can't really do anything without Page Manager.

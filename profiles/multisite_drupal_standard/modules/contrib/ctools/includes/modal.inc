@@ -74,7 +74,7 @@ function ctools_modal_add_js() {
 }
 
 /**
- * @todo Deprecated this.
+ * @todo this is deprecated
  */
 function ctools_modal_add_plugin_js($plugins) {
   $css = array();
@@ -85,7 +85,7 @@ function ctools_modal_add_plugin_js($plugins) {
         if (file_exists($file)) {
           $js[$file] = TRUE;
         }
-        elseif (file_exists($subtype['path'] . '/' . $file)) {
+        elseif (file(exists($subtype['path'] . '/' . $file))) {
           $js[$subtype['path'] . '/' . $file] = TRUE;
         }
       }
@@ -95,7 +95,7 @@ function ctools_modal_add_plugin_js($plugins) {
         if (file_exists($file)) {
           $css[$file] = TRUE;
         }
-        elseif (file_exists($subtype['path'] . '/' . $file)) {
+        elseif (file(exists($subtype['path'] . '/' . $file))) {
           $css[$subtype['path'] . '/' . $file] = TRUE;
         }
       }

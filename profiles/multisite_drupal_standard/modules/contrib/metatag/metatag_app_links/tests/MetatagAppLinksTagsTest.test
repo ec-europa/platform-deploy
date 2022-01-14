@@ -60,7 +60,7 @@ class MetatagAppLinksTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp(array $modules = array()) {
+  function setUp(array $modules = array()) {
     $modules[] = 'metatag_app_links';
     parent::setUp($modules);
   }

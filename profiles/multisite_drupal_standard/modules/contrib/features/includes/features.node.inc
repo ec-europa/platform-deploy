@@ -1,11 +1,6 @@
 <?php
 
 /**
- * @file
- * Features integration for 'node' module.
- */
-
-/**
  * Implements hook_features_api().
  */
 function node_features_api() {
@@ -13,7 +8,6 @@ function node_features_api() {
     'node' => array(
       'name' => t('Content types'),
       'feature_source' => TRUE,
-      /* @see \hook_node_info() */
       'default_hook' => 'node_info',
       'alter_type' => FEATURES_ALTER_TYPE_INLINE,
     ),
@@ -37,8 +31,7 @@ function node_features_export($data, &$export, $module_name = '') {
   foreach ($data as $type) {
     // Poll node module to determine who provides the node type.
     if ($info = node_type_get_type($type)) {
-      // If this node type is provided by a different module, add it as a
-      // dependency.
+      // If this node type is provided by a different module, add it as a dependency
       if (isset($map[$type]) && $map[$type] != $module_name) {
         $export['dependencies'][$map[$type]] = $map[$type];
       }

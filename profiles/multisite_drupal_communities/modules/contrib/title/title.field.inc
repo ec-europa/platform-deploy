@@ -5,6 +5,7 @@
  * Implement a title field formater.
  */
 
+
 /**
  * Implements hook_field_formatter_info().
  */
@@ -13,13 +14,7 @@ function title_field_formatter_info() {
     'title_linked' => array(
       'label' => t('Linked and wrapped'),
       'field types' => array('text'),
-      'settings' => array(
-        'title_style' => '',
-        'title_link' => '',
-        'title_class' => '',
-        'enable_trim' => FALSE,
-        'trim_length' => 50,
-      ),
+      'settings' => array('title_style' => '', 'title_link' => '', 'title_class' => ''),
     ),
   );
 }
@@ -50,8 +45,7 @@ function title_field_formatter_settings_form($field, $instance, $view_mode, $for
   );
 
   $link_types = array(
-    'content' => t('Content (relative url)'),
-    'content_absolute' => t('Content (absolute url)'),
+    'content' => t('Content'),
   );
   $element['title_link'] = array(
     '#title' => t('Link title to'),
@@ -59,25 +53,6 @@ function title_field_formatter_settings_form($field, $instance, $view_mode, $for
     '#default_value' => $settings['title_link'],
     '#empty_option' => t('Nothing'),
     '#options' => $link_types,
-  );
-
-  $element['enable_trim'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Enable trimming?'),
-    '#default_value' => $settings['enable_trim'],
-  );
-
-  $element['trim_length'] = array(
-    '#title' => t('Trim length'),
-    '#type' => 'textfield',
-    '#size' => 10,
-    '#default_value' => $settings['trim_length'],
-    '#element_validate' => array('element_validate_integer_positive'),
-    '#states' => array(
-      'visible' => array(
-        ':input[name*="enable_trim"]' => array('checked' => TRUE),
-      ),
-    ),
   );
 
   $element['title_class'] = array(
@@ -103,7 +78,6 @@ function title_field_formatter_settings_summary($field, $instance, $view_mode) {
 
   $link_types = array(
     'content' => t('Linked to content'),
-    'content_absolute' => t('Linked to content(absolute url)'),
   );
   // Display this setting only if field is linked.
   if (isset($link_types[$settings['title_link']])) {
@@ -113,11 +87,6 @@ function title_field_formatter_settings_summary($field, $instance, $view_mode) {
   // Display this setting only if wrapper has a class.
   if (isset($settings['title_class']) && $settings['title_class'] != '_none' && $settings['title_class'] != '') {
     $summary[] = t('Wrap tag classes: @classes', array('@classes' => $settings['title_class']));
-  }
-
-  // Display this setting only if trim is enabled.
-  if (!empty($settings['enable_trim'])) {
-    $summary[] = t('Trim length: @length', array('@length' => $settings['trim_length']));
   }
 
   return implode('<br />', $summary);
@@ -138,23 +107,9 @@ function title_field_formatter_view($entity_type, $entity, $field, $instance, $l
   $element = array();
 
   if (!empty($output)) {
-    if (in_array($settings['title_link'], array(
-      'content',
-      'content_absolute',
-    ))) {
+    if ($settings['title_link'] == 'content') {
       $uri = entity_uri($entity_type, $entity);
-      // If trimmed is enabled.
-      if (!empty($settings['enable_trim'])) {
-        $trimmed_output = text_summary($output, $instance['settings']['text_processing'] ? $items[0]['format'] : NULL, $display['settings']['trim_length']);
-        // If we performed trimmed, add ellipsis in the end.
-        if (drupal_strlen($output) != drupal_strlen($trimmed_output)) {
-          $output = $trimmed_output . '&hellip;';
-        }
-      }
-      $options = array(
-        'html' => TRUE,
-        'absolute' => $settings['title_link'] === 'content_absolute',
-      );
+      $options = array('html' => TRUE);
       if (!empty($uri['options'])) {
         $options = array_merge($options, $uri['options']);
       }
@@ -188,38 +143,17 @@ function title_field_formatter_view($entity_type, $entity, $field, $instance, $l
 }
 
 /**
- * Validate the list of values.
- *
- * Validate that a space-separated list of values are lowercase and appropriate
- * for use as HTML classes.
+ * Validate that a space-separated list of values are lowercase and appropriate for use as HTML classes.
  *
  * @see title_field_formatter_settings_form()
  */
 function _title_validate_class($element, &$form_state) {
-  static $validated_class = array();
   $value = drupal_array_get_nested_value($form_state['values'], $element['#parents']);
   $classes = explode(' ', $value);
 
   foreach ($classes as $class) {
-    if (!isset($validated_class[$class])) {
-      // Using drupal_clean_css_identifier() directly to allow a double
-      // underscore in addition to core defaults.
-      // @see: https://www.drupal.org/node/2009584.
-      $validated_class[$class] = drupal_clean_css_identifier(
-        drupal_strtolower($class),
-        array(
-          ' ' => '-',
-          '__' => '__',
-          '_' => '-',
-          '/' => '-',
-          '[' => '-',
-          ']' => '',
-        )
-      );
-    }
-
-    if ($class !== $validated_class[$class]) {
-      form_error($element, t('Wrapper classes contain illegal characters; classes should be lowercase and may contain letters, numbers, dashes and double underscores.'));
+    if ($class != drupal_html_class($class)) {
+      form_error($element, t('Wrapper classes contain illegal characters; classes should be lowercase and may contain letters, numbers, and dashes.'));
       return;
     }
   }

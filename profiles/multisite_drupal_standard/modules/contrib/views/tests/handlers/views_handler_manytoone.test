@@ -83,8 +83,8 @@ class ViewsHandlerManyToOneTest extends ViewsSqlTest {
   /**
    * {@inheritdoc}
    */
-  public function setUp(array $modules = array()) {
-    parent::setUp($modules);
+  public function setUp() {
+    parent::setUp();
 
     // Create boolean field.
     $this->fields[0] = array(

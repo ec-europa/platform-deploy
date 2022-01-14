@@ -2,9 +2,8 @@
 
 /**
  * @file
- * Add a date repeat selection form to a date field.
- *
- * Also creates an iCal RRULE from the chosen selections.
+ * Code to add a date repeat selection form to a date field and create
+ * an iCal RRULE from the chosen selections.
  *
  * Moved to a separate file since it is not used on most pages
  * so the code is not parsed unless needed.
@@ -317,7 +316,7 @@ function _date_repeat_rrule_process($element, &$form_state, $form) {
   $monthly_byday_day = '';
   if (isset($rrule['BYDAY']) && !empty($rrule['BYDAY']) && $rrule['FREQ'] === 'MONTHLY') {
     $monthly_byday_count = substr($rrule['BYDAY'][0], 0, -2);
-    $monthly_byday_day = substr($rrule['BYDAY'][0], -2);
+    $monthly_byday_day = substr($rrule['BYDAY'][0], -2);;
   }
 
   list($byday_count_title, $byday_day_title) = explode('@byday', t('On the @byday of', array(), array('context' => 'Date repeat')));
@@ -421,7 +420,7 @@ function _date_repeat_rrule_process($element, &$form_state, $form) {
   $yearly_byday_day = '';
   if (isset($rrule['BYDAY']) && !empty($rrule['BYDAY']) && $rrule['FREQ'] === 'YEARLY') {
     $yearly_byday_count = substr($rrule['BYDAY'][0], 0, -2);
-    $yearly_byday_day = substr($rrule['BYDAY'][0], -2);
+    $yearly_byday_day = substr($rrule['BYDAY'][0], -2);;
   }
 
   list($byday_count_title, $byday_day_title) = explode('@byday', t('On the @byday of', array(), array('context' => 'Date repeat')));
@@ -1000,16 +999,12 @@ function theme_date_repeat_current_exceptions($vars) {
   $rows_info = array();
   foreach ($rows as $key => $value) {
     if (substr($key, 0, 1) != '#') {
-      $rows_info[] = array(
-        drupal_render($value['action']),
-        drupal_render($value['display'])
-      );
+      $rows_info[] = array(drupal_render($value['action']), drupal_render($value['display']));
     }
   }
   return theme('table', array(
     'header' => array(t('Delete'), t('Current exceptions')),
-    'rows' => $rows_info,
-  )
+    'rows' => $rows_info)
   );
 }
 
@@ -1020,16 +1015,12 @@ function theme_date_repeat_current_additions($rows = array()) {
   $rows_info = array();
   foreach ($rows as $key => $value) {
     if (substr($key, 0, 1) != '#') {
-      $rows_info[] = array(
-        drupal_render($value['action']),
-        drupal_render($value['display'])
-      );
+      $rows_info[] = array(drupal_render($value['action']), drupal_render($value['display']));
     }
   }
   return theme('table', array(
     'header' => array(t('Delete'), t('Current additions')),
-    'rows' => $rows_info,
-  )
+    'rows' => $rows_info)
   );
 }
 

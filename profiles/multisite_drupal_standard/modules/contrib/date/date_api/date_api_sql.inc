@@ -4,9 +4,9 @@
  * @file
  * SQL helper for Date API.
  *
- * @todo Add experimental support for sqlite
- * (http://www.sqlite.org/lang_datefunc.html) and Oracle
- * (http://psoug.org/reference/date_func.html and
+ * @todo
+ * Add experimental support for sqlite: http://www.sqlite.org/lang_datefunc.html
+ * and Oracle (http://psoug.org/reference/date_func.html and
  * http://psoug.org/reference/datatypes.html) date/time functions.
  */
 
@@ -14,10 +14,10 @@
  * A helper function to do cross-database concatation of date parts.
  *
  * @param array $array
- *   An array of values to be concatonated in SQL.
+ *   An array of values to be concatonated in sql.
  *
  * @return string
- *   Correct SQL string for database type.
+ *   Correct sql string for database type.
  */
 function date_sql_concat(array $array) {
   switch (Database::getConnection()->databaseType()) {
@@ -72,35 +72,18 @@ function date_sql_pad($str, $size = 2, $pad = '0', $side = 'l') {
  * A class to manipulate date SQL.
  */
 class date_sql_handler {
-
-  public $db_type = NULL;
-
-  public $date_type = DATE_DATETIME;
-
-  /**
-   * A string timezone name.
-   */
-  public $db_timezone = 'UTC';
-
-  /**
-   * A string timezone name.
-   */
-  public $local_timezone = NULL;
-
-  /**
-   * Use if the db timezone is stored in a field.
-   */
-  public $db_timezone_field = NULL;
-
-  /**
-   * Use if the local timezone is stored in a field.
-   */
-  public $local_timezone_field = NULL;
-
-  /**
-   * Use if the offset is stored in a field.
-   */
-  public $offset_field = NULL;
+  var $db_type = NULL;
+  var $date_type = DATE_DATETIME;
+  // A string timezone name.
+  var $db_timezone = 'UTC';
+  // A string timezone name.
+  var $local_timezone = NULL;
+  // Use if the db timezone is stored in a field.
+  var $db_timezone_field = NULL;
+  // Use if the local timezone is stored in a field.
+  var $local_timezone_field = NULL;
+  // Use if the offset is stored in a field.
+  var $offset_field = NULL;
 
   /**
    * The object constuctor.
@@ -181,9 +164,7 @@ class date_sql_handler {
           // Issue #1201342, This is the wrong way to set the timezone, this
           // still needs to be fixed. In the meantime, commenting this out makes
           // SQLSRV functional.
-          // @code
           // db_query('TimeZone.setDefault(TimeZone.getTimeZone("GMT"))');
-          // @endcode
           break;
       }
       $already_set = TRUE;
@@ -219,7 +200,7 @@ class date_sql_handler {
    * @return string
    *   An appropriate SQL string for the db type and field type.
    */
-  public function sql_field($field, $offset = NULL, $comp_date = NULL) {
+  function sql_field($field, $offset = NULL, $comp_date = NULL) {
     if (strtoupper($field) == 'NOW') {
       // NOW() will be in UTC since that is what we set the db timezone to.
       $this->local_timezone = 'UTC';
@@ -291,7 +272,7 @@ class date_sql_handler {
   /**
    * Adjust a field value by an offset in seconds.
    */
-  public function sql_offset($field, $offset = NULL) {
+  function sql_offset($field, $offset = NULL) {
     if (!empty($offset)) {
       switch ($this->db_type) {
         case 'mysql':
@@ -323,7 +304,7 @@ class date_sql_handler {
    *   The granularity of the adjustment, should be singular, like SECOND,
    *   MINUTE, DAY, HOUR.
    */
-  public function sql_date_math($field, $direction, $count, $granularity) {
+  function sql_date_math($field, $direction, $count, $granularity) {
     $granularity = strtoupper($granularity);
     switch ($this->db_type) {
       case 'mysql':
@@ -369,7 +350,7 @@ class date_sql_handler {
    *   Set a fixed offset or offset field to use for the date. If set, no
    *   timezone conversion will be done and the offset will be used.
    */
-  public function sql_tz($field, $offset = NULL, $comp_date = NULL) {
+  function sql_tz($field, $offset = NULL, $comp_date = NULL) {
     // If the timezones are values they need to be quoted, but if they are
     // field names they do not.
     $db_zone   = !empty($this->db_timezone_field) ? $this->db_timezone_field : "'{$this->db_timezone}'";
@@ -417,7 +398,7 @@ class date_sql_handler {
    * @return string
    *   An appropriate SQL string for the db type and field type.
    */
-  public function sql_format($format, $field) {
+  function sql_format($format, $field) {
     switch ($this->db_type) {
       case 'mysql':
         $replace = array(
@@ -571,7 +552,7 @@ class date_sql_handler {
    * @return string
    *   An appropriate SQL string for the db type and field type.
    */
-  public function sql_extract($extract_type, $field) {
+  function sql_extract($extract_type, $field) {
     // Note there is no space after FROM to avoid db_rewrite problems
     // see http://drupal.org/node/79904.
     switch (strtoupper($extract_type)) {
@@ -618,7 +599,7 @@ class date_sql_handler {
           case 'pgsql':
             return "EXTRACT(DOW FROM($field))";
         }
-
+  
       case 'DOY':
         switch ($this->db_type) {
           case 'mysql':
@@ -647,7 +628,7 @@ class date_sql_handler {
    * @return string
    *   SQL for the where clause for this operation.
    */
-  public function sql_where_date($type, $field, $operator, $value, $adjustment = NULL) {
+  function sql_where_date($type, $field, $operator, $value, $adjustment = NULL) {
     $type = strtoupper($type);
     if (strtoupper($value) == 'NOW') {
       $value = $this->sql_field('NOW', $adjustment);
@@ -693,7 +674,7 @@ class date_sql_handler {
    * @return string
    *   SQL for the where clause for this operation.
    */
-  public function sql_where_extract($part, $field, $operator, $value, $adjustment = NULL) {
+  function sql_where_extract($part, $field, $operator, $value, $adjustment = NULL) {
     if (empty($adjustment) && $this->local_timezone != $this->db_timezone) {
       $field = $this->sql_field($field);
     }
@@ -719,7 +700,7 @@ class date_sql_handler {
    * @return string
    *   SQL for the where clause for this operation.
    */
-  public function sql_where_format($format, $field, $operator, $value, $adjustment = NULL) {
+  function sql_where_format($format, $field, $operator, $value, $adjustment = NULL) {
     if (empty($adjustment) && $this->local_timezone != $this->db_timezone) {
       $field = $this->sql_field($field);
     }
@@ -735,7 +716,7 @@ class date_sql_handler {
    * @param bool $limit
    *   Limit to an array of allowed parts.
    */
-  public function date_parts($limit = NULL) {
+  function date_parts($limit = NULL) {
     $parts = array(
       'year' => t('Year', array(), array('context' => 'datetime')),
       'month' => t('Month', array(), array('context' => 'datetime')),
@@ -768,7 +749,7 @@ class date_sql_handler {
    *   'year', 'month', 'day', 'hour', 'minute', or 'second. Returns info for
    *   all parts if empty.
    */
-  public function part_info($op = NULL, $part = NULL) {
+  function part_info($op = NULL, $part = NULL) {
     $info = array();
     $info['min'] = array(
       'year' => 100,
@@ -845,7 +826,7 @@ class date_sql_handler {
    * the latest possible values if type = 'max', and the current values if type
    * = 'now'.
    */
-  public function complete_date($selected, $type = 'now') {
+  function complete_date($selected, $type = 'now') {
     if (empty($selected)) {
       return '';
     }
@@ -890,7 +871,7 @@ class date_sql_handler {
    * @return string
    *   The conveted help text.
    */
-  public function format_help($format) {
+  function format_help($format) {
     $replace = array(
       'Y' => 'YYYY',
       'm' => 'MM',
@@ -906,7 +887,7 @@ class date_sql_handler {
   /**
    * A function to test the validity of various date parts.
    */
-  public function part_is_valid($value, $type) {
+  function part_is_valid($value, $type) {
     if (!preg_match('/^[0-9]*$/', $value)) {
       return FALSE;
     }
@@ -943,9 +924,9 @@ class date_sql_handler {
   }
 
   /**
-   * @todo Document this.
+   * @todo.
    */
-  public function views_formats($granularity, $type = 'sql') {
+  function views_formats($granularity, $type = 'sql') {
     if (empty($granularity)) {
       return DATE_FORMAT_ISO;
     }
@@ -996,9 +977,9 @@ class date_sql_handler {
   }
 
   /**
-   * @todo Document this.
+   * @todo.
    */
-  public function granularity_form($granularity) {
+  function granularity_form($granularity) {
     $form = array(
       '#title' => t('Granularity'),
       '#type' => 'radios',
@@ -1027,7 +1008,7 @@ class date_sql_handler {
    * @see http://en.wikipedia.org/wiki/ISO_8601#Week_dates
    * @see http://en.wikipedia.org/wiki/ISO_8601#Duration
    */
-  public function arg_parts($argument) {
+  function arg_parts($argument) {
     $values = array();
     // Keep mal-formed arguments from creating errors.
     if (empty($argument) || is_array($argument)) {
@@ -1100,7 +1081,7 @@ class date_sql_handler {
   /**
    * Convert strings like '+1 day' to the ISO equivalent, like 'P1D' .
    */
-  public function arg_replace($arg) {
+  function arg_replace($arg) {
     if (!preg_match('/([+|-])\s?([0-9]{1,32})\s?([day(s)?|week(s)?|month(s)?|year(s)?|hour(s)?|minute(s)?|second(s)?]{1,10})/', $arg, $results)) {
       return str_replace('now', '@', $arg);
     }
@@ -1149,7 +1130,7 @@ class date_sql_handler {
    * Use the parsed values from the ISO argument to determine the granularity
    * of this period.
    */
-  public function arg_granularity($arg) {
+  function arg_granularity($arg) {
     $granularity = '';
     $parts = $this->arg_parts($arg);
     $date = !empty($parts[0]['date']) ? $parts[0]['date'] : (!empty($parts[1]['date']) ? $parts[1]['date'] : array());
@@ -1164,7 +1145,7 @@ class date_sql_handler {
    *
    * Uses the parsed values from the ISO argument.
    */
-  public function arg_range($arg) {
+  function arg_range($arg) {
     // Parse the argument to get its parts.
     $parts = $this->arg_parts($arg);
 
@@ -1231,5 +1212,4 @@ class date_sql_handler {
     $now = date_now();
     return array($now, $now);
   }
-
 }

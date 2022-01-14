@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Definition of views_bootstrap_plugin_style.
@@ -9,7 +8,6 @@
  * Class to define a style plugin handler.
  */
 class ViewsBootstrapThumbnailPluginStyle extends views_plugin_style {
-
   /**
    * Definition.
    */
@@ -30,13 +28,8 @@ class ViewsBootstrapThumbnailPluginStyle extends views_plugin_style {
   /**
    * Form.
    */
-  public function options_form(&$form, &$form_state) {
+  function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
-
-    $form['help'] = array(
-      '#markup' => t('The Bootstrap thumbnails extends the grid display with the thumbnail component to showcase linked images (<a href="!docs">see documentation</a>).', ['!docs' => 'https://www.drupal.org/docs/7/modules/views-bootstrap/thumbnail']),
-      '#weight' => -99,
-    );
 
     $form['alignment'] = array(
       '#type' => 'radios',
@@ -160,5 +153,4 @@ class ViewsBootstrapThumbnailPluginStyle extends views_plugin_style {
       '#default_value' => $this->options['column_class'],
     );
   }
-
 }

@@ -1,10 +1,4 @@
-<?php
-
-/**
- * @file
- * Template to display Bootstrap Carousel images.
- */
-print $image ?>
+<?php print $image ?>
 
 <?php if (!empty($title) || !empty($description)): ?>
   <div class="carousel-caption">

@@ -23,7 +23,7 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
   /**
    * {@inheritdoc}
    */
-  public function init(&$view, &$options) {
+  function init(&$view, &$options) {
     parent::init($view, $options);
     module_load_include('inc', 'date_api', 'date_api_sql');
     $this->date_handler = new date_sql_handler(DATE_UNIX);
@@ -47,7 +47,7 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
   /**
    * {@inheritdoc}
    */
-  public function option_definition() {
+  function option_definition() {
     $options = parent::option_definition();
     $options['granularity'] = array('default' => 'day');
     $options['form_type'] = array('default' => 'date_select');
@@ -61,28 +61,21 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
   /**
    * {@inheritdoc}
    */
-  public function operators() {
-    // Cache the operators that are being added.
-    static $new_operators;
-    if (!isset($new_operators)) {
-      $new_operators = array(
-        'title' => t('Contains'),
-        'method' => 'op_contains',
-        'short' => t('contains'),
-        'values' => 1,
-      );
-    }
-
-    // Add the new 'contains' operators.
+  function operators() {
     $operators = parent::operators();
-    $operators['contains'] = $new_operators;
+    $operators['contains'] = array(
+      'title' => t('Contains'),
+      'method' => 'op_contains',
+      'short' => t('contains'),
+      'values' => 1,
+    );
     return $operators;
   }
 
   /**
    * Helper function to find a default value.
    */
-  public function date_default_value($prefix, $options = NULL) {
+  function date_default_value($prefix, $options = NULL) {
     $default_date = '';
     if (empty($options)) {
       $options = $this->options;
@@ -102,8 +95,7 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
       $date = date_create($default_option, date_default_timezone_object());
       $default_date = !empty($date) ? $date->format($this->format) : '';
 
-      // The format for our filter is in ISO format, but the widget will need
-      // it in datetime format.
+      // The format for our filter is in ISO format, but the widget will need it in datetime format.
       $default_date = str_replace('T', ' ', $default_date);
     }
     // This a fixed date.
@@ -120,7 +112,7 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
    * value we have to see if anything actually was submitted. If nothing has
    * really been submitted, we need to swap in our default value logic.
    */
-  public function get_filter_value($prefix, $input) {
+  function get_filter_value($prefix, $input) {
     // All our date widgets provide datetime values but we use ISO in our SQL
     // for consistency between the way filters and arguments work (arguments
     // cannot contain spaces).
@@ -139,7 +131,7 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
   /**
    * {@inheritdoc}
    */
-  public function accept_exposed_input($input) {
+  function accept_exposed_input($input) {
     if (!empty($this->options['exposed'])) {
       $element_input = $input[$this->options['expose']['identifier']];
       $element_input['value'] = $this->get_filter_value('value', !empty($element_input['value']) ? $element_input['value'] : '');
@@ -158,9 +150,9 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
   }
 
   /**
-   * @todo Document this.
+   * @todo
    */
-  public function op_between($field) {
+  function op_between($field) {
     // Add the delta field to the view so we can later find the value that
     // matched our query.
     list($table_name, $field_name) = explode('.', $field);
@@ -183,23 +175,17 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
     $placeholder_max = $this->placeholder();
     $group = !empty($this->options['date_group']) ? $this->options['date_group'] : $this->options['group'];
     if ($this->operator == 'between') {
-      $this->query->add_where_expression($group, "$field_min >= $placeholder_min AND $field_max <= $placeholder_max", array(
-        $placeholder_min => $min_value,
-        $placeholder_max => $max_value,
-      ));
+      $this->query->add_where_expression($group, "$field_min >= $placeholder_min AND $field_max <= $placeholder_max", array($placeholder_min => $min_value, $placeholder_max => $max_value));
     }
     else {
-      $this->query->add_where_expression($group, "$field_min < $placeholder_min OR $field_max > $placeholder_max", array(
-        $placeholder_min => $min_value,
-        $placeholder_max => $max_value,
-      ));
+      $this->query->add_where_expression($group, "$field_min < $placeholder_min OR $field_max > $placeholder_max", array($placeholder_min => $min_value, $placeholder_max => $max_value));
     }
   }
 
   /**
-   * @todo Document this.
+   * @todo
    */
-  public function op_simple($field) {
+  function op_simple($field) {
     // Add the delta field to the view so we can later find the value that
     // matched our query.
     list($table_name, $field_name) = explode('.', $field);
@@ -220,9 +206,9 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
   }
 
   /**
-   * @todo Document this.
+   * @todo
    */
-  public function op_contains($field) {
+  function op_contains($field) {
     // Add the delta field to the view so we can later find the value that
     // matched our query.
     list($table_name, $field_name) = explode('.', $field);
@@ -242,28 +228,25 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
     $placeholder_min = $this->placeholder();
     $placeholder_max = $this->placeholder();
     $group = !empty($this->options['date_group']) ? $this->options['date_group'] : $this->options['group'];
-    $this->query->add_where_expression($group, "$field_max >= $placeholder_min AND $field_min <= $placeholder_max", array(
-      $placeholder_min => $value,
-      $placeholder_max => $value,
-    ));
+    $this->query->add_where_expression($group, "$field_max >= $placeholder_min AND $field_min <= $placeholder_max", array($placeholder_min => $value, $placeholder_max => $value));
   }
 
   /**
    * {@inheritdoc}
    */
-  public function has_extra_options() {
+  function has_extra_options() {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function widget_options() {
+  function widget_options() {
     $options = array(
       'date_select' => t('Select'),
       'date_text' => t('Text'),
       'date_popup' => t('Popup'),
-    );
+      );
     if (!module_exists('date_popup')) {
       unset($options['date_popup']);
     }
@@ -271,9 +254,9 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
   }
 
   /**
-   * @todo Document this.
+   * @todo
    */
-  public function year_range() {
+  function year_range() {
     $year_range = explode(':', $this->options['year_range']);
     if (substr($this->options['year_range'], 0, 1) == '-' || $year_range[0] < 0) {
       $this_year = date_format(date_now(), 'Y');
@@ -286,14 +269,14 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
   /**
    * {@inheritdoc}
    */
-  public function extra_options_form(&$form, &$form_state) {
+  function extra_options_form(&$form, &$form_state) {
     parent::extra_options_form($form, $form_state);
     $form['form_type'] = array(
       '#type' => 'radios',
       '#title' => t('Date selection form element'),
       '#default_value' => $this->options['form_type'],
       '#options' => $this->widget_options(),
-    );
+      );
 
     $form['granularity'] = $this->date_handler->granularity_form($this->options['granularity']);
     $form['granularity']['#title'] = t('Filter granularity');
@@ -312,7 +295,7 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
       '#default_value' => $this->options['add_delta'],
       '#options' => array('' => t('No'), 'yes' => t('Yes')),
       '#description' => t('Add an identifier to the view to show which multiple value date fields meet the filter criteria. Note: This option may introduce duplicate values into the view. Required when using multiple value fields in a Calendar or any time you want the node view of multiple value dates to display only the values that match the view filters.'),
-      // Only let mere mortals tweak this setting for multi-value fields.
+      // Only let mere mortals tweak this setting for multi-value fields
       '#access' => !empty($field) ? $field['cardinality'] != 1 : 0,
     );
   }
@@ -320,7 +303,7 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
   /**
    * {@inheritdoc}
    */
-  public function extra_options_validate($form, &$form_state) {
+  function extra_options_validate($form, &$form_state) {
     if (!preg_match('/^(?:[\+\-][0-9]{1,4}|[0-9]{4}):(?:[\+\-][0-9]{1,4}|[0-9]{4})$/', $form_state['values']['options']['year_range'])) {
       form_error($form['year_range'], t('Date year range must be in the format -9:+9, 2005:2010, -9:2010, or 2005:+9'));
     }
@@ -329,7 +312,7 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
   /**
    * {@inheritdoc}
    */
-  public function value_form(&$form, &$form_state) {
+  function value_form(&$form, &$form_state) {
     // We use different values than the parent form, so we must construct our
     // own form element.
     $form['value'] = array();
@@ -378,8 +361,6 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
   /**
    * A form element to select date part values.
    *
-   * @param array $form_state
-   *   The data submitted through Form API for this element.
    * @param string $prefix
    *   A prefix for the date values, 'value', 'min', or 'max' .
    * @param string $source
@@ -388,15 +369,15 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
    *   Which element to provide, 'all', 'value', or 'minmax' .
    * @param array $operator_values
    *   An array of the allowed operators for this element.
-   * @param string $identifier
+   * @param array $identifier
    *   Identifier of the exposed element.
-   * @param string $relative_id
-   *   Form element ID to use for the relative date field.
+   * @param array $relative_id
+   *   Form element id to use for the relative date field.
    *
    * @return
    *   The form date part element for this instance.
    */
-  public function date_parts_form(array &$form_state, $prefix, $source, $which, array $operator_values, $identifier, $relative_id) {
+  function date_parts_form(&$form_state, $prefix, $source, $which, $operator_values, $identifier, $relative_id) {
     module_load_include('inc', 'date_api', 'date_api_elements');
     switch ($prefix) {
       case 'min':
@@ -472,15 +453,8 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
       $form[$prefix . '_group'][$prefix . '_choose_input_type'] = array(
         '#title' => check_plain($label),
         '#type' => 'select',
-        '#options' => array(
-          'date' => t('Select a date'),
-          'relative' => ('Enter a relative date'),
-        ),
-        '#attributes' => array(
-          'class' => array(
-            $prefix . '-choose-input-type',
-          ),
-        ),
+        '#options' => array('date' => t('Select a date'), 'relative' => ('Enter a relative date')),
+        '#attributes' => array('class' => array($prefix . '-choose-input-type')),
         '#default_value' => !empty($relative_value) ? 'relative' : 'date',
       );
       $form[$prefix . '_group'][$prefix] = array(
@@ -507,28 +481,22 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
         '#description' => t("Relative dates are computed when the view is displayed. Examples: now, now +1 day, 12AM today, Monday next week. <a href=\"@relative_format\">More examples of relative date formats in the PHP documentation</a>.", array('@relative_format' => 'http://www.php.net/manual/en/datetime.formats.relative.php')),
         '#states' => array(
           'visible' => array(
-            ":input.{$prefix}-choose-input-type" => array(
-              'value' => 'relative',
-            ),
+            ":input.{$prefix}-choose-input-type" => array('value' => 'relative'),
           ),
         ),
       );
       if ($which == 'all') {
         $form[$prefix . '_group']['#pre_render'][] = 'ctools_dependent_pre_render';
-        $form[$prefix . '_group']['#dependency'] = array(
-          $source => $operator_values,
-        );
+        $form[$prefix . '_group']['#dependency'] = array($source => $operator_values);
       }
     }
     return $form;
   }
 
   /**
-   * Return form state input array appropriate to missing, valid, invalid input.
-   *
-   * @todo Document this more thoroughly.
+   * Returns form state input array appropriate to missing, valid, and invalid input.
    */
-  public function input_validate($element, $input) {
+  function input_validate($element, $input) {
     if (!$input) {
       // No input value (e.g. initial form load), set value to NULL so Form API
       // calls the element value_callback routine with FALSE to set the '#value'
@@ -585,7 +553,7 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
    * sense to set it there. That's not the normal method, so we have to manually
    * transfer the selected value back to the option.
    */
-  public function value_validate($form, &$form_state) {
+  function value_validate($form, &$form_state) {
     $options = &$form_state['values']['options'];
 
     if ($options['operator'] == 'between' || $options['operator'] == 'not between') {
@@ -646,7 +614,7 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
   /**
    * Validate that the time values convert to something usable.
    */
-  public function validate_valid_time(&$form, $operator, $value) {
+  function validate_valid_time(&$form, $operator, $value) {
     // Override the core date filter validation.
     // Our date widgets do their own validation.
   }
@@ -654,15 +622,12 @@ class date_views_filter_handler_simple extends views_handler_filter_date {
   /**
    * {@inheritdoc}
    */
-  public function admin_summary() {
+  function admin_summary() {
     $parts = $this->date_handler->date_parts();
     $widget_options = $this->widget_options();
     // If the filter is exposed, display the granularity.
     if ($this->options['exposed']) {
-      return t('<strong>Exposed</strong> @widget @format', array(
-        '@format' => $parts[$this->date_handler->granularity],
-        '@widget' => $widget_options[$this->options['form_type']],
-      ));
+      return t('<strong>Exposed</strong> @widget @format', array('@format' => $parts[$this->date_handler->granularity], '@widget' => $widget_options[$this->options['form_type']]));
     }
     // If not exposed, display the value.
     $output = '';

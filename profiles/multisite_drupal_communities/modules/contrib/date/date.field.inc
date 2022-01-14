@@ -55,16 +55,12 @@ function date_field_formatter_settings_form($field, $instance, $view_mode, $form
     default:
       $form = date_default_formatter_settings_form($field, $instance, $view_mode, $form, $form_state);
   }
-
   $context = array(
     'field' => $field,
     'instance' => $instance,
     'view_mode' => $view_mode,
   );
-
-  // Trigger hook_date_field_formatter_settings_form_alter().
   drupal_alter('date_field_formatter_settings_form', $form, $form_state, $context);
-
   return $form;
 }
 
@@ -88,8 +84,6 @@ function date_field_formatter_settings_summary($field, $instance, $view_mode) {
     'instance' => $instance,
     'view_mode' => $view_mode,
   );
-
-  // Trigger hook_date_field_formatter_settings_summary_alter().
   drupal_alter('date_field_formatter_settings_summary', $summary, $context);
 
   return implode('<br />', $summary);
@@ -148,7 +142,6 @@ function date_field_formatter_view($entity_type, $entity, $field, $instance, $la
     }
   }
 
-  // Trigger hook_date_formatter_pre_view_alter().
   // Give other modules a chance to prepare the entity before formatting it.
   drupal_alter('date_formatter_pre_view', $entity, $variables);
 
@@ -395,19 +388,13 @@ function date_field_validate($entity_type, $entity, $field, $instance, $langcode
           if ($processed == 'value' && $field['settings']['todate'] && !$valid1 && $valid2) {
             $errors[$field['field_name']][$langcode][$delta][] = array(
               'error' => 'value',
-              'message' => t("A 'Start date' date is required for field %field #%delta.", array(
-                '%delta' => $field['cardinality'] ? intval($delta + 1) : '',
-                '%field' => $instance['label'],
-              )),
+              'message' => t("A 'Start date' date is required for field %field #%delta.", array('%delta' => $field['cardinality'] ? intval($delta + 1) : '', '%field' => $instance['label'])),
             );
           }
           if ($processed == 'value2' && $field['settings']['todate'] == 'required' && ($instance['required'] && $valid1 && !$valid2)) {
             $errors[$field['field_name']][$langcode][$delta][] = array(
               'error' => 'value2',
-              'message' => t("An 'End date' is required for field %field #%delta.", array(
-                '%delta' => $field['cardinality'] ? intval($delta + 1) : '',
-                '%field' => $instance['label'],
-              )),
+              'message' => t("An 'End date' is required for field %field #%delta.", array('%delta' => $field['cardinality'] ? intval($delta + 1) : '', '%field' => $instance['label'])),
             );
           }
         }
@@ -450,8 +437,6 @@ function date_field_insert($entity_type, $entity, $field, $instance, $langcode, 
     'instance' => $instance,
     'langcode' => $langcode,
   );
-
-  // Trigger hook_date_field_insert_alter().
   drupal_alter('date_field_insert', $items, $context);
 }
 
@@ -466,7 +451,6 @@ function date_field_update($entity_type, $entity, $field, $instance, $langcode, 
     'instance' => $instance,
     'langcode' => $langcode,
   );
-  // Trigger hook_date_field_update_alter().
   drupal_alter('date_field_update', $items, $context);
 }
 

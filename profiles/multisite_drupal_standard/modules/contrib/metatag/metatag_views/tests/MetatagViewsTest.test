@@ -25,7 +25,7 @@ class MetatagViewsTest extends MetatagTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp(array $modules = array()) {
+  function setUp(array $modules = array()) {
     $modules[] = 'views';
 
     // Enable the hidden submodule to manage some default configs.

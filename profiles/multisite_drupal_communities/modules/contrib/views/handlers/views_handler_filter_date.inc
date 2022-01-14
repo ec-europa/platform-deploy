@@ -141,10 +141,7 @@ class views_handler_filter_date extends views_handler_filter_numeric {
     }
 
     // Store this because it will get overwritten.
-    $type = '';
-    if (is_array($this->value)) {
-      $type = $this->value['type'];
-    }
+    $type = $this->value['type'];
     $rc = parent::accept_exposed_input($input);
 
     // Don't filter if value(s) are empty.
@@ -168,10 +165,7 @@ class views_handler_filter_date extends views_handler_filter_numeric {
     }
 
     // Restore what got overwritten by the parent.
-    if (is_array($this->value)) {
-      $this->value['type'] = $type;
-    }
-
+    $this->value['type'] = $type;
     return $rc;
   }
 

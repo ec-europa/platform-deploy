@@ -18,16 +18,14 @@ class MetatagPanelsI18nTest extends MetatagTestBase {
       'name' => 'Metatag:Panels i18n tests',
       'description' => 'Test Metatag integration via the Metatag:Panels module.',
       'group' => 'Metatag',
-      'dependencies' => array(
-        'ctools', 'devel', 'token', 'panels', 'page_manager', 'i18n',
-      ),
+      'dependencies' => array('ctools', 'devel', 'token', 'panels', 'page_manager', 'i18n'),
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setUp(array $modules = array()) {
+  function setUp(array $modules = array()) {
     $modules[] = 'panels';
     $modules[] = 'metatag_panels';
 

@@ -11,8 +11,7 @@
 function metatag_context_context_overview() {
   $contexts = context_enabled_contexts(TRUE);
 
-  $header = array(t('Name'), t('Paths'), t('Weight'), t('Operations'));
-  $rows = array();
+  $header = array(t('Name'), t('Paths'), t('Weight'), t('Operations'));  $rows = array();
 
   $caption = t('Values assigned here inherit from the <a href="@url" title="Edit the global default meta tags.">global defaults</a>. Use the weight to specify the order the context meta tags run.', array('@url' => url('admin/config/search/metatags/config/global')));
 
@@ -34,11 +33,7 @@ function metatag_context_context_overview() {
   }
   uasort($rows, 'drupal_sort_weight');
 
-  return theme('table', array(
-    'header' => $header,
-    'rows' => $rows,
-    'caption' => $caption,
-  ));
+  return theme('table', array('header' => $header, 'rows' => $rows, 'caption' => $caption));
 }
 
 /**

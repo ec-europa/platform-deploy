@@ -63,31 +63,28 @@ class date_views_plugin_pager extends views_plugin_pager {
   /**
    * {@inheritdoc}
    */
-  public function use_count_query() {
+  function use_count_query() {
     return FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function has_more_records() {
+  function has_more_records() {
     return FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function summary_title() {
-    return t("Position: @position, format: @format.", array(
-      '@position' => $this->options['pager_position'],
-      '@format' => $this->options['link_format'],
-    ));
+  function summary_title() {
+    return t("Position: @position, format: @format.", array('@position' => $this->options['pager_position'], '@format' => $this->options['link_format']));
   }
 
   /**
    * {@inheritdoc}
    */
-  public function option_definition() {
+  function option_definition() {
     $options = parent::option_definition();
     $options['date_id'] = array('default' => 'date');
     $options['pager_position'] = array('default' => 'top');
@@ -101,7 +98,7 @@ class date_views_plugin_pager extends views_plugin_pager {
   /**
    * {@inheritdoc}
    */
-  public function options_form(&$form, &$form_state) {
+  function options_form(&$form, &$form_state) {
     $form['markup']['#markup'] = t('This pager works together with a Date or Content date field contextual filter. If a Date filter has been added to the view, this pager will provide back/next paging to match the granularity of that filter (i.e. paging by year, month, week, or day). The filter must also be configured to use a DATE default value. If there is no Date contextual filter on this view, or if it has not been set to use a default date, the pager will not appear.');
     $form['date_id'] = array(
       '#title' => t('Date identifier'),
@@ -113,11 +110,7 @@ class date_views_plugin_pager extends views_plugin_pager {
     $form['pager_position'] = array(
       '#title' => t('Pager position'),
       '#type' => 'select',
-      '#options' => array(
-        'bottom' => t('Bottom'),
-        'top' => t('Top'),
-        'both' => t('Both'),
-      ),
+      '#options' => array('bottom' => t('Bottom'), 'top' => t('Top'), 'both' => t('Both')),
       '#description' => t('Where to place the date pager, on the top, bottom, or both top and bottom of the content.'),
       '#default_value' => $this->options['pager_position'],
       '#required' => TRUE,
@@ -125,10 +118,7 @@ class date_views_plugin_pager extends views_plugin_pager {
     $form['link_format'] = array(
       '#title' => t('Link format'),
       '#type' => 'select',
-      '#options' => array(
-        'pager' => t('Pager'),
-        'clean' => t('Clean URL'),
-      ),
+      '#options' => array('pager' => t('Pager'), 'clean' => t('Clean URL')),
       '#description' => t("The format for pager link urls. With the Pager format, the links look like 'calendar/?date=2020-05'. The Clean URL format links look like 'calendar/2020-05'. The Clean format links look nicer but the Pager format links are likely to work better if the calendar is used in blocks or panels."),
       '#default_value' => $this->options['link_format'],
       '#required' => TRUE,
@@ -148,7 +138,7 @@ class date_views_plugin_pager extends views_plugin_pager {
   /**
    * {@inheritdoc}
    */
-  public function query() {
+  function query() {
     // By fetching our data from the exposed input, it is possible to feed
     // pager data through some method other than $_GET.
     $input = $this->view->get_exposed_input();
@@ -284,8 +274,7 @@ class date_views_plugin_pager extends views_plugin_pager {
         }
         // Write the date_info properties that depend on the current value.
         $this->view->date_info->year = date_format($argument->min_date, 'Y');
-        $this->view->date_info->month = date_format($argument->min_date, 'n');
-        ;
+        $this->view->date_info->month = date_format($argument->min_date, 'n');;
         $this->view->date_info->day = date_format($argument->min_date, 'j');
         $this->view->date_info->week = date_week(date_format($argument->min_date, DATE_FORMAT_DATE));
         $this->view->date_info->date_range = $argument->date_range;
@@ -306,7 +295,7 @@ class date_views_plugin_pager extends views_plugin_pager {
   /**
    * {@inheritdoc}
    */
-  public function set_argument_value($argument, $value) {
+  function set_argument_value($argument, $value) {
     $argument->argument = $value;
     $argument->date_range = $argument->date_handler->arg_range($value);
     $argument->min_date = $argument->date_range[0];
@@ -319,7 +308,7 @@ class date_views_plugin_pager extends views_plugin_pager {
   /**
    * {@inheritdoc}
    */
-  public function set_argument_placeholders($placeholders, $mindate, $maxdate, $query, $format) {
+  function set_argument_placeholders($placeholders, $mindate, $maxdate, $query, $format) {
     $count = count($placeholders);
     foreach ($query->where as $group => $data) {
       foreach ($data['conditions'] as $delta => $condition) {
@@ -342,7 +331,7 @@ class date_views_plugin_pager extends views_plugin_pager {
   /**
    * Determine if we have moved outside the valid date range for this argument.
    */
-  public function date_forbid($argument) {
+  function date_forbid($argument) {
     // See if we're outside the allowed date range for our argument.
     $limit = date_range_years($argument->options['year_range']);
     if (date_format($argument->min_date, 'Y') < $limit[0] || date_format($argument->max_date, 'Y') > $limit[1]) {
@@ -354,7 +343,7 @@ class date_views_plugin_pager extends views_plugin_pager {
   /**
    * {@inheritdoc}
    */
-  public function pre_render(&$result) {
+  function pre_render(&$result) {
     // Load theme functions for the pager.
     module_load_include('inc', 'date_views', 'theme/theme');
   }
@@ -362,7 +351,7 @@ class date_views_plugin_pager extends views_plugin_pager {
   /**
    * {@inheritdoc}
    */
-  public function render($input) {
+  function render($input) {
     // This adds all of our template suggestions based upon the view name and
     // display id.
     $pager_theme = views_theme_functions('date_views_pager', $this->view, $this->display);

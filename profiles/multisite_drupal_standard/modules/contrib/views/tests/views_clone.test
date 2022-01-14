@@ -33,8 +33,8 @@ class ViewsCloneTest extends ViewsSqlTest {
   /**
    * {@inheritdoc}
    */
-  public function setUp(array $modules = array()) {
-    parent::setUp($modules);
+  public function setUp() {
+    parent::setUp();
 
     $vocabulary = taxonomy_vocabulary_machine_name_load('tags');
     $this->term = $this->createTerm($vocabulary);

@@ -25,7 +25,7 @@ class MetatagBulkRevertTest extends MetatagTestBase {
   /**
    * Test the Bulk Revert functionality works.
    */
-  public function testBulkRevertPageLoads() {
+  function testBulkRevertPageLoads() {
     $this->adminUser = $this->createAdminUser();
     $this->drupalLogin($this->adminUser);
 

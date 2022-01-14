@@ -943,10 +943,6 @@ class view extends views_db_object {
       $this->base_database = $views_data['table']['base']['database'];
     }
 
-    if (empty($this->display_handler)) {
-      return FALSE;
-    }
-
     // Load the options.
     $query_options = $this->display_handler->get_option('query');
 
@@ -1004,7 +1000,6 @@ class view extends views_db_object {
     // Let the handlers interact with each other if they really want.
     $this->_pre_query();
 
-    $exposed_form = FALSE;
     if ($this->display_handler->uses_exposed()) {
       $exposed_form = $this->display_handler->get_plugin('exposed_form');
       // (1) Record the errors before rendering the exposed form widgets.
@@ -1085,7 +1080,7 @@ class view extends views_db_object {
     $this->style_plugin->query($this->display_handler->use_group_by());
 
     // Allow exposed form to affect the query.
-    if ($exposed_form) {
+    if (isset($exposed_form)) {
       $exposed_form->query();
     }
 

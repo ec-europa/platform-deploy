@@ -1925,11 +1925,6 @@ class DatabaseTransactionOutOfOrderException extends Exception { }
 class InvalidMergeQueryException extends Exception {}
 
 /**
- * Exception thrown if an invalid query condition is specified.
- */
-class InvalidQueryConditionOperatorException extends Exception {}
-
-/**
  * Exception thrown if an insert query specifies a field twice.
  *
  * It is not allowed to specify a field as default and insert field, this
@@ -2262,7 +2257,6 @@ class DatabaseStatementBase extends PDOStatement implements DatabaseStatementInt
     $this->setFetchMode(PDO::FETCH_OBJ);
   }
 
-  #[\ReturnTypeWillChange]
   public function execute($args = array(), $options = array()) {
     if (isset($options['fetch'])) {
       if (is_string($options['fetch'])) {
@@ -2400,27 +2394,23 @@ class DatabaseStatementEmpty implements Iterator, DatabaseStatementInterface {
   }
 
   /* Implementations of Iterator. */
-  #[\ReturnTypeWillChange]
+
   public function current() {
     return NULL;
   }
 
-  #[\ReturnTypeWillChange]
   public function key() {
     return NULL;
   }
 
-  #[\ReturnTypeWillChange]
   public function rewind() {
     // Nothing to do: our DatabaseStatement can't be rewound.
   }
 
-  #[\ReturnTypeWillChange]
   public function next() {
     // Do nothing, since this is an always-empty implementation.
   }
 
-  #[\ReturnTypeWillChange]
   public function valid() {
     return FALSE;
   }

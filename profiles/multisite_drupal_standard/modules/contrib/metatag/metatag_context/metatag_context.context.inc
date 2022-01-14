@@ -9,11 +9,7 @@
  * Context reaction for Metatag.
  */
 class metatag_context_reaction extends context_reaction {
-
-  /**
-   * {@inheritdoc}
-   */
-  public function options_form($context) {
+  function options_form($context) {
     $form = array();
 
     // Don't care about the instance name, the data is being managed by
@@ -120,7 +116,7 @@ class metatag_context_reaction extends context_reaction {
   /**
    * Output a list of active contexts.
    */
-  public function execute() {
+  function execute() {
     $output = &drupal_static('metatag_context');
 
     if (!isset($output)) {
@@ -152,10 +148,7 @@ class metatag_context_reaction extends context_reaction {
           $weight = isset($context->reactions['metatag_context_reaction']['weight'])
             ? $context->reactions['metatag_context_reaction']['weight']
             : 0;
-          $instance_names[] = array(
-            'name' => $context->name,
-            'weight' => $weight,
-          );
+          $instance_names[] = array('name' => $context->name, 'weight' => $weight);
         }
       }
 
