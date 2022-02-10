@@ -1486,6 +1486,9 @@ function _wysiwyg_process_include($module, $identifier, $path, $hook) {
 
 /**
  * Return an install note about deprecation.
+ *
+ * @param array $editor
+ *   The definition for a an editor plugin with a 'deprecation message' key.
  */
 function wysiwyg_deprecation_install_note($editor) {
   $output = '<p class="warning">' . $editor['deprecation message'] . '</p>';

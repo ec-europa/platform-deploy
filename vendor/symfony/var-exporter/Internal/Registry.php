@@ -27,11 +27,11 @@ class Registry
     public static $cloneable = [];
     public static $instantiableWithoutConstructor = [];
 
+    public $classes = [];
+
     public function __construct(array $classes)
     {
-        foreach ($classes as $i => $class) {
-            $this->$i = $class;
-        }
+        $this->classes = $classes;
     }
 
     public static function unserialize($objects, $serializables)
@@ -89,8 +89,18 @@ class Registry
                 $proto = $reflector->implementsInterface('Serializable') && !method_exists($class, '__unserialize') ? 'C:' : 'O:';
                 if ('C:' === $proto && !$reflector->getMethod('unserialize')->isInternal()) {
                     $proto = null;
-                } elseif (false === $proto = @unserialize($proto.\strlen($class).':"'.$class.'":0:{}')) {
-                    throw new NotInstantiableTypeException($class);
+                } else {
+                    try {
+                        $proto = @unserialize($proto.\strlen($class).':"'.$class.'":0:{}');
+                    } catch (\Exception $e) {
+                        if (__FILE__ !== $e->getFile()) {
+                            throw $e;
+                        }
+                        throw new NotInstantiableTypeException($class, $e);
+                    }
+                    if (false === $proto) {
+                        throw new NotInstantiableTypeException($class);
+                    }
                 }
             }
             if (null !== $proto && !$proto instanceof \Throwable && !$proto instanceof \Serializable && !method_exists($class, '__sleep') && (\PHP_VERSION_ID < 70400 || !method_exists($class, '__serialize'))) {
