@@ -11,13 +11,13 @@
 
 namespace Symfony\Component\Cache\Tests\Adapter;
 
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\SimpleCacheAdapter;
 use Symfony\Component\Cache\Simple\ArrayCache;
-use Symfony\Component\Cache\Simple\FilesystemCache;
+use Symfony\Component\Cache\Simple\Psr6Cache;
 
 /**
  * @group time-sensitive
- * @group legacy
  */
 class SimpleCacheAdapterTest extends AdapterTestCase
 {
@@ -27,7 +27,7 @@ class SimpleCacheAdapterTest extends AdapterTestCase
 
     public function createCachePool($defaultLifetime = 0)
     {
-        return new SimpleCacheAdapter(new FilesystemCache(), '', $defaultLifetime);
+        return new SimpleCacheAdapter(new Psr6Cache(new FilesystemAdapter()), '', $defaultLifetime);
     }
 
     public function testValidCacheKeyWithNamespace()

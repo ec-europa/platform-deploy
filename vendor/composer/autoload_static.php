@@ -4,16 +4,16 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitec2734c4d42e9a26c0ceff5b451e28c4
+class ComposerStaticInit964a931d33a30ddb3b6476d789e9ab9a
 {
     public static $files = array (
-        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
-        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
-        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
-        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
+        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
@@ -36,8 +36,7 @@ class ComposerStaticInitec2734c4d42e9a26c0ceff5b451e28c4
             'Symfony\\Polyfill\\Intl\\Normalizer\\' => 33,
             'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
             'Symfony\\Polyfill\\Ctype\\' => 23,
-            'Symfony\\Contracts\\Service\\' => 26,
-            'Symfony\\Contracts\\Cache\\' => 24,
+            'Symfony\\Contracts\\' => 18,
             'Symfony\\Component\\Yaml\\' => 23,
             'Symfony\\Component\\VarExporter\\' => 30,
             'Symfony\\Component\\Validator\\' => 28,
@@ -50,6 +49,7 @@ class ComposerStaticInitec2734c4d42e9a26c0ceff5b451e28c4
         ),
         'P' => 
         array (
+            'Psr\\SimpleCache\\' => 16,
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Container\\' => 14,
@@ -109,13 +109,9 @@ class ComposerStaticInitec2734c4d42e9a26c0ceff5b451e28c4
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
         ),
-        'Symfony\\Contracts\\Service\\' => 
+        'Symfony\\Contracts\\' => 
         array (
-            0 => __DIR__ . '/..' . '/symfony/service-contracts',
-        ),
-        'Symfony\\Contracts\\Cache\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/cache-contracts',
+            0 => __DIR__ . '/..' . '/symfony/contracts',
         ),
         'Symfony\\Component\\Yaml\\' => 
         array (
@@ -152,6 +148,10 @@ class ComposerStaticInitec2734c4d42e9a26c0ceff5b451e28c4
         'SuperClosure\\' => 
         array (
             0 => __DIR__ . '/..' . '/jeremeamia/superclosure/src',
+        ),
+        'Psr\\SimpleCache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/simple-cache/src',
         ),
         'Psr\\Log\\' => 
         array (
@@ -268,10 +268,10 @@ class ComposerStaticInitec2734c4d42e9a26c0ceff5b451e28c4
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitec2734c4d42e9a26c0ceff5b451e28c4::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitec2734c4d42e9a26c0ceff5b451e28c4::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitec2734c4d42e9a26c0ceff5b451e28c4::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitec2734c4d42e9a26c0ceff5b451e28c4::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit964a931d33a30ddb3b6476d789e9ab9a::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit964a931d33a30ddb3b6476d789e9ab9a::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit964a931d33a30ddb3b6476d789e9ab9a::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit964a931d33a30ddb3b6476d789e9ab9a::$classMap;
 
         }, null, ClassLoader::class);
     }

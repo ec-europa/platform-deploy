@@ -16,9 +16,9 @@ use Symfony\Component\Cache\Adapter\RedisAdapter;
 
 class PredisAdapterTest extends AbstractRedisAdapterTest
 {
-    public static function setUpBeforeClass(): void
+    public static function setupBeforeClass()
     {
-        parent::setUpBeforeClass();
+        parent::setupBeforeClass();
         self::$redis = new \Predis\Client(['host' => getenv('REDIS_HOST')]);
     }
 
@@ -34,7 +34,7 @@ class PredisAdapterTest extends AbstractRedisAdapterTest
 
         $params = [
             'scheme' => 'tcp',
-            'host' => $redisHost,
+            'host' => 'localhost',
             'port' => 6379,
             'persistent' => 0,
             'timeout' => 3,

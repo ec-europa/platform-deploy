@@ -28,7 +28,7 @@ class PhpFilesAdapterTest extends AdapterTestCase
         return new PhpFilesAdapter('sf-cache');
     }
 
-    public static function tearDownAfterClass(): void
+    public static function tearDownAfterClass()
     {
         FilesystemAdapterTest::rmdir(sys_get_temp_dir().'/symfony-cache');
     }

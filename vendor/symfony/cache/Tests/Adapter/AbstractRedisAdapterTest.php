@@ -28,7 +28,7 @@ abstract class AbstractRedisAdapterTest extends AdapterTestCase
         return new RedisAdapter(self::$redis, str_replace('\\', '.', __CLASS__), $defaultLifetime);
     }
 
-    public static function setUpBeforeClass(): void
+    public static function setupBeforeClass()
     {
         if (!\extension_loaded('redis')) {
             self::markTestSkipped('Extension redis required.');
@@ -39,7 +39,7 @@ abstract class AbstractRedisAdapterTest extends AdapterTestCase
         }
     }
 
-    public static function tearDownAfterClass(): void
+    public static function tearDownAfterClass()
     {
         self::$redis = null;
     }

@@ -21,7 +21,7 @@ use Symfony\Contracts\Cache\CallbackInterface;
 
 abstract class AdapterTestCase extends CachePoolTest
 {
-    protected function setUp(): void
+    protected function setUp()
     {
         parent::setUp();
 
@@ -87,8 +87,8 @@ abstract class AdapterTestCase extends CachePoolTest
         $cache = $this->createCachePool(0, __FUNCTION__);
 
         $v = $cache->get('k1', function () use (&$counter, $cache) {
-            $cache->get('k2', function () use (&$counter) { return ++$counter; });
-            $v = $cache->get('k2', function () use (&$counter) { return ++$counter; }); // ensure the callback is called once
+            $v = $cache->get('k2', function () use (&$counter) { return ++$counter; });
+            $v = $cache->get('k2', function () use (&$counter) { return ++$counter; });
 
             return $v;
         });
@@ -109,7 +109,7 @@ abstract class AdapterTestCase extends CachePoolTest
         $cache->deleteItem('foo');
         $cache->get('foo', function ($item) {
             $item->expiresAfter(10);
-            usleep(999000);
+            sleep(1);
 
             return 'bar';
         });
@@ -120,7 +120,7 @@ abstract class AdapterTestCase extends CachePoolTest
             CacheItem::METADATA_EXPIRY => 9.5 + time(),
             CacheItem::METADATA_CTIME => 1000,
         ];
-        $this->assertEqualsWithDelta($expected, $item->getMetadata(), .6, 'Item metadata should embed expiry and ctime.');
+        $this->assertEquals($expected, $item->getMetadata(), 'Item metadata should embed expiry and ctime.', .6);
     }
 
     public function testDefaultLifeTime()
@@ -254,9 +254,14 @@ abstract class AdapterTestCase extends CachePoolTest
     }
 }
 
-class NotUnserializable
+class NotUnserializable implements \Serializable
 {
-    public function __wakeup()
+    public function serialize()
+    {
+        return serialize(123);
+    }
+
+    public function unserialize($ser)
     {
         throw new \Exception(__CLASS__);
     }

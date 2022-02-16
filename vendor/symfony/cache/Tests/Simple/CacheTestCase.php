@@ -17,7 +17,7 @@ use Symfony\Component\Cache\PruneableInterface;
 
 abstract class CacheTestCase extends SimpleCacheTest
 {
-    protected function setUp(): void
+    protected function setUp()
     {
         parent::setUp();
 
@@ -132,9 +132,14 @@ abstract class CacheTestCase extends SimpleCacheTest
     }
 }
 
-class NotUnserializable
+class NotUnserializable implements \Serializable
 {
-    public function __wakeup()
+    public function serialize()
+    {
+        return serialize(123);
+    }
+
+    public function unserialize($ser)
     {
         throw new \Exception(__CLASS__);
     }

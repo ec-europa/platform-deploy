@@ -26,7 +26,7 @@ trait FilesystemCommonTrait
     private function init($namespace, $directory)
     {
         if (!isset($directory[0])) {
-            $directory = sys_get_temp_dir().\DIRECTORY_SEPARATOR.'symfony-cache';
+            $directory = sys_get_temp_dir().'/symfony-cache';
         } else {
             $directory = realpath($directory) ?: $directory;
         }
@@ -55,8 +55,8 @@ trait FilesystemCommonTrait
     {
         $ok = true;
 
-        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->directory, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::CURRENT_AS_PATHNAME), \RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
-            $ok = ($this->doUnlink($file) || !file_exists($file)) && $ok;
+        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->directory, \FilesystemIterator::SKIP_DOTS)) as $file) {
+            $ok = ($file->isDir() || $this->doUnlink($file) || !file_exists($file)) && $ok;
         }
 
         return $ok;
@@ -101,11 +101,11 @@ trait FilesystemCommonTrait
         }
     }
 
-    private function getFile($id, $mkdir = false, string $directory = null)
+    private function getFile($id, $mkdir = false)
     {
         // Use MD5 to favor speed over security, which is not an issue here
         $hash = str_replace('/', '-', base64_encode(hash('md5', static::class.$id, true)));
-        $dir = ($directory ?? $this->directory).strtoupper($hash[0].\DIRECTORY_SEPARATOR.$hash[1].\DIRECTORY_SEPARATOR);
+        $dir = $this->directory.strtoupper($hash[0].\DIRECTORY_SEPARATOR.$hash[1].\DIRECTORY_SEPARATOR);
 
         if ($mkdir && !file_exists($dir)) {
             @mkdir($dir, 0777, true);
