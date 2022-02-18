@@ -44,7 +44,7 @@ class PhpArrayAdapter implements AdapterInterface, CacheInterface, PruneableInte
         $this->file = $file;
         $this->pool = $fallbackPool;
         $this->createCacheItem = \Closure::bind(
-            function ($key, $value, $isHit) {
+            static function ($key, $value, $isHit) {
                 $item = new CacheItem();
                 $item->key = $key;
                 $item->value = $value;
@@ -61,22 +61,17 @@ class PhpArrayAdapter implements AdapterInterface, CacheInterface, PruneableInte
      * This adapter takes advantage of how PHP stores arrays in its latest versions.
      *
      * @param string                 $file         The PHP file were values are cached
-     * @param CacheItemPoolInterface $fallbackPool Fallback when opcache is disabled
+     * @param CacheItemPoolInterface $fallbackPool A pool to fallback on when an item is not hit
      *
      * @return CacheItemPoolInterface
      */
     public static function create($file, CacheItemPoolInterface $fallbackPool)
     {
-        // Shared memory is available in PHP 7.0+ with OPCache enabled
-        if (filter_var(ini_get('opcache.enable'), FILTER_VALIDATE_BOOLEAN)) {
-            if (!$fallbackPool instanceof AdapterInterface) {
-                $fallbackPool = new ProxyAdapter($fallbackPool);
-            }
-
-            return new static($file, $fallbackPool);
+        if (!$fallbackPool instanceof AdapterInterface) {
+            $fallbackPool = new ProxyAdapter($fallbackPool);
         }
 
-        return $fallbackPool;
+        return new static($file, $fallbackPool);
     }
 
     /**
@@ -288,12 +283,12 @@ class PhpArrayAdapter implements AdapterInterface, CacheInterface, PruneableInte
     /**
      * @throws \ReflectionException When $class is not found and is required
      *
-     * @internal
+     * @internal to be removed in Symfony 5.0
      */
     public static function throwOnRequiredClass($class)
     {
         $e = new \ReflectionException("Class $class does not exist");
-        $trace = $e->getTrace();
+        $trace = debug_backtrace();
         $autoloadFrame = [
             'function' => 'spl_autoload_call',
             'args' => [$class],
