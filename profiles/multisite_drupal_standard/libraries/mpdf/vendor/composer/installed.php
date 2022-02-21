@@ -1,7 +1,7 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => 'dev-release-2.6.18',
-        'version' => 'dev-release-2.6.18',
+        'pretty_version' => 'dev-2f2f7ccf034b75029a9c408eea28021a312f0a9a',
+        'version' => 'dev-2f2f7ccf034b75029a9c408eea28021a312f0a9a',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,8 +11,8 @@
     ),
     'versions' => array(
         'mpdf/mpdf' => array(
-            'pretty_version' => 'dev-release-2.6.18',
-            'version' => 'dev-release-2.6.18',
+            'pretty_version' => 'dev-2f2f7ccf034b75029a9c408eea28021a312f0a9a',
+            'version' => 'dev-2f2f7ccf034b75029a9c408eea28021a312f0a9a',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
