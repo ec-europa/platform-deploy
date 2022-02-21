@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '3b767e4bf8485b938c5deccceaca50118335cfed',
+        'reference' => '2f2f7ccf034b75029a9c408eea28021a312f0a9a',
         'name' => '__root__',
         'dev' => false,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '3b767e4bf8485b938c5deccceaca50118335cfed',
+            'reference' => '2f2f7ccf034b75029a9c408eea28021a312f0a9a',
             'dev_requirement' => false,
         ),
         'apereo/phpcas' => array(
