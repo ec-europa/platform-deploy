@@ -54,6 +54,7 @@ return array(
     'CAS_Request_RequestInterface' => $vendorDir . '/apereo/phpcas/source/CAS/Request/RequestInterface.php',
     'CAS_Session_PhpSession' => $vendorDir . '/apereo/phpcas/source/CAS/Session/PhpSession.php',
     'CAS_TypeMismatchException' => $vendorDir . '/apereo/phpcas/source/CAS/TypeMismatchException.php',
+    'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Normalizer' => $vendorDir . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
     'Stringable' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
     'UnhandledMatchError' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
