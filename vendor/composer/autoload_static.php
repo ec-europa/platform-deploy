@@ -4,12 +4,12 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit48c206e8360cbac958bc296fa2f09313
+class ComposerStaticInitd37e4d9efc5d90bce618a5d9951b86b9
 {
     public static $files = array (
-        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
@@ -36,9 +36,9 @@ class ComposerStaticInit48c206e8360cbac958bc296fa2f09313
             'Symfony\\Polyfill\\Intl\\Normalizer\\' => 33,
             'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
             'Symfony\\Polyfill\\Ctype\\' => 23,
+            'Symfony\\Contracts\\Translation\\' => 30,
             'Symfony\\Contracts\\Service\\' => 26,
             'Symfony\\Contracts\\Cache\\' => 24,
-            'Symfony\\Component\\Yaml\\' => 23,
             'Symfony\\Component\\VarExporter\\' => 30,
             'Symfony\\Component\\Validator\\' => 28,
             'Symfony\\Component\\Translation\\' => 30,
@@ -46,7 +46,6 @@ class ComposerStaticInit48c206e8360cbac958bc296fa2f09313
             'Symfony\\Component\\EventDispatcher\\' => 34,
             'Symfony\\Component\\DomCrawler\\' => 29,
             'Symfony\\Component\\Cache\\' => 24,
-            'SuperClosure\\' => 13,
         ),
         'P' => 
         array (
@@ -54,7 +53,6 @@ class ComposerStaticInit48c206e8360cbac958bc296fa2f09313
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Container\\' => 14,
             'Psr\\Cache\\' => 10,
-            'PhpParser\\' => 10,
         ),
         'L' => 
         array (
@@ -109,6 +107,10 @@ class ComposerStaticInit48c206e8360cbac958bc296fa2f09313
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
         ),
+        'Symfony\\Contracts\\Translation\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/translation-contracts',
+        ),
         'Symfony\\Contracts\\Service\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/service-contracts',
@@ -116,10 +118,6 @@ class ComposerStaticInit48c206e8360cbac958bc296fa2f09313
         'Symfony\\Contracts\\Cache\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/cache-contracts',
-        ),
-        'Symfony\\Component\\Yaml\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/yaml',
         ),
         'Symfony\\Component\\VarExporter\\' => 
         array (
@@ -149,10 +147,6 @@ class ComposerStaticInit48c206e8360cbac958bc296fa2f09313
         array (
             0 => __DIR__ . '/..' . '/symfony/cache',
         ),
-        'SuperClosure\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/jeremeamia/superclosure/src',
-        ),
         'Psr\\Log\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
@@ -168,10 +162,6 @@ class ComposerStaticInit48c206e8360cbac958bc296fa2f09313
         'Psr\\Cache\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/cache/src',
-        ),
-        'PhpParser\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
         ),
         'League\\Plates\\' => 
         array (
@@ -269,10 +259,10 @@ class ComposerStaticInit48c206e8360cbac958bc296fa2f09313
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit48c206e8360cbac958bc296fa2f09313::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit48c206e8360cbac958bc296fa2f09313::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit48c206e8360cbac958bc296fa2f09313::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit48c206e8360cbac958bc296fa2f09313::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitd37e4d9efc5d90bce618a5d9951b86b9::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitd37e4d9efc5d90bce618a5d9951b86b9::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitd37e4d9efc5d90bce618a5d9951b86b9::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitd37e4d9efc5d90bce618a5d9951b86b9::$classMap;
 
         }, null, ClassLoader::class);
     }

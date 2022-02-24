@@ -1,22 +1,22 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => 'dev-e1d89758f4388ab20641033bbb0324bd8530be93',
-        'version' => 'dev-e1d89758f4388ab20641033bbb0324bd8530be93',
+        'pretty_version' => 'dev-release-2.6',
+        'version' => 'dev-release-2.6',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'e1d89758f4388ab20641033bbb0324bd8530be93',
+        'reference' => '7664381693637b51ef39ad27784c04d3089ec9d3',
         'name' => 'mpdf/mpdf',
         'dev' => false,
     ),
     'versions' => array(
         'mpdf/mpdf' => array(
-            'pretty_version' => 'dev-e1d89758f4388ab20641033bbb0324bd8530be93',
-            'version' => 'dev-e1d89758f4388ab20641033bbb0324bd8530be93',
+            'pretty_version' => 'dev-release-2.6',
+            'version' => 'dev-release-2.6',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'e1d89758f4388ab20641033bbb0324bd8530be93',
+            'reference' => '7664381693637b51ef39ad27784c04d3089ec9d3',
             'dev_requirement' => false,
         ),
         'myclabs/deep-copy' => array(
