@@ -55,13 +55,16 @@ class CacheItemTest extends TestCase
     public function testTag()
     {
         $item = new CacheItem();
+        $r = new \ReflectionProperty($item, 'isTaggable');
+        $r->setAccessible(true);
+        $r->setValue($item, true);
 
         $this->assertSame($item, $item->tag('foo'));
         $this->assertSame($item, $item->tag(['bar', 'baz']));
 
-        \call_user_func(\Closure::bind(function () use ($item) {
-            $this->assertSame(['foo' => 'foo', 'bar' => 'bar', 'baz' => 'baz'], $item->tags);
-        }, $this, CacheItem::class));
+        (\Closure::bind(function () use ($item) {
+            $this->assertSame(['foo' => 'foo', 'bar' => 'bar', 'baz' => 'baz'], $item->newMetadata[CacheItem::METADATA_TAGS]);
+        }, $this, CacheItem::class))();
     }
 
     /**
@@ -72,6 +75,22 @@ class CacheItemTest extends TestCase
         $this->expectException('Symfony\Component\Cache\Exception\InvalidArgumentException');
         $this->expectExceptionMessage('Cache tag');
         $item = new CacheItem();
+        $r = new \ReflectionProperty($item, 'isTaggable');
+        $r->setAccessible(true);
+        $r->setValue($item, true);
+
         $item->tag($tag);
+    }
+
+    public function testNonTaggableItem()
+    {
+        $this->expectException('Symfony\Component\Cache\Exception\LogicException');
+        $this->expectExceptionMessage('Cache item "foo" comes from a non tag-aware pool: you cannot tag it.');
+        $item = new CacheItem();
+        $r = new \ReflectionProperty($item, 'key');
+        $r->setAccessible(true);
+        $r->setValue($item, 'foo');
+
+        $item->tag([]);
     }
 }
