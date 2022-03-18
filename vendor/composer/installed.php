@@ -1,22 +1,22 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => 'dev-456548b0f55ab9378571c7e814a308549379d2ec',
-        'version' => 'dev-456548b0f55ab9378571c7e814a308549379d2ec',
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '456548b0f55ab9378571c7e814a308549379d2ec',
+        'reference' => 'eb00b585de8e53400e4ac5c2e84a9752261f11eb',
         'name' => '__root__',
         'dev' => false,
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => 'dev-456548b0f55ab9378571c7e814a308549379d2ec',
-            'version' => 'dev-456548b0f55ab9378571c7e814a308549379d2ec',
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '456548b0f55ab9378571c7e814a308549379d2ec',
+            'reference' => 'eb00b585de8e53400e4ac5c2e84a9752261f11eb',
             'dev_requirement' => false,
         ),
         'apereo/phpcas' => array(
