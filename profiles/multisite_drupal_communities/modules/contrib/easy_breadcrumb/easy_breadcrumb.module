@@ -28,6 +28,7 @@ function easy_breadcrumb_permission() {
  * Implements hook_init().
  */
 function easy_breadcrumb_init() {
+  require_once 'includes/EasyBreadcrumbConstants.inc';
   global $theme;
   $site_theme = variable_get('theme_default', 'bartik');
   $admin_theme = variable_get('admin_theme', 'seven');
