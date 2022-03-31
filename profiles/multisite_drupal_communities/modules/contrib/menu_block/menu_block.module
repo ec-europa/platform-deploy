@@ -5,7 +5,7 @@
  */
 
 /**
- * Denotes that the tree should use the menu picked by the curent page.
+ * Denotes that the tree should use the menu picked by the current page.
  */
 define('MENU_TREE__CURRENT_PAGE_MENU', '_active');
 
@@ -241,6 +241,7 @@ function menu_block_default_config() {
     'admin_title' => '',
     'level' => 1,
     'follow' => 0,
+    'display_empty' => 0,
     'depth' => 0,
     'depth_relative' => 0,
     'expanded' => 0,
@@ -532,13 +533,18 @@ function menu_tree_build(array &$config) {
   $data['subject_array'] = $title;
   $data['subject'] = drupal_render($title);
   $data['content'] = array();
-  if (!empty($tree) && $output = menu_block_tree_output($tree, $config)) {
-    $data['content']['#content'] = $output;
-    $data['content']['#theme'] = array(
-      'menu_block_wrapper__' . str_replace('-', '_', $config['delta']),
-      'menu_block_wrapper__' . str_replace('-', '_', $config['menu_name']),
-      'menu_block_wrapper'
-    );
+  if (!empty($tree) || !empty($config['display_empty'])) {
+    if ($output = menu_block_tree_output($tree, $config)) {
+      $data['content']['#content'] = $output;
+      $data['content']['#theme'] = array(
+        'menu_block_wrapper__' . str_replace('-', '_', $config['delta']),
+        'menu_block_wrapper__' . str_replace('-', '_', $config['menu_name']),
+        'menu_block_wrapper'
+      );
+    }
+    else {
+      $data['content']['#content'] = NULL;
+    }
     $data['content']['#config'] = $config;
     $data['content']['#delta'] = $config['delta'];
   }
@@ -614,6 +620,11 @@ function menu_block_set_title($item = NULL) {
  *   The menu tree.
  */
 function menu_tree_add_active_path(array &$tree) {
+  // Return if there are no menu items.
+  if (!$tree) {
+    return;
+  }
+
   // Grab any menu item to find the menu_name for this tree.
   $menu_item = current($tree);
   $tree_with_trail = menu_tree_page_data($menu_item['link']['menu_name']);
@@ -849,7 +860,7 @@ function menu_block_tree_output(array &$tree, array $config = array()) {
     // the active class accordingly. But local tasks do not appear in menu
     // trees, so if the current path is a local task, and this link is its
     // tab root, then we have to set the class manually.
-    if ($data['link']['href'] == $router_item['tab_root_href'] && $data['link']['href'] != $_GET['q']) {
+    if ($router_item && $data['link']['href'] == $router_item['tab_root_href'] && $data['link']['href'] != $_GET['q']) {
       $data['link']['localized_options']['attributes']['class'][] = 'active';
     }
 

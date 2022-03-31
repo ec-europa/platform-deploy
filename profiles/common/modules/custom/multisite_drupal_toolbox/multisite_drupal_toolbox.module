@@ -1256,7 +1256,6 @@ function form_security_settings($form, &$form_state) {
  *     will become "http://example.org/settings".
  */
 function multisite_drupal_toolbox_linkit_scan_url($url, $field) {
-
   global $base_url;
   // Note this function has been heavily modified.
   // To see original see linkit.module.
@@ -1450,7 +1449,12 @@ function multisite_drupal_toolbox_mail_alter(&$message) {
     // Recipient_user is an alias of user.
     $data['recipient_user'] = $recipient_user;
     $aliases = array('recipient_user' => 'user');
-    $body = $message['body']['0'];
+    if (isset($message['body']['body'])) {
+      $body = $message['body']['body'];
+    }
+    else {
+      $body = $message['body']['0'];
+    }
     // Replace token.
     $message['body']['0'] = token_replace($body, $data, array('aliases' => $aliases));
   }

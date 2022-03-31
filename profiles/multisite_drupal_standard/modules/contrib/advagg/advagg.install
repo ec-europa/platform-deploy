@@ -34,6 +34,8 @@ function advagg_install() {
     // Change utf8_bin to ascii_bin.
     advagg_install_change_table_collation($table, $fields, 'ascii_bin', $schema[$table]['fields']);
   }
+  // New install gets a locked admin section.
+  variable_set('advagg_admin_mode', 0);
 }
 
 /**
@@ -62,6 +64,22 @@ function advagg_enable() {
     }
     if (isset($stat_js['uid']) && $stat_public['gid'] != $stat_js['gid']) {
       @chgrp($stat_js[0], $stat_public['gid']);
+    }
+  }
+  if (drupal_is_cli()) {
+    // Remove advagg and public dirs if empty and running from command line.
+    list($css_path, $js_path) = advagg_get_root_files_dir();
+    $files = file_scan_directory($css_path[1], '/.*/');
+    if (empty($files)) {
+      rmdir($css_path[1]);
+    }
+    $files = file_scan_directory($js_path[1], '/.*/');
+    if (empty($files)) {
+      rmdir($js_path[1]);
+    }
+    $files = file_scan_directory('public://', '/.*/');
+    if (empty($files)) {
+      rmdir('public://');
     }
   }
 
@@ -1002,17 +1020,40 @@ function advagg_install_fast_checks($phase = 'runtime') {
   }
 
   // Check that the menu router handler is working.
+  // Paths will vary based on s3fs no_rewrite_cssjs setting.
+  if (advagg_s3fs_evaluate_no_rewrite_cssjs(FALSE)) {
+    // If using s3fs and no_rewrite_cssjs is not set, external paths are needed.
+    // Use $css_path[0] and $js_path[0] since they contain the scheme.
+    $menu_path_key = 0;
+    $menu_css_path = trim(parse_url(file_create_url($css_path[0] . '/test.css'), PHP_URL_PATH));
+    if (strpos($menu_css_path, $GLOBALS['base_path']) === 0) {
+      $menu_css_path = substr($menu_css_path, strlen($GLOBALS['base_path']));
+    }
+    $menu_js_path = trim(parse_url(file_create_url($js_path[0] . '/test.js'), PHP_URL_PATH));
+    if (strpos($menu_js_path, $GLOBALS['base_path']) === 0) {
+      $menu_js_path = substr($menu_js_path, strlen($GLOBALS['base_path']));
+    }
+  }
+  else {
+    // Determine paths if not using s3fs, or no_rewrite_cssjs is set.
+    // Use $css_path[1] and $js_path[1] since they are without schemes.
+    $menu_path_key = 1;
+    $menu_css_path = $css_path[1] . '/test.css';
+    $menu_js_path = $js_path[1] . '/test.js';
+  }
+
+  // Use the paths set above to check menu router handler.
   $advagg_async_generation_menu_issue = FALSE;
-  if (!file_uri_scheme($css_path[1])) {
-    $item_css = menu_get_item($css_path[1] . '/test.css');
+  if (!file_uri_scheme($css_path[$menu_path_key])) {
+    $item_css = menu_get_item($menu_css_path);
     if (empty($item_css['page_callback'])
       || strpos($item_css['page_callback'], 'advagg') === FALSE
     ) {
       $advagg_async_generation_menu_issue = TRUE;
     }
   }
-  if (!file_uri_scheme($js_path[1])) {
-    $item_js = menu_get_item($js_path[1] . '/test.js');
+  if (!file_uri_scheme($js_path[$menu_path_key])) {
+    $item_js = menu_get_item($menu_js_path);
     if (empty($item_js['page_callback'])
       || strpos($item_js['page_callback'], 'advagg') === FALSE
     ) {
@@ -1203,7 +1244,18 @@ function advagg_requirements($phase) {
     return $requirements;
   }
 
-  // Make sure http requests will work correctly.
+  // Make sure outbound http requests will work.
+  $request = drupal_http_request('https://www.google.com/robots.txt', array('timeout' => 8));
+  if (empty($request->data) || $request->code != 200) {
+    $requirements['advagg_drupal_http_request_failure'] = array(
+      'title' => $t('Adv CSS/JS Agg - drupal_http_request test'),
+      'severity' => REQUIREMENT_WARNING,
+      'value' => $t('An external request for https://www.google.com/robots.txt could not be fulfilled.'),
+      'description' => $t('If drupal_http_request does not work, the tests that AdvAgg performs may not be accurate.'),
+    );
+  }
+
+  // Make sure http requests to advagg will work.
   advagg_install_check_via_http($requirements);
 
   // Check that file writes happen without any errors.
@@ -1285,9 +1337,8 @@ function advagg_install_check_via_http(array &$requirements) {
   $types = array('css', 'js');
   $config_path = advagg_admin_config_root_path();
 
-  if (module_exists('s3fs') && is_callable('_s3fs_get_config')) {
-    $s3fs_config = _s3fs_get_config();
-  }
+  // Get s3fs no_rewrite_cssjs setting.
+  $s3fs_no_rewrite_cssjs = advagg_get_s3fs_config('no_rewrite_cssjs');
 
   // Make sure we get an advagg fast 404.
   $mod_url = FALSE;
@@ -1305,10 +1356,11 @@ function advagg_install_check_via_http(array &$requirements) {
       // Set arguments for drupal_http_request().
       // Make a 404 request to the advagg menu callback.
       $url = file_create_url($url_path . '/' . $type . ADVAGG_SPACE . REQUEST_TIME . '.' . $type);
-      $options = array();
+      $options = array('timeout' => 8);
 
       if (empty($url)) {
-        $filename = advagg_install_get_first_advagg_file($file_path, $type);
+        $filename_path = (!is_null($s3fs_no_rewrite_cssjs) && empty($s3fs_no_rewrite_cssjs)) ? $url_path : $file_path;
+        $filename = advagg_install_get_first_advagg_file($filename_path, $type);
         $url = file_create_url($url_path . '/' . $filename);
         $end = strpos($url, $filename);
         if ($end !== FALSE) {
@@ -1544,10 +1596,10 @@ location ~* files/advagg_(?:css|js)/ {
             )),
           );
         }
-        elseif (module_exists('s3fs')
+        elseif (!is_null($s3fs_no_rewrite_cssjs)
+            && !empty($s3fs_no_rewrite_cssjs)
             && !empty($request->headers['server'])
             && $request->headers['server'] === 'AmazonS3'
-            && !empty($s3fs_config['no_rewrite_cssjs'])
         ) {
           $severity = REQUIREMENT_WARNING;
           if (module_exists('httprl') && variable_get('advagg_use_httprl', ADVAGG_USE_HTTPRL)) {
@@ -1599,7 +1651,8 @@ location ~* files/advagg_(?:css|js)/ {
       $file_path = $js_path[1];
     }
     // Get filename.
-    $filename = advagg_install_get_first_advagg_file($file_path, $type);
+    $filename_path = (!is_null($s3fs_no_rewrite_cssjs) && empty($s3fs_no_rewrite_cssjs)) ? $url_path : $file_path;
+    $filename = advagg_install_get_first_advagg_file($filename_path, $type);
 
     // Skip if filename is empty.
     if (empty($filename)) {
@@ -1634,6 +1687,7 @@ location ~* files/advagg_(?:css|js)/ {
       ),
       'version' => '1.0',
       '#advagg_path' => "{$file_path}/{$filename}",
+      'timeout' => 8,
     );
     // Test http 1.0.
     $old_requirements = $requirements;
@@ -1664,6 +1718,7 @@ location ~* files/advagg_(?:css|js)/ {
           'Accept-Encoding' => 'br',
         ),
         'version' => '1.0',
+        'timeout' => 8,
       );
       // Test http 1.0.
       $old_requirements = $requirements;
@@ -1714,6 +1769,10 @@ function advagg_install_chk_urls(array &$requirements, array $urls, array $optio
   list($css_path, $js_path) = advagg_get_root_files_dir();
   $config_path = advagg_admin_config_root_path();
 
+  $options += array(
+    'timeout' => 8,
+  );
+
   $is_apache = FALSE;
   if (stripos($_SERVER['SERVER_SOFTWARE'], 'apache') !== FALSE || function_exists('apache_get_modules')) {
     $is_apache = TRUE;
@@ -1731,6 +1790,26 @@ function advagg_install_chk_urls(array &$requirements, array $urls, array $optio
       else {
         $url = 'http:' . $url;
       }
+    }
+
+    // Before sending the request when using s3fs, check if the file exists.
+    if (module_exists('s3fs') && !file_exists($url_path . '/' . $filename)) {
+      if (module_exists('httprl') && variable_get('advagg_use_httprl', ADVAGG_USE_HTTPRL)) {
+        $httprl_message = 'This may be due to an issue with the HTTPRL module or its configuration. ';
+      }
+      else {
+        $httprl_message = '';
+      }
+      $requirements['advagg_' . $type . '_missing' . $key] = array(
+        'title' => $t('Adv CSS/JS Agg - file does not exist'),
+        'severity' => REQUIREMENT_WARNING,
+        'value' => $t('Unable to find %type files.', array('%type' => $type)),
+        'description' => $t('The AdvAgg database records and S3 files are not in sync. The file referenced in the database to perform a test cannot be found in the S3 file system. @httprl_messageFile URL: <pre>@file</pre>', array(
+          '@httprl_message' => $httprl_message,
+          '@file' => $url,
+        )),
+      );
+      continue;
     }
 
     // Send request.
@@ -1977,7 +2056,8 @@ function advagg_install_chk_urls(array &$requirements, array $urls, array $optio
           }
         }
         // Check for double gzip compression.
-        if (@gzinflate(substr($request->data, 10)) !== FALSE || @gzinflate($request->data) !== FALSE) {
+        $contents = @file_get_contents($options['#advagg_path']);
+        if ($contents !== $request->data && (@gzinflate(substr($request->data, 10)) !== FALSE || @gzinflate($request->data) !== FALSE)) {
           $config_path = advagg_admin_config_root_path();
           $description = '';
           if (variable_get('advagg_gzip', ADVAGG_GZIP)) {
@@ -2002,7 +2082,7 @@ function advagg_install_chk_urls(array &$requirements, array $urls, array $optio
             'description' => $description,
           );
         }
-        if (is_callable('brotli_uncompress') && @brotli_uncompress($request->data) !== FALSE) {
+        if ($contents !== $request->data && (is_callable('brotli_uncompress') && @brotli_uncompress($request->data) !== FALSE)) {
           $config_path = advagg_admin_config_root_path();
           $description = '';
           if (variable_get('advagg_brotli', ADVAGG_BROTLI)) {
@@ -2339,8 +2419,15 @@ function advagg_install_get_first_advagg_file($directory, $type) {
       && variable_get('advagg_brotli', ADVAGG_BROTLI)
     ) {
       $gzip_filename = $scanned_directory[$key + 2];
-      // Skip if the next file is not a .br file.
-      if (strcmp($filename . '.br', $br_filename) !== 0) {
+      // Skip if the next file does not have a .br extension.
+      // This can occur if:
+      // - File is not .br compressed, or,
+      // - Using s3fs module and only .br compression is set. In
+      //   this case, the advagg_advadgg_save_aggregate_alter()
+      //   function will not add a file extension.
+      if (strcmp($filename . '.br', $br_filename) !== 0
+        && (!module_exists('s3fs')
+          || (module_exists('s3fs') && variable_get('advagg_gzip', ADVAGG_GZIP)))) {
         continue;
       }
     }
@@ -2352,8 +2439,15 @@ function advagg_install_get_first_advagg_file($directory, $type) {
     }
 
     if (variable_get('advagg_gzip', ADVAGG_GZIP)) {
-      // Skip if the next file is not a .gz file.
-      if (strcmp($filename . '.gz', $gzip_filename) !== 0) {
+      // Skip if the next file does not have a .gz extension.
+      // This can occur if:
+      // - File is not .gz compressed, or,
+      // - Using s3fs module and either:
+      //   - Only .gz compression option is set or,
+      //   - Both .gz and .br compression options are set. In
+      //     this case, the advagg_advagg_save_aggregate_alter()
+      //     function creates a .gz file by default.
+      if (strcmp($filename . '.gz', $gzip_filename) !== 0 && !module_exists('s3fs')) {
         continue;
       }
     }
@@ -2508,7 +2602,7 @@ function advagg_install_apache_mod_loaded($mod) {
     }
   }
   elseif (is_callable('phpinfo') && FALSE === strpos(ini_get('disable_functions'), 'phpinfo')) {
-    // Use static so we don't run phpinfo mutiple times.
+    // Use static so we don't run phpinfo multiple times.
     $phpinfo = &drupal_static(__FUNCTION__);
     if (empty($phpinfo)) {
       // Use phpinfo to get the info if apache_get_modules doesn't exist.
