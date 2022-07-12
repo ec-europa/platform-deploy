@@ -950,6 +950,10 @@ function _nexteuropa_varnish_trim_base_path($path, $base_path = NULL) {
  *   The file entity.
  */
 function _nexteuropa_varnish_flush_file(&$file) {
+  if (_nexteuropa_varnish_prevent_purge()) {
+    return;
+  }
+
   $scheme = file_uri_scheme($file->uri);
   $base_name = drupal_basename($file->uri);
 
