@@ -1717,7 +1717,7 @@ function workbench_moderation_states_next($current_state, $account = NULL, $node
  */
 function workbench_moderation_moderate($node, $state) {
   // Set the current and new moderation state value.
-  $node->original = $node;
+  $node->original = node_load($node->nid);
 
   // Ensure that published nodes are flagged properly.
   if ($state == workbench_moderation_state_published()) {

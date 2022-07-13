@@ -5,6 +5,8 @@
  * Multi_user install file.
  */
 
+module_load_include('inc', 'multi_user_blog', 'multi_user_blog.install');
+
 /**
  * Implements hook_disable().
  */
@@ -29,7 +31,91 @@ function multi_user_blog_disable() {
  * Use soft config for blog comment form location.
  */
 function multi_user_blog_install() {
-  multisite_config_service('comment')->setThreadingCommentForContentType('blog_post', 0);
+  // Use soft config for blog_post comment form location.
+  multisite_config_service('comment')->setReplyFormCommentForContentType('blog_post', 0);
+  // Use soft config to allow comments from authenticated users.
+  multisite_config_service('comment')->setDefaultCommentForContentType('blog_post', 'open');
+  // Use soft config to allow blog_post comment threading.
+  multisite_config_service('comment')->setThreadingCommentForContentType('blog_post', 1);
+  // Use soft config for blog_post comment title.
+  multisite_config_service('comment')->setTitleCommentForContentType('blog_post', 0);
+  // Use soft config for preview blog_post comment.
+  multisite_config_service('comment')->setPreviewCommentForContentType('blog_post', 1);
+  // Use soft config to set number of comments per page.
+  multisite_config_service('comment')->setNumberCommentForContentType('blog_post', '50');
+  // Use soft config for anonymous comments.
+  multisite_config_service('comment')->setAnonymousCommentForContentType('blog_post', 2);
+
+  // Use soft config for comment_body field instance.
+  _multi_user_blog_comment_body_field_instance_add();
+
+  $cem_permissions = array(
+    'view rate results page',
+  );
+  $all_permissions = array_keys(module_invoke_all('permission'));
+  multisite_config_service('user')->grantPermission(CCE_BASIC_CONFIG_CEM_ROLE_NAME, array_intersect($all_permissions, $cem_permissions));
+
+  // Add a fivestar rate widget.
+  $path = drupal_get_path('module', 'rate');
+  $rate_widgets = array(
+    (object) array(
+      'name' => 'rate_fivestar',
+      'tag' => 'vote',
+      'title' => 'rate_fivestar',
+      'node_types' => array(),
+      'comment_types' => array(),
+      'options' => array(
+        0 => array(
+          0 => '0',
+          1 => '1',
+        ),
+        1 => array(
+          0 => '25',
+          1 => '2',
+        ),
+        2 => array(
+          0 => '50',
+          1 => '3',
+        ),
+        3 => array(
+          0 => '75',
+          1 => '4',
+        ),
+        4 => array(
+          0 => '100',
+          1 => '5',
+        ),
+      ),
+      'template' => 'fivestar',
+      'node_display' => '2',
+      'teaser_display' => FALSE,
+      'comment_display' => '2',
+      'node_display_mode' => '1',
+      'teaser_display_mode' => '1',
+      'comment_display_mode' => '1',
+      'roles' => array(
+        2 => '2',
+        3 => 0,
+        1 => 0,
+        4 => 0,
+        5 => 0,
+      ),
+      'allow_voting_by_author' => 1,
+      'noperm_behaviour' => '1',
+      'displayed' => '1',
+      'displayed_just_voted' => '2',
+      'description' => '',
+      'description_in_compact' => TRUE,
+      'delete_vote_on_second_click' => '0',
+      'use_source_translation' => TRUE,
+      'value_type' => 'percent',
+      'theme' => 'rate_template_fivestar',
+      'css' => $path . '/templates/fivestar/fivestar.css',
+      'js' => $path . '/templates/fivestar/fivestar.js',
+      'translate' => TRUE,
+    ),
+  );
+  variable_set('rate_widgets', $rate_widgets);
 }
 
 /**
@@ -50,4 +136,15 @@ function multi_user_blog_enable() {
 
   // Activation message.
   drupal_set_message(t('multi user blogs feature is now enable on your site.'));
+}
+
+/**
+ * Set new value for multi_user_blog feature in database.
+ *
+ * Variables from comments settings must be removed from hard config.
+ * Recreate the value of the feature in database without the variable.
+ */
+function multi_user_blog_update_7001() {
+  module_load_include('inc', 'features', "features.export");
+  features_set_signature('multi_user_blog', 'variable');
 }

@@ -350,9 +350,9 @@ function media_colorbox_field_formatter_view($entity_type, $entity, $field, $ins
         $colorbox_caption_field_name = variable_get($colorbox_caption_var_name);
         $colorbox_field_caption_value = NULL;
 
-        if (isset($items[0]{$colorbox_caption_field_name})){
-          $colorbox_field_caption_value = isset($items[0]{$colorbox_caption_field_name}['und'][0]) ?
-          $items[0]{$colorbox_caption_field_name}['und'][0]['value'] : NULL;
+        if (isset($items[0][$colorbox_caption_field_name])){
+          $colorbox_field_caption_value = isset($items[0][$colorbox_caption_field_name]['und'][0]) ?
+          $items[0][$colorbox_caption_field_name]['und'][0]['value'] : NULL;
         }
       }
       $render_array = array();
@@ -384,9 +384,9 @@ function media_colorbox_field_formatter_view($entity_type, $entity, $field, $ins
     $colorbox_caption_field_name = variable_get($colorbox_caption_var_name);
     $colorbox_field_caption_value = NULL;
 
-    if (isset($items[0]{$colorbox_caption_field_name})){
-      $colorbox_field_caption_value = isset($items[0]{$colorbox_caption_field_name}['und'][0]) ?
-      $items[0]{$colorbox_caption_field_name}['und'][0]['value'] : NULL;
+    if (isset($items[0][$colorbox_caption_field_name])){
+      $colorbox_field_caption_value = isset($items[0][$colorbox_caption_field_name]['und'][0]) ?
+      $items[0][$colorbox_caption_field_name]['und'][0]['value'] : NULL;
     }
     //get attributes for item to use on item and wrapping link
     $class = isset($items[0]['override']['class']) ? $items[0]['override']['class'] : NULL;
@@ -414,9 +414,9 @@ function media_colorbox_field_formatter_view($entity_type, $entity, $field, $ins
       $colorbox_caption_field_name = variable_get($colorbox_caption_var_name);
       $colorbox_field_caption_value = NULL;
       
-      if (isset($item{$colorbox_caption_field_name})){
-        $colorbox_field_caption_value = isset($item{$colorbox_caption_field_name}['und'][0]) ?
-        $item{$colorbox_caption_field_name}['und'][0]['value'] : NULL;
+      if (isset($item[$colorbox_caption_field_name])){
+        $colorbox_field_caption_value = isset($item[$colorbox_caption_field_name]['und'][0]) ?
+        $item[$colorbox_caption_field_name]['und'][0]['value'] : NULL;
       }
       $element[$item['fid']] = array(
         '#theme' => 'media_colorbox',
@@ -453,8 +453,8 @@ function media_colorbox_form_file_entity_file_display_form_alter(&$form, &$form_
 function media_colorbox_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
   if($form['#entity_type'] != 'file'){
     foreach($form['#fields'] as $field_name){
-      if(isset($form['fields']{$field_name}['format']) && isset($form['fields']{$field_name}['format']['type']['#options']['colorbox_link'])){
-        unset($form['fields']{$field_name}['format']['type']['#options']['colorbox_link']);
+      if(isset($form['fields'][$field_name]['format']) && isset($form['fields'][$field_name]['format']['type']['#options']['colorbox_link'])){
+        unset($form['fields'][$field_name]['format']['type']['#options']['colorbox_link']);
       }
     }
   }
