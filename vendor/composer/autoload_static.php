@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit2d4e65dde69c77236b451c3046f5be36
+class ComposerStaticInit4598c567baf3db0a9f5660276e0beb79
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -39,6 +39,7 @@ class ComposerStaticInit2d4e65dde69c77236b451c3046f5be36
             'Symfony\\Contracts\\Translation\\' => 30,
             'Symfony\\Contracts\\Service\\' => 26,
             'Symfony\\Contracts\\Cache\\' => 24,
+            'Symfony\\Component\\Yaml\\' => 23,
             'Symfony\\Component\\VarExporter\\' => 30,
             'Symfony\\Component\\Validator\\' => 28,
             'Symfony\\Component\\Translation\\' => 30,
@@ -46,6 +47,7 @@ class ComposerStaticInit2d4e65dde69c77236b451c3046f5be36
             'Symfony\\Component\\EventDispatcher\\' => 34,
             'Symfony\\Component\\DomCrawler\\' => 29,
             'Symfony\\Component\\Cache\\' => 24,
+            'SuperClosure\\' => 13,
         ),
         'P' => 
         array (
@@ -53,6 +55,7 @@ class ComposerStaticInit2d4e65dde69c77236b451c3046f5be36
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Container\\' => 14,
             'Psr\\Cache\\' => 10,
+            'PhpParser\\' => 10,
         ),
         'L' => 
         array (
@@ -119,6 +122,10 @@ class ComposerStaticInit2d4e65dde69c77236b451c3046f5be36
         array (
             0 => __DIR__ . '/..' . '/symfony/cache-contracts',
         ),
+        'Symfony\\Component\\Yaml\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/yaml',
+        ),
         'Symfony\\Component\\VarExporter\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/var-exporter',
@@ -147,6 +154,10 @@ class ComposerStaticInit2d4e65dde69c77236b451c3046f5be36
         array (
             0 => __DIR__ . '/..' . '/symfony/cache',
         ),
+        'SuperClosure\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jeremeamia/superclosure/src',
+        ),
         'Psr\\Log\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
@@ -162,6 +173,10 @@ class ComposerStaticInit2d4e65dde69c77236b451c3046f5be36
         'Psr\\Cache\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/cache/src',
+        ),
+        'PhpParser\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
         ),
         'League\\Plates\\' => 
         array (
@@ -250,6 +265,7 @@ class ComposerStaticInit2d4e65dde69c77236b451c3046f5be36
         'CAS_TypeMismatchException' => __DIR__ . '/..' . '/apereo/phpcas/source/CAS/TypeMismatchException.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
+        'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
         'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
         'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
         'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
@@ -259,10 +275,10 @@ class ComposerStaticInit2d4e65dde69c77236b451c3046f5be36
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit2d4e65dde69c77236b451c3046f5be36::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit2d4e65dde69c77236b451c3046f5be36::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit2d4e65dde69c77236b451c3046f5be36::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit2d4e65dde69c77236b451c3046f5be36::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit4598c567baf3db0a9f5660276e0beb79::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit4598c567baf3db0a9f5660276e0beb79::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit4598c567baf3db0a9f5660276e0beb79::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit4598c567baf3db0a9f5660276e0beb79::$classMap;
 
         }, null, ClassLoader::class);
     }

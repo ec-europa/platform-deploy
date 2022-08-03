@@ -3,7 +3,7 @@
         'name' => 'mpdf/mpdf',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '5a3b18189225603de26dfd20880ad559a041dbb6',
+        'reference' => '896adc9be77eeb4826ce94f437fdef03cadce847',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'mpdf/mpdf' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '5a3b18189225603de26dfd20880ad559a041dbb6',
+            'reference' => '896adc9be77eeb4826ce94f437fdef03cadce847',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
