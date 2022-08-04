@@ -32,24 +32,22 @@ Drupal.fullcalendar.fullcalendar.prototype.dateChange = function (fields) {
 };
 
 Drupal.fullcalendar.fullcalendar.prototype.submitInit = function (settings) {
-  if (Drupal.settings.views.ajaxViews !== undefined) {
-    var domId = this.dom_id.replace('.view-dom-id-', '');
-    var ajaxView = Drupal.settings.views.ajaxViews['views_dom_id:' + domId];
-    this.tm = settings.theme ? 'ui' : 'fc';
-    var $submit = this.$calendar.find('.views-exposed-form .views-submit-button');
-    if (this.$calendar.find('.views-exposed-widget').length == settings.fullcalendar_fields_count + 1) {
-      $submit.hide();
-    }
-    var $submit_button = $submit.find('.form-submit');
-    this.$submit = new Drupal.ajax('main', $submit_button[0], {
-      event: 'fullcalendar_submit',
-      url: Drupal.settings.basePath + 'fullcalendar/ajax/results/' + settings.view_name + '/' + settings.view_display + '/' + ajaxView.view_args,
-      fullcalendar: this,
-      submit: {dom_id: domId}
-    });
-
-    $submit_button.click($.proxy(this.fetchEvents, this));
+  var domId = this.dom_id.replace('.view-dom-id-', '');
+  var ajaxView = Drupal.settings.views.ajaxViews['views_dom_id:' + domId];
+  this.tm = settings.theme ? 'ui' : 'fc';
+  var $submit = this.$calendar.find('.views-exposed-form .views-submit-button');
+  if (this.$calendar.find('.views-exposed-widget').length == settings.fullcalendar_fields_count + 1) {
+    $submit.hide();
   }
+  var $submit_button = $submit.find('.form-submit');
+  this.$submit = new Drupal.ajax('main', $submit_button[0], {
+    event: 'fullcalendar_submit',
+    url: Drupal.settings.basePath + 'fullcalendar/ajax/results/' + settings.view_name + '/' + settings.view_display + '/' + ajaxView.view_args,
+    fullcalendar: this,
+    submit: {dom_id: domId}
+  });
+
+  $submit_button.click($.proxy(this.fetchEvents, this));
 };
 
 Drupal.fullcalendar.fullcalendar.prototype.fetchEvents = function () {
