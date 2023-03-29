@@ -171,6 +171,10 @@ function registration_field_formatter_info() {
       'label' => t('Registration Type'),
       'field types' => array('registration'),
     ),
+    'registration_default' => array(
+      'label' => t('Registration Default'),
+      'field types' => array('registration'),
+    ),
   );
 }
 

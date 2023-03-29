@@ -300,12 +300,11 @@ function nexteuropa_webtools_field_default_field_instances() {
           ),
         ),
       ),
-      'defer_on_js_to_load' => array(
-        'nexteuropa_webtools_smartloader_prurl' => 'nexteuropa_webtools_smartloader_prurl',
-      ),
-      'entity_translation_sync' => FALSE,
       'js_to_load' => array(
-        'nexteuropa_webtools_smartloader_prurl' => 'nexteuropa_webtools_smartloader_prurl',
+        'nexteuropa_smartloader_prurl' => 'nexteuropa_smartloader_prurl',
+      ),
+      'defer_on_js_to_load' => array(
+        'nexteuropa_smartloader_prurl' => 'nexteuropa_smartloader_prurl',
       ),
       'text_processing' => 0,
       'user_register_form' => FALSE,

@@ -1393,7 +1393,10 @@ function _form_validate(&$elements, &$form_state, $form_id = NULL) {
         // identical to the empty option's value, we reset the element's value
         // to NULL to trigger the regular #required handling below.
         // @see form_process_select()
-        elseif ($elements['#type'] == 'select' && !$elements['#multiple'] && $elements['#required'] && !isset($elements['#default_value']) && $elements['#value'] === $elements['#empty_value']) {
+        elseif ($elements['#type'] == 'select' && $elements['#required']
+        && (!array_key_exists('#multiple', $elements) || !$elements['#multiple'])
+        && !isset($elements['#default_value'])
+        && $elements['#value'] === $elements['#empty_value']) {
           $elements['#value'] = NULL;
           form_set_value($elements, NULL, $form_state);
         }
@@ -2084,7 +2087,7 @@ function _form_builder_handle_input_element($form_id, &$element, &$form_state) {
   // #access=FALSE on an element usually allow access for some users, so forms
   // submitted with drupal_form_submit() may bypass access restriction and be
   // treated as high-privilege users instead.
-  $process_input = empty($element['#disabled']) && (($form_state['programmed'] && $form_state['programmed_bypass_access_check']) || ($form_state['process_input'] && (!isset($element['#access']) || $element['#access'])));
+  $process_input = empty($element['#disabled']) && ($element['#type'] !== 'value') && (($form_state['programmed'] && $form_state['programmed_bypass_access_check']) || ($form_state['process_input'] && (!isset($element['#access']) || $element['#access'])));
 
   // Set the element's #value property.
   if (!isset($element['#value']) && !array_key_exists('#value', $element)) {
@@ -2106,7 +2109,7 @@ function _form_builder_handle_input_element($form_id, &$element, &$form_state) {
       if (!$input_exists && !$form_state['rebuild'] && !$form_state['programmed']) {
         // Add the necessary parent keys to $form_state['input'] and sets the
         // element's input value to NULL.
-        drupal_array_set_nested_value($form_state['input'], $element['#parents'], NULL);
+        drupal_array_set_nested_value($form_state['input'], $element['#parents'], NULL, TRUE);
         $input_exists = TRUE;
       }
       // If we have input for the current element, assign it to the #value
@@ -3923,6 +3926,11 @@ function theme_button($variables) {
   $element = $variables['element'];
   $element['#attributes']['type'] = 'submit';
   element_set_attributes($element, array('id', 'name', 'value'));
+
+  // Remove name attribute, if empty, for W3C compliance.
+  if (isset($element['#attributes']['name']) && $element['#attributes']['name'] === '') {
+    unset($element['#attributes']['name']);
+  }
 
   $element['#attributes']['class'][] = 'form-' . $element['#button_type'];
   if (!empty($element['#attributes']['disabled'])) {
