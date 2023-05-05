@@ -30,7 +30,7 @@
  *   or an empty array to use default values.
  * @param $form
  *   An array representing the form that the editing element will be attached
- *   to. 
+ *   to.
  * @param $form_state
  *   An array containing the current state of the form.
  * @param $get_delta
@@ -82,7 +82,7 @@ function field_default_form($entity_type, $entity, $field, $instance, $langcode,
   }
 
   // If field module handles multiple values for this form element, and we are
-  // displaying an individual element, process the multiple value form.
+  // not displaying an individual element, process the multiple value form.
   if (!isset($get_delta) && field_behaviors_widget('multiple values', $instance) == FIELD_BEHAVIOR_DEFAULT) {
     // Store the entity in the form.
     $form['#entity'] = $entity;
@@ -224,7 +224,7 @@ function field_multiple_value_form($field, $instance, $langcode, $items, &$form,
       // table.
       if ($multiple) {
         if ($delta == 0) {
-          $element['#title'] = t('!title', array('!title' => $title));
+          $element['#title'] = $title;
         }
         else {
           $element['#title'] = t('!title (value @number)', array('@number' => $delta + 1, '!title' => $title));

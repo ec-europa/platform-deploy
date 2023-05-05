@@ -39,7 +39,6 @@ function nexteuropa_piwik_uninstall() {
   variable_del('nexteuropa_piwik_pages');
   variable_del('nexteuropa_piwik_roles');
   variable_del('nexteuropa_piwik_site_id');
-  variable_del('nexteuropa_piwik_smartloader_prurl');
   variable_del('nexteuropa_piwik_site_path');
   variable_del('nexteuropa_piwik_site_instance');
   variable_del('nexteuropa_piwik_site_section');
@@ -72,7 +71,7 @@ function nexteuropa_piwik_requirements($phase) {
       if (!preg_match('/^\d{1,}$/', variable_get('nexteuropa_piwik_site_id', ''))) {
         $requirements['nexteuropa_piwik'] = array(
           'title' => $t('Nexteuropa Piwik module'),
-          'description' => $t('NextEuropa Piwik module has not been configured yet. Please configure its settings from the <a href="@url">Piwik settings page</a>.', array('@url' => url('admin/config/system/webtools/piwik'))),
+          'description' => $t('NextEuropa Piwik module has not been configured yet. Please configure its settings from the <a href="@url">Piwik settings page</a>.', array('@url' => url('admin/config/services/webtools'))),
           'severity' => REQUIREMENT_WARNING,
           'value' => $t('Not configured'),
         );
@@ -90,6 +89,7 @@ function nexteuropa_piwik_enable() {
   // Define permissions for role.
   $piwik_admin_permissions = array(
     'administer nexteuropa_piwik' => TRUE,
+    'administer site configuration' => TRUE,
   );
   // Grant the permissions to PIWIK administrator role.
   user_role_change_permissions($piwik_admin_role->rid, $piwik_admin_permissions);
@@ -113,4 +113,13 @@ function nexteuropa_piwik_update_7101() {
     'nexteuropa_piwik_rule',
     _nexteuropa_piwik_get_schema_array()
   );
+}
+
+/**
+ * Add the Administer site configuration permission to the role.
+ */
+function nexteuropa_piwik_update_7102() {
+  $piwik_administrator = user_role_load_by_name('PIWIK administrator');
+  $rid = $piwik_administrator->rid;
+  user_role_grant_permissions($rid, array('administer site configuration'));
 }
